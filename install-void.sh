@@ -143,7 +143,7 @@ sleep 1
 
 echo ""
 log_warn "Enter encryption passphrase for root partition:"
-cryptsetup luksFormat --type luks2 --force "$PART3"
+printf "YES\n" | cryptsetup luksFormat --type luks2 "$PART3"
 
 echo ""
 log_warn "Enter passphrase again to unlock:"
