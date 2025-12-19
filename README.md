@@ -42,7 +42,7 @@ dhcpcd
 
 ### 3. Download Installation Scripts
 
-Since git is not available in the live ISO, download the scripts directly:
+Since git and wget are not available in the live ISO, use curl:
 
 ```bash
 # Create working directory
@@ -50,8 +50,8 @@ mkdir -p /tmp/void-install
 cd /tmp/void-install
 
 # Download installation scripts
-wget https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh
-wget https://raw.githubusercontent.com/mggpie/dotfiles/main/config.sh
+curl -O https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh
+curl -O https://raw.githubusercontent.com/mggpie/dotfiles/main/config.sh
 
 # Make scripts executable
 chmod +x install-void.sh config.sh
