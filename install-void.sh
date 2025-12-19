@@ -83,16 +83,7 @@ log_info "Starting Void Linux automated installation..."
 log_info "Target disk: $TARGET_DISK"
 log_info "Hostname: $HOSTNAME"
 log_info "Username: $USERNAME"
-
-# Confirm before proceeding
 echo ""
-log_warn "WARNING: This will ERASE all data on $TARGET_DISK!"
-echo -n "Type 'YES' to continue: "
-read -r confirm
-if [ "$confirm" != "YES" ]; then
-    log_error "Installation cancelled"
-    exit 1
-fi
 
 # ============================================================================
 # STEP 1: Partition the disk
