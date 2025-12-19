@@ -40,15 +40,21 @@ dhcpcd
 # Configure manually or wait for post-install
 ```
 
-### 3. Clone This Repository
+### 3. Download Installation Scripts
+
+Since git is not available in the live ISO, download the scripts directly:
 
 ```bash
-# Install git if not available
-xbps-install -Suy git
+# Create working directory
+mkdir -p /tmp/void-install
+cd /tmp/void-install
 
-# Clone the repository
-git clone https://github.com/w23b07d28/dotfiles.git
-cd dotfiles
+# Download installation scripts
+wget https://raw.githubusercontent.com/w23b07d28/dotfiles/main/install-void.sh
+wget https://raw.githubusercontent.com/w23b07d28/dotfiles/main/config.sh
+
+# Make scripts executable
+chmod +x install-void.sh config.sh
 ```
 
 ### 4. Configure Installation
