@@ -11,8 +11,23 @@ set -e  # Exit on error
 if [ -f "$(dirname "$0")/config.sh" ]; then
     source "$(dirname "$0")/config.sh"
 else
-    echo "Error: config.sh not found!"
-    exit 1
+    # Default configuration if config.sh not found
+    TARGET_DISK="/dev/nvme0n1"
+    HOSTNAME="here"
+    TIMEZONE="Europe/Warsaw"
+    LOCALE="en_US.UTF-8"
+    KEYMAP="pl"
+    USERNAME="me"
+    USER_GROUPS="wheel audio video storage network input optical kvm lp"
+    USE_SWAP="yes"
+    SWAP_SIZE="auto"
+    FILESYSTEM="ext4"
+    USE_ENCRYPTION="yes"
+    BOOTLOADER="grub"
+    BOOT_MODE="uefi"
+    NETWORK_MANAGER="dhcpcd"
+    ENABLE_SSH="yes"
+    DOTFILES_REPO="https://github.com/mggpie/dotfiles.git"
 fi
 
 # Colors for output
