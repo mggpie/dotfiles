@@ -97,9 +97,10 @@ xbps-install -Sy gptfdisk parted
 # ============================================================================
 log_info "Step 1: Partitioning disk $TARGET_DISK..."
 
-# Wipe existing partition table
-wipefs -af "$TARGET_DISK"
-sgdisk --zap-all "$TARGET_DISK"
+# Wipe existing partition table and data
+dd if=/dev/zero of="$TARGET_DISK" bs=1M count=100 2>/dev/null || true
+wipefs -af "$TARGET_DISK" 2>/dev/null || true
+sgdisk --zap-all "$TARGET_DISK" 2>/dev/null || true
 
 # Create GPT partition table
 sgdisk -o "$TARGET_DISK"
@@ -134,6 +135,9 @@ log_info "Created partitions: $PART1 (EFI), $PART2 (BOOT), $PART3 (ROOT)"
 # STEP 2: Setup LUKS encryption
 # ============================================================================
 log_info "Step 2: Setting up LUKS encryption..."
+
+# Wipe any existing LUKS header
+dd if=/dev/zero of="$PART3" bs=1M count=10 2>/dev/null || true
 
 echo ""
 log_warn "Enter encryption passphrase for root partition:"
