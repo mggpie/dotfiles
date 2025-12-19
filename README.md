@@ -40,9 +40,16 @@ dhcpcd
 # Configure manually or wait for post-install
 ```
 
-### 3. Download Installation Scripts
+### 3. Install curl
 
-Since git and wget are not available in the live ISO, use curl:
+The live ISO doesn't include curl by default, so install it first:
+
+```bash
+xbps-install -Suy xbps
+xbps-install -Sy curl
+```
+
+### 4. Download Installation Scripts
 
 ```bash
 # Create working directory
@@ -57,7 +64,7 @@ curl -O https://raw.githubusercontent.com/mggpie/dotfiles/main/config.sh
 chmod +x install-void.sh config.sh
 ```
 
-### 4. Configure Installation
+### 5. Configure Installation
 
 Edit `config.sh` to customize your installation:
 
@@ -75,7 +82,7 @@ Key configuration options:
 
 **⚠️ WARNING:** The installation will ERASE all data on `TARGET_DISK`!
 
-### 5. Run the Installation
+### 6. Run the Installation
 
 ```bash
 chmod +x install-void.sh
@@ -89,10 +96,10 @@ The script will:
 4. Install the base system
 5. Configure GRUB with encryption support
 6. Prompt for root password
-7. Prompt for user password
-8. Complete installation
+5. Prompt for user password
+6. Complete installation
 
-### 6. Reboot
+### 7. Reboot
 
 After installation completes:
 
@@ -102,7 +109,7 @@ reboot
 
 Remove the installation media and boot into your new system.
 
-### 7. Post-Installation Setup
+### 8. Post-Installation Setup
 
 After first boot and login:
 
@@ -114,10 +121,10 @@ After first boot and login:
 This will:
 1. Update the system
 2. Install Ansible
-3. Clone your dotfiles repository
-4. Prepare for Ansible playbook execution
+2. Clone your dotfiles repository
+3. Prepare for Ansible playbook execution
 
-### 8. Configure Ansible Vault
+### 9. Configure Ansible Vault
 
 Store sensitive data (WiFi passwords, API keys, etc.) in an Ansible vault:
 
@@ -137,7 +144,7 @@ wifi_password: "YourWiFiPassword"
 # Other secrets...
 ```
 
-### 9. Run Ansible Playbook
+### 10. Run Ansible Playbook
 
 ```bash
 ansible-playbook playbook.yml --ask-vault-pass
