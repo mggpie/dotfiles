@@ -175,8 +175,8 @@ log_info "Step 4: Mounting filesystems..."
 
 mount /dev/mapper/voidcrypt /mnt
 mkdir -p /mnt/boot
-mkdir -p /mnt/boot/efi
 mount "$PART2" /mnt/boot
+mkdir -p /mnt/boot/efi
 mount "$PART1" /mnt/boot/efi
 
 # ============================================================================
