@@ -90,7 +90,7 @@ log_info "Configuring repositories and installing tools..."
 mkdir -p /etc/xbps.d
 echo "repository=https://repo-default.voidlinux.org/current" > /etc/xbps.d/00-repository-main.conf
 xbps-install -Suy xbps
-xbps-install -Sy gptfdisk
+xbps-install -Sy gptfdisk parted
 
 # ============================================================================
 # STEP 1: Partition the disk
@@ -114,7 +114,7 @@ sgdisk -n 2:0:+1G -t 2:8300 -c 2:"BOOT" "$TARGET_DISK"
 sgdisk -n 3:0:0 -t 3:8300 -c 3:"ROOT" "$TARGET_DISK"
 
 # Inform kernel of partition changes
-partprobe "$TARGET_DISK"
+sync
 sleep 2
 
 # Determine partition naming scheme
