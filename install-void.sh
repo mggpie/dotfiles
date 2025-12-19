@@ -85,11 +85,12 @@ log_info "Hostname: $HOSTNAME"
 log_info "Username: $USERNAME"
 echo ""
 
-# Install required tools if not present
-if ! command -v sgdisk >/dev/null 2>&1; then
-    log_info "Installing required partitioning tools..."
-    xbps-install -Sy gptfdisk
-fi
+# Ensure repository is configured and install required tools
+log_info "Configuring repositories and installing tools..."
+mkdir -p /etc/xbps.d
+echo "repository=https://repo-default.voidlinux.org/current" > /etc/xbps.d/00-repository-main.conf
+xbps-install -Suy xbps
+xbps-install -Sy gptfdisk
 
 # ============================================================================
 # STEP 1: Partition the disk
