@@ -136,6 +136,12 @@ log_info "Created partitions: $PART1 (EFI), $PART2 (BOOT), $PART3 (ROOT)"
 # ============================================================================
 log_info "Step 2: Setting up LUKS encryption..."
 
+# Close any existing LUKS mappings from previous runs
+cryptsetup close voidcrypt 2>/dev/null || true
+dmsetup remove voidcrypt 2>/dev/null || true
+sync
+sleep 1
+
 # Wipe any existing LUKS header
 dd if=/dev/zero of="$PART3" bs=1M count=10 2>/dev/null || true
 sync
@@ -145,8 +151,6 @@ echo ""
 log_warn "Enter encryption passphrase for root partition:"
 printf "YES\n" | cryptsetup luksFormat --type luks2 "$PART3" < /dev/tty
 
-# Close any existing mapping from luksFormat
-cryptsetup close voidcrypt 2>/dev/null || true
 sync
 sleep 1
 
