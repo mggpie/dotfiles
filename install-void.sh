@@ -145,6 +145,11 @@ echo ""
 log_warn "Enter encryption passphrase for root partition:"
 printf "YES\n" | cryptsetup luksFormat --type luks2 "$PART3" < /dev/tty
 
+# Close any existing mapping from luksFormat
+cryptsetup close voidcrypt 2>/dev/null || true
+sync
+sleep 1
+
 echo ""
 log_warn "Enter passphrase again to unlock:"
 cryptsetup open "$PART3" voidcrypt < /dev/tty
