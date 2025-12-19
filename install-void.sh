@@ -170,25 +170,16 @@ xbps-install -Suy xbps
 
 # Install base system
 # Note: Adjust microcode package based on your CPU (intel-ucode or amd-ucode)
-XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt \
-    base-system \
-    grub-x86_64-efi \
-    efibootmgr \
-    cryptsetup \
-    lvm2 \
-    linux \
-    linux-firmware \
-    linux-firmware-intel \
-    intel-ucode \
-    NetworkManager \
-    dhcpcd \
-    wpa_supplicant \
-    iwd \
-    curl \
-    wget \
-    git \
-    vim \
-    sudo
+BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware linux-firmware-intel intel-ucode wpa_supplicant iwd curl wget git vim sudo"
+
+# Add selected network manager
+if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
+    BASE_PACKAGES="$BASE_PACKAGES NetworkManager"
+else
+    BASE_PACKAGES="$BASE_PACKAGES dhcpcd"
+fi
+
+XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES
 
 # ============================================================================
 # STEP 6: Configure the system
