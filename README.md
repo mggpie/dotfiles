@@ -45,12 +45,6 @@ dhcpcd
 Quick one-liner installation:
 
 ```bash
-curl -sSL https://mggpie.github.io/void | sh
-```
-
-Or direct from GitHub:
-
-```bash
 xbps-install -Sy curl && curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh | sh
 ```
 

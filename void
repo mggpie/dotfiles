@@ -1,5 +1,0 @@
-#!/bin/sh
-# Void Linux Quick Installer
-# Usage: curl -sSL https://mggpie.github.io/void | sh
-
-curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh | sh
