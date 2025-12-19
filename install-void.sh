@@ -147,18 +147,20 @@ dd if=/dev/zero of="$PART3" bs=1M count=10 2>/dev/null || true
 sync
 sleep 1
 
-# Get encryption passphrase from user
+# Get encryption passphrase (stty -echo hides input in POSIX sh)
 echo ""
 printf "Enter disk encryption passphrase: "
-read -s PASSPHRASE
+stty -echo
+read PASSPHRASE
+stty echo
 echo ""
 
-# Format and open LUKS partition with single passphrase
+# Format and open LUKS partition
 log_info "Encrypting partition..."
-echo "$PASSPHRASE" | cryptsetup -q luksFormat --type luks2 -s 512 "$PART3"
+printf "%s" "$PASSPHRASE" | cryptsetup -q luksFormat --type luks2 -s 512 "$PART3"
 
 log_info "Opening encrypted partition..."
-echo "$PASSPHRASE" | cryptsetup luksOpen "$PART3" voidcrypt
+printf "%s" "$PASSPHRASE" | cryptsetup luksOpen "$PART3" voidcrypt
 
 # Clear passphrase from memory
 unset PASSPHRASE
