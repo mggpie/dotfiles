@@ -85,6 +85,12 @@ log_info "Hostname: $HOSTNAME"
 log_info "Username: $USERNAME"
 echo ""
 
+# Install required tools if not present
+if ! command -v sgdisk >/dev/null 2>&1; then
+    log_info "Installing required partitioning tools..."
+    xbps-install -Sy gptfdisk
+fi
+
 # ============================================================================
 # STEP 1: Partition the disk
 # ============================================================================
