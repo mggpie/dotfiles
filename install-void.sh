@@ -9,7 +9,7 @@ set -e  # Exit on error
 
 # Source configuration
 if [ -f "$(dirname "$0")/config.sh" ]; then
-    source "$(dirname "$0")/config.sh"
+    . "$(dirname "$0")/config.sh"
 else
     # Default configuration if config.sh not found
     TARGET_DISK="/dev/nvme0n1"
@@ -37,15 +37,15 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    printf "${GREEN}[INFO]${NC} %s\n" "$1"
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    printf "${YELLOW}[WARN]${NC} %s\n" "$1"
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    printf "${RED}[ERROR]${NC} %s\n" "$1"
 }
 
 # Check if running as root
@@ -170,7 +170,7 @@ xbps-install -Suy xbps
 
 # Install base system
 # Note: Adjust microcode package based on your CPU (intel-ucode or amd-ucode)
-BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware linux-firmware-intel intel-ucode wpa_supplicant iwd curl wget git vim sudo"
+BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware linux-firmware-intel intel-ucode curl git vim sudo"
 
 # Add selected network manager
 if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
@@ -266,7 +266,7 @@ log_warn "Set root password:"
 chroot /mnt passwd root
 
 # Create user
-chroot /mnt useradd -m -G wheel,audio,video,storage,network,input,optical,kvm,lp -s /bin/bash "$USERNAME"
+chroot /mnt useradd -m -G wheel,audio,video,storage,network,input,optical,kvm,lp -s /bin/sh "$USERNAME"
 
 # Set user password
 echo ""
@@ -282,8 +282,17 @@ chmod 0440 /mnt/etc/sudoers.d/wheel
 # ============================================================================
 log_info "Step 9: Enabling services..."
 
-chroot /mnt ln -sf /etc/sv/dhcpcd /etc/runit/runsvdir/default/
-chroot /mnt ln -sf /etc/sv/sshd /etc/runit/runsvdir/default/
+# Enable network service
+if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
+    chroot /mnt ln -sf /etc/sv/NetworkManager /etc/runit/runsvdir/default/
+else
+    chroot /mnt ln -sf /etc/sv/dhcpcd /etc/runit/runsvdir/default/
+fi
+
+# Enable SSH if configured
+if [ "$ENABLE_SSH" = "yes" ]; then
+    chroot /mnt ln -sf /etc/sv/sshd /etc/runit/runsvdir/default/
+fi
 
 # ============================================================================
 # STEP 10: Create swap file (if enabled)
