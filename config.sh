@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Void Linux Installation Configuration
 # Edit this file to customize your installation
