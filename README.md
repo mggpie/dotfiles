@@ -49,7 +49,15 @@ xbps-install -Suy xbps
 xbps-install -Sy curl
 ```
 
-### 4. Download Installation Scripts
+### 4. Download and Run Installation
+
+One-liner to download and execute:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh | sh -s
+```
+
+Or if you want to review/edit the config first:
 
 ```bash
 # Create working directory
@@ -62,6 +70,12 @@ curl -O https://raw.githubusercontent.com/mggpie/dotfiles/main/config.sh
 
 # Make scripts executable
 chmod +x install-void.sh config.sh
+
+# Edit config if needed
+vi config.sh
+
+# Run installation
+./install-void.sh
 ```
 
 ### 5. Configure Installation
