@@ -138,10 +138,12 @@ log_info "Step 2: Setting up LUKS encryption..."
 
 # Wipe any existing LUKS header
 dd if=/dev/zero of="$PART3" bs=1M count=10 2>/dev/null || true
+sync
+sleep 1
 
 echo ""
 log_warn "Enter encryption passphrase for root partition:"
-cryptsetup luksFormat --type luks2 "$PART3"
+cryptsetup luksFormat --type luks2 --force "$PART3"
 
 echo ""
 log_warn "Enter passphrase again to unlock:"
