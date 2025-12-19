@@ -348,7 +348,7 @@ sudo xbps-install -Sy git ansible
 echo "Cloning dotfiles..."
 cd ~
 if [ ! -d "dotfiles" ]; then
-    git clone https://github.com/w23b07d28/dotfiles.git
+    git clone https://github.com/mggpie/dotfiles.git
     cd dotfiles
 else
     cd dotfiles
