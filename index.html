@@ -1,9 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void Linux Installer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { 
+            color: #58a6ff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .warning {
+            background: #332200;
+            border-left: 4px solid #f85149;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 6px;
+        }
+        .warning strong { color: #f85149; }
+        h2 {
+            color: #8b949e;
+            margin: 30px 0 15px;
+            font-size: 1.5em;
+        }
+        .cmd-box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        code {
+            color: #79c0ff;
+            display: block;
+            word-wrap: break-word;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        button:hover { background: #2ea043; }
+        button:active { background: #2c974b; }
+        ul { 
+            list-style: none;
+            margin: 20px 0;
+        }
+        li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #58a6ff;
+        }
+        .note {
+            background: #1c2128;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 3px solid #58a6ff;
+        }
+    </style>
 </head>
 <body>
-    Redirecting to installer...
+    <div class="container">
+        <h1>🐧 Void Linux Installer</h1>
+        <p>Automated LUKS-encrypted Void Linux installation</p>
+        
+        <div class="warning">
+            <strong>⚠️  DANGER ZONE</strong><br>
+            This script will COMPLETELY ERASE your disk. Only use in a VM or after backing up all data!
+        </div>
+
+        <h2>Installation Command</h2>
+        <div class="cmd-box">
+            <code id="installCmd">curl -sSL "https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh?$(date +%s)" -o /tmp/install.sh && chmod +x /tmp/install.sh && /tmp/install.sh</code>
+            <button onclick="copyInstall()">📋 Copy to Clipboard</button>
+        </div>
+
+        <h2>What This Does</h2>
+        <ul>
+            <li>Auto-detects disk (<code>/dev/vda</code> for VMs, <code>/dev/nvme0n1</code> for bare metal)</li>
+            <li>Creates GPT partitions (EFI 512MB, BOOT 1GB, ROOT encrypted)</li>
+            <li>Sets up LUKS2 full disk encryption</li>
+            <li>Installs Void Linux base system</li>
+            <li>Configures GRUB bootloader with LUKS support</li>
+            <li>Creates user account and sets up networking</li>
+        </ul>
+
+        <h2>Interactive Prompts</h2>
+        <div class="note">
+            You'll be asked for:
+            <ul style="margin-top: 10px;">
+                <li>Disk encryption passphrase (twice)</li>
+                <li>Root password</li>
+                <li>User password</li>
+            </ul>
+        </div>
+
+        <h2>Manual Download</h2>
+        <div class="cmd-box">
+            <code>curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh -o /tmp/install.sh</code>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #30363d; color: #8b949e; text-align: center;">
+            <p>Repository: <a href="https://github.com/mggpie/dotfiles" style="color: #58a6ff;">mggpie/dotfiles</a></p>
+        </div>
+    </div>
+
+    <script>
+        function copyInstall() {
+            const cmd = document.getElementById('installCmd').textContent;
+            const timestamp = Math.floor(Date.now() / 1000);
+            const finalCmd = cmd.replace('$(date +%s)', timestamp);
+            
+            navigator.clipboard.writeText(finalCmd).then(() => {
+                const btn = event.target;
+                const oldText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.style.background = '#2ea043';
+                setTimeout(() => {
+                    btn.textContent = oldText;
+                    btn.style.background = '#238636';
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
