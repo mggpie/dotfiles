@@ -45,7 +45,7 @@ dhcpcd
 Quick one-liner installation:
 
 ```bash
-xbps-install -Sy curl && curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh | sh
+xbps-install -Suy xbps && xbps-install -Sy curl && curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh | sh
 ```
 
 This will use default configuration:
