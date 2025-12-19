@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Void Linux Automated Installation Script
 # This script automates the Void Linux installation process
+# Compatible with POSIX sh (dash)
 #
 
 set -e  # Exit on error
@@ -42,9 +43,10 @@ fi
 if ! grep -q "void" /etc/os-release 2>/dev/null; then
     log_warn "This doesn't appear to be Void Linux. Continue anyway? (y/N)"
     read -r response
-    if [[ ! "$response" =~ ^[Yy]$ ]]; then
-        exit 1
-    fi
+    case "$response" in
+        [Yy]*) ;;
+        *) exit 1 ;;
+    esac
 fi
 
 log_info "Starting Void Linux automated installation..."
@@ -88,7 +90,7 @@ partprobe "$TARGET_DISK"
 sleep 2
 
 # Determine partition naming scheme
-if [[ "$TARGET_DISK" == *"nvme"* ]] || [[ "$TARGET_DISK" == *"mmcblk"* ]]; then
+if echo "$TARGET_DISK" | grep -q "nvme\|mmcblk"; then
     PART1="${TARGET_DISK}p1"
     PART2="${TARGET_DISK}p2"
     PART3="${TARGET_DISK}p3"
@@ -316,7 +318,7 @@ log_info "Step 12: Final configuration..."
 
 # Create a post-install script for the user
 cat > /mnt/home/$USERNAME/post-install.sh << 'EOF'
-#!/bin/bash
+#!/bin/sh
 # Post-installation script
 # Run this after first boot to clone dotfiles and run Ansible
 
@@ -328,11 +330,12 @@ echo "1. Clone your dotfiles repository"
 echo "2. Set up Ansible"
 echo "3. Run your Ansible playbook"
 echo ""
-read -p "Continue? (y/N) " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    exit 1
-fi
+printf "Continue? (y/N) "
+read -r reply
+case "$reply" in
+    [Yy]*) ;;
+    *) exit 1 ;;
+esac
 
 # Update system
 echo "Updating system..."
@@ -436,6 +439,7 @@ log_info "  3. Run ~/post-install.sh after first login"
 echo ""
 log_warn "Reboot now? (y/N)"
 read -r reboot_now
-if [[ "$reboot_now" =~ ^[Yy]$ ]]; then
-    reboot
-fi
+case "$reboot_now" in
+    [Yy]*) reboot ;;
+    *) ;;
+esac
