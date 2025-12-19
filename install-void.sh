@@ -143,11 +143,11 @@ sleep 1
 
 echo ""
 log_warn "Enter encryption passphrase for root partition:"
-printf "YES\n" | cryptsetup luksFormat --type luks2 "$PART3"
+printf "YES\n" | cryptsetup luksFormat --type luks2 "$PART3" < /dev/tty
 
 echo ""
 log_warn "Enter passphrase again to unlock:"
-cryptsetup open "$PART3" voidcrypt
+cryptsetup open "$PART3" voidcrypt < /dev/tty
 
 # ============================================================================
 # STEP 3: Create filesystems

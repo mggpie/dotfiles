@@ -48,10 +48,12 @@ Quick one-liner installation:
 curl -L mggpie.github.io/dotfiles | sh
 ```
 
-Or with xbps installation:
+Or with manual download:
 
 ```bash
-xbps-install -Suy xbps && xbps-install -Sy curl && curl -L mggpie.github.io/dotfiles | sh
+curl -sSL raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh -o /tmp/install.sh
+chmod +x /tmp/install.sh
+/tmp/install.sh
 ```
 
 This will use default configuration:
