@@ -1,1 +1,0 @@
-return { path = "/home/me", documents = {["type"]="leaf",["views"]={[1]={["active"]=true,["text"]=false,["type"]="doc",["selection"]={[1]=20,[2]=35,[3]=20,[4]=35},["filename"]="Religia.md",["scroll"]={["y"]=0,["x"]=0}}},["active_view"]=1}, directories = {} }

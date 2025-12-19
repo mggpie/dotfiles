@@ -1,1 +1,0 @@
-return {recents={[2]="/home/me/.config",[1]="/home/me"}, window={[1]=1148,[2]=1061,[3]=0,[4]=0,["n"]=4}, window_mode="normal", previous_find={[1]="nietolerancyjn",[2]="grubasy",[3]="tolerancja",[4]="nasze umysły",[5]="złość",[6]="hackerstwo"}, previous_replace={}}
