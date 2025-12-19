@@ -170,7 +170,7 @@ xbps-install -Suy xbps
 
 # Install base system
 # Note: Adjust microcode package based on your CPU (intel-ucode or amd-ucode)
-BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware linux-firmware-intel intel-ucode curl git vim sudo"
+BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware linux-firmware-intel intel-ucode curl git neovim sudo"
 
 # Add selected network manager
 if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
