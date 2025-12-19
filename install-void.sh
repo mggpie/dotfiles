@@ -147,16 +147,21 @@ dd if=/dev/zero of="$PART3" bs=1M count=10 2>/dev/null || true
 sync
 sleep 1
 
+# Get encryption passphrase from user
 echo ""
-log_warn "Enter encryption passphrase for root partition:"
-printf "YES\n" | cryptsetup luksFormat --type luks2 "$PART3" < /dev/tty
-
-sync
-sleep 1
-
+printf "Enter disk encryption passphrase: "
+read -s PASSPHRASE
 echo ""
-log_warn "Enter passphrase again to unlock:"
-cryptsetup open "$PART3" voidcrypt < /dev/tty
+
+# Format and open LUKS partition with single passphrase
+log_info "Encrypting partition..."
+echo "$PASSPHRASE" | cryptsetup -q luksFormat --type luks2 -s 512 "$PART3"
+
+log_info "Opening encrypted partition..."
+echo "$PASSPHRASE" | cryptsetup luksOpen "$PART3" voidcrypt
+
+# Clear passphrase from memory
+unset PASSPHRASE
 
 # ============================================================================
 # STEP 3: Create filesystems
