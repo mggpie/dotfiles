@@ -40,24 +40,29 @@ dhcpcd
 # Configure manually or wait for post-install
 ```
 
-### 3. Install curl
+### 3. Install and Run
 
-The live ISO doesn't include curl by default, so install it first:
-
-```bash
-xbps-install -Suy xbps
-xbps-install -Sy curl
-```
-
-### 4. Download and Run Installation
-
-One-liner to download and execute:
+Quick one-liner installation:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh | sh -s
+curl -sSL https://mggpie.github.io/void | sh
 ```
 
-Or if you want to review/edit the config first:
+Or direct from GitHub:
+
+```bash
+xbps-install -Sy curl && curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh | sh
+```
+
+This will use default configuration:
+- **Disk:** `/dev/nvme0n1` (will be auto-detected)
+- **Hostname:** `here`
+- **Username:** `me`
+- **Timezone:** `Europe/Warsaw`
+- **Locale:** `en_US.UTF-8`
+- **Keyboard:** `pl`
+
+To customize, download and edit `config.sh` first:
 
 ```bash
 # Create working directory
@@ -78,9 +83,7 @@ vi config.sh
 ./install-void.sh
 ```
 
-### 5. Configure Installation
-
-Edit `config.sh` to customize your installation:
+### 4. Configure Installation (Optional)
 
 ```bash
 vim config.sh
@@ -96,7 +99,7 @@ Key configuration options:
 
 **⚠️ WARNING:** The installation will ERASE all data on `TARGET_DISK`!
 
-### 6. Run the Installation
+### 5. Run the Installation
 
 ```bash
 chmod +x install-void.sh
@@ -113,7 +116,7 @@ The script will:
 5. Prompt for user password
 6. Complete installation
 
-### 7. Reboot
+### 6. Reboot
 
 After installation completes:
 
@@ -123,7 +126,7 @@ reboot
 
 Remove the installation media and boot into your new system.
 
-### 8. Post-Installation Setup
+### 7. Post-Installation Setup
 
 After first boot and login:
 
@@ -138,7 +141,7 @@ This will:
 2. Clone your dotfiles repository
 3. Prepare for Ansible playbook execution
 
-### 9. Configure Ansible Vault
+### 8. Configure Ansible Vault
 
 Store sensitive data (WiFi passwords, API keys, etc.) in an Ansible vault:
 
@@ -158,7 +161,7 @@ wifi_password: "YourWiFiPassword"
 # Other secrets...
 ```
 
-### 10. Run Ansible Playbook
+### 9. Run Ansible Playbook
 
 ```bash
 ansible-playbook playbook.yml --ask-vault-pass
