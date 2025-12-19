@@ -12,7 +12,22 @@ if [ -f "$(dirname "$0")/config.sh" ]; then
     . "$(dirname "$0")/config.sh"
 else
     # Default configuration if config.sh not found
-    TARGET_DISK="/dev/nvme0n1"
+    
+    # Auto-detect target disk
+    if [ -b "/dev/vda" ]; then
+        # Virtual machine (QEMU/KVM with virtio)
+        TARGET_DISK="/dev/vda"
+    elif [ -b "/dev/nvme0n1" ]; then
+        # Physical machine with NVMe
+        TARGET_DISK="/dev/nvme0n1"
+    elif [ -b "/dev/sda" ]; then
+        # Physical/Virtual machine with SATA/SCSI
+        TARGET_DISK="/dev/sda"
+    else
+        # Fallback - user will need to confirm
+        TARGET_DISK="/dev/sda"
+    fi
+    
     HOSTNAME="here"
     TIMEZONE="Europe/Warsaw"
     LOCALE="en_US.UTF-8"
