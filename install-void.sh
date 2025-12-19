@@ -154,6 +154,7 @@ log_info "Step 5: Installing base system..."
 xbps-install -Suy xbps
 
 # Install base system
+# Note: Adjust microcode package based on your CPU (intel-ucode or amd-ucode)
 XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt \
     base-system \
     grub-x86_64-efi \
@@ -163,9 +164,7 @@ XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current 
     linux \
     linux-firmware \
     linux-firmware-intel \
-    linux-firmware-amd \
     intel-ucode \
-    amd-ucode \
     NetworkManager \
     dhcpcd \
     wpa_supplicant \
