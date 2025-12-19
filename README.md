@@ -50,8 +50,8 @@ mkdir -p /tmp/void-install
 cd /tmp/void-install
 
 # Download installation scripts
-wget https://raw.githubusercontent.com/w23b07d28/dotfiles/main/install-void.sh
-wget https://raw.githubusercontent.com/w23b07d28/dotfiles/main/config.sh
+wget https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh
+wget https://raw.githubusercontent.com/mggpie/dotfiles/main/config.sh
 
 # Make scripts executable
 chmod +x install-void.sh config.sh
