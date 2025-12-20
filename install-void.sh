@@ -85,6 +85,68 @@ log_info "Hostname: $HOSTNAME"
 log_info "Username: $USERNAME"
 echo ""
 
+# ============================================================================
+# Collect all passwords upfront
+# ============================================================================
+log_info "Password Setup"
+log_info "=============="
+echo ""
+
+# Collect LUKS encryption password
+log_warn "Set disk encryption passphrase:"
+stty -echo </dev/tty
+printf "Enter passphrase: " >/dev/tty
+read LUKS_PASSPHRASE </dev/tty
+printf "\n" >/dev/tty
+printf "Confirm passphrase: " >/dev/tty
+read LUKS_PASSPHRASE_CONFIRM </dev/tty
+printf "\n" >/dev/tty
+stty echo </dev/tty
+
+if [ "$LUKS_PASSPHRASE" != "$LUKS_PASSPHRASE_CONFIRM" ]; then
+    log_error "Passphrases do not match!"
+    exit 1
+fi
+echo ""
+
+# Collect root password
+log_warn "Set root password:"
+stty -echo </dev/tty
+printf "Enter root password: " >/dev/tty
+read ROOT_PASSWORD </dev/tty
+printf "\n" >/dev/tty
+printf "Confirm root password: " >/dev/tty
+read ROOT_PASSWORD_CONFIRM </dev/tty
+printf "\n" >/dev/tty
+stty echo </dev/tty
+
+if [ "$ROOT_PASSWORD" != "$ROOT_PASSWORD_CONFIRM" ]; then
+    log_error "Passwords do not match!"
+    exit 1
+fi
+echo ""
+
+# Collect user password
+log_warn "Set password for user $USERNAME:"
+stty -echo </dev/tty
+printf "Enter password for $USERNAME: " >/dev/tty
+read USER_PASSWORD </dev/tty
+printf "\n" >/dev/tty
+printf "Confirm password for $USERNAME: " >/dev/tty
+read USER_PASSWORD_CONFIRM </dev/tty
+printf "\n" >/dev/tty
+stty echo </dev/tty
+
+if [ "$USER_PASSWORD" != "$USER_PASSWORD_CONFIRM" ]; then
+    log_error "Passwords do not match!"
+    exit 1
+fi
+echo ""
+
+log_info "All passwords collected. Starting installation..."
+sleep 2
+echo ""
+
 # Clean up any existing LUKS mappings FIRST
 log_info "Cleaning up any existing LUKS mappings..."
 cryptsetup close voidcrypt 2>/dev/null || true
@@ -154,23 +216,12 @@ dd if=/dev/zero of="$PART3" bs=1M count=10 2>/dev/null || true
 sync
 sleep 1
 
-# Get encryption passphrase using /dev/tty (works even when piped)
-echo ""
-printf "Enter disk encryption passphrase: " > /dev/tty
-stty -echo < /dev/tty
-read PASSPHRASE < /dev/tty
-stty echo < /dev/tty
-echo "" > /dev/tty
-
-# Format and open LUKS partition
+# Format and open LUKS partition (using password collected at start)
 log_info "Encrypting partition..."
-printf "%s" "$PASSPHRASE" | cryptsetup -q luksFormat --type luks2 -s 512 "$PART3"
+printf "%s" "$LUKS_PASSPHRASE" | cryptsetup -q luksFormat --type luks2 -s 512 "$PART3"
 
 log_info "Opening encrypted partition..."
-printf "%s" "$PASSPHRASE" | cryptsetup luksOpen "$PART3" voidcrypt
-
-# Clear passphrase from memory
-unset PASSPHRASE
+printf "%s" "$LUKS_PASSPHRASE" | cryptsetup luksOpen "$PART3" voidcrypt
 
 # ============================================================================
 # STEP 3: Create filesystems
@@ -307,45 +358,13 @@ chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 # ============================================================================
 log_info "Step 8: Creating user and setting passwords..."
 
-# Set root password
-echo ""
-log_warn "Set root password:"
-stty -echo </dev/tty
-printf "Enter root password: " >/dev/tty
-read ROOT_PASSWORD </dev/tty
-printf "\n" >/dev/tty
-printf "Confirm root password: " >/dev/tty
-read ROOT_PASSWORD_CONFIRM </dev/tty
-printf "\n" >/dev/tty
-stty echo </dev/tty
-
-if [ "$ROOT_PASSWORD" != "$ROOT_PASSWORD_CONFIRM" ]; then
-    log_error "Passwords do not match!"
-    exit 1
-fi
-
+# Set root password (using password collected at start)
 echo "root:$ROOT_PASSWORD" | chroot /mnt chpasswd
 
 # Create user
 chroot /mnt useradd -m -G wheel,audio,video,storage,network,input,optical,kvm,lp -s /bin/sh "$USERNAME"
 
-# Set user password
-echo ""
-log_warn "Set password for user $USERNAME:"
-stty -echo </dev/tty
-printf "Enter password for $USERNAME: " >/dev/tty
-read USER_PASSWORD </dev/tty
-printf "\n" >/dev/tty
-printf "Confirm password for $USERNAME: " >/dev/tty
-read USER_PASSWORD_CONFIRM </dev/tty
-printf "\n" >/dev/tty
-stty echo </dev/tty
-
-if [ "$USER_PASSWORD" != "$USER_PASSWORD_CONFIRM" ]; then
-    log_error "Passwords do not match!"
-    exit 1
-fi
-
+# Set user password (using password collected at start)
 echo "$USERNAME:$USER_PASSWORD" | chroot /mnt chpasswd
 
 # Configure sudo
@@ -405,130 +424,25 @@ chroot /mnt xbps-reconfigure -fa
 # ============================================================================
 log_info "Step 12: Final configuration..."
 
-# Create a post-install script for the user
-cat > /mnt/home/$USERNAME/post-install.sh << 'EOF'
-#!/bin/sh
-# Post-installation script
-# Run this after first boot to clone dotfiles and run Ansible
-
-echo "Void Linux Post-Installation Script"
-echo "===================================="
-echo ""
-echo "This script will:"
-echo "1. Clone your dotfiles repository"
-echo "2. Set up Ansible"
-echo "3. Run your Ansible playbook"
-echo ""
-printf "Continue? (y/N) "
-read -r reply
-case "$reply" in
-    [Yy]*) ;;
-    *) exit 1 ;;
-esac
-
-# Update system
-echo "Updating system..."
-sudo xbps-install -Suy
-
-# Install git and ansible if not present
-echo "Installing prerequisites..."
-sudo xbps-install -Sy git ansible
-
-# Clone dotfiles
-echo "Cloning dotfiles..."
-cd ~
-if [ ! -d "dotfiles" ]; then
-    git clone https://github.com/mggpie/dotfiles.git
-    cd dotfiles
-else
-    cd dotfiles
-    git pull
-fi
-
-echo ""
-echo "Dotfiles cloned successfully!"
-echo "Next steps:"
-echo "1. Review the Ansible playbook"
-echo "2. Configure ansible-vault for secrets (WiFi passwords, etc.)"
-echo "3. Run: ansible-playbook playbook.yml"
-echo ""
-EOF
-
-chmod +x /mnt/home/$USERNAME/post-install.sh
-chroot /mnt chown $USERNAME:$USERNAME /home/$USERNAME/post-install.sh
-
-# Create a reminder file
-cat > /mnt/home/$USERNAME/README.md << EOF
-# Void Linux Installation Complete!
-
-Your Void Linux system has been installed with the following configuration:
-
-- **Hostname:** $HOSTNAME
-- **Username:** $USERNAME
-- **Disk:** $TARGET_DISK (encrypted with LUKS)
-- **Bootloader:** GRUB (UEFI)
-- **Timezone:** $TIMEZONE
-- **Locale:** $LOCALE
-- **Keyboard:** $KEYMAP
-
-## Next Steps
-
-After rebooting into your new system:
-
-1. Run the post-install script:
-   \`\`\`bash
-   ./post-install.sh
-   \`\`\`
-
-2. Configure your Ansible vault for secrets:
-   \`\`\`bash
-   cd ~/dotfiles
-   ansible-vault create group_vars/all/vault.yml
-   \`\`\`
-
-3. Add your WiFi credentials and other secrets to the vault
-
-4. Run your Ansible playbook:
-   \`\`\`bash
-   ansible-playbook playbook.yml --ask-vault-pass
-   \`\`\`
-
-## Important Notes
-
-- Your root partition is encrypted with LUKS
-- You will need to enter your encryption password at boot
-- SSH daemon is enabled by default
-- NetworkManager is installed but not enabled (using dhcpcd)
-
-## Troubleshooting
-
-If you have any issues booting:
-- Make sure you entered the correct LUKS passphrase
-- Check GRUB configuration in /etc/default/grub
-- Regenerate initramfs: \`xbps-reconfigure -f linux\`
-
-Enjoy your new Void Linux system!
-EOF
-
-chroot /mnt chown $USERNAME:$USERNAME /home/$USERNAME/README.md
-
 # Unmount filesystems
 log_info "Unmounting filesystems..."
 umount -R /mnt
+
+# Clear passwords from memory
+unset LUKS_PASSPHRASE ROOT_PASSWORD USER_PASSWORD
+unset LUKS_PASSPHRASE_CONFIRM ROOT_PASSWORD_CONFIRM USER_PASSWORD_CONFIRM
 
 log_info "============================================"
 log_info "Installation complete!"
 log_info "============================================"
 echo ""
-log_info "You can now reboot into your new Void Linux system."
-log_info "Remember to:"
-log_info "  1. Remove the installation media"
-log_info "  2. Enter your LUKS passphrase at boot"
-log_info "  3. Run ~/post-install.sh after first login"
+log_info "Your Void Linux system is ready!"
+log_info ""
+log_info "Next steps after reboot:"
+log_info "  1. Enter LUKS passphrase at boot"
+log_info "  2. Login as: $USERNAME"
+log_info "  3. Set up WiFi and run Ansible playbook"
 echo ""
-log_warn "Reboot now? (y/N)"
-read -r reboot_now
-case "$reboot_now" in
-    [Yy]*) reboot ;;
-    *) ;;
-esac
+log_info "Rebooting in 5 seconds..."
+sleep 5
+reboot
