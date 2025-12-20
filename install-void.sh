@@ -269,6 +269,11 @@ cp -a /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
 # Install base system (microcode will be installed later via Ansible)
 BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo binutils"
 
+# Add VM-specific packages if running in a VM
+if [ "$TARGET_DISK" = "/dev/vda" ]; then
+    BASE_PACKAGES="$BASE_PACKAGES openssh spice-vdagent"
+fi
+
 # Add selected network manager
 if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
     BASE_PACKAGES="$BASE_PACKAGES NetworkManager"
@@ -390,6 +395,11 @@ fi
 # Enable SSH if configured
 if [ "$ENABLE_SSH" = "yes" ]; then
     chroot /mnt ln -sf /etc/sv/sshd /etc/runit/runsvdir/default/
+fi
+
+# Enable spice-vdagent if in VM
+if [ "$TARGET_DISK" = "/dev/vda" ]; then
+    chroot /mnt ln -sf /etc/sv/spice-vdagentd /etc/runit/runsvdir/default/
 fi
 
 # ============================================================================
