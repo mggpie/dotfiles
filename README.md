@@ -45,7 +45,7 @@ dhcpcd
 **Quick installation (recommended):**
 
 ```bash
-curl -sSL "https://mggpie.github.io/dotfiles/install-void.sh?$(date +%s)" -o /tmp/i.sh && chmod +x /tmp/i.sh && /tmp/i.sh
+curl -sSL mggpie.github.io/dotfiles/install-void.sh -o /tmp/i.sh && chmod +x /tmp/i.sh && /tmp/i.sh
 ```
 
 **Or visit the installation page:**
