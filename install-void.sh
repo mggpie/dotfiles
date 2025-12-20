@@ -211,8 +211,16 @@ log_info "Step 5: Installing base system..."
 xbps-install -Suy xbps
 
 # Install base system
-# Note: Adjust microcode package based on your CPU (intel-ucode or amd-ucode)
-BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware linux-firmware-intel intel-ucode curl git micro sudo"
+BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo"
+
+# Add CPU microcode if available (optional, not critical)
+if grep -q "GenuineIntel" /proc/cpuinfo; then
+    log_info "Intel CPU detected, will try to install intel-ucode..."
+    BASE_PACKAGES="$BASE_PACKAGES intel-ucode"
+elif grep -q "AuthenticAMD" /proc/cpuinfo; then
+    log_info "AMD CPU detected, will try to install amd-ucode..."
+    BASE_PACKAGES="$BASE_PACKAGES amd-ucode"
+fi
 
 # Add selected network manager
 if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
@@ -221,7 +229,13 @@ else
     BASE_PACKAGES="$BASE_PACKAGES dhcpcd"
 fi
 
-XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES
+log_info "Installing packages: $BASE_PACKAGES"
+XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES || {
+    log_warn "Some packages failed to install, retrying without microcode..."
+    BASE_PACKAGES_MINIMAL="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo"
+    [ "$NETWORK_MANAGER" = "NetworkManager" ] && BASE_PACKAGES_MINIMAL="$BASE_PACKAGES_MINIMAL NetworkManager" || BASE_PACKAGES_MINIMAL="$BASE_PACKAGES_MINIMAL dhcpcd"
+    XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES_MINIMAL
+}
 
 # ============================================================================
 # STEP 6: Configure the system
