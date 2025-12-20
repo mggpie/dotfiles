@@ -42,11 +42,15 @@ dhcpcd
 
 ### 3. Install and Run
 
-Quick one-liner installation:
+**Quick installation (recommended):**
 
 ```bash
-curl -L mggpie.github.io/dotfiles | sh
+curl -sSL "https://mggpie.github.io/dotfiles/install-void.sh?$(date +%s)" -o /tmp/i.sh && chmod +x /tmp/i.sh && /tmp/i.sh
 ```
+
+**Or visit the installation page:**
+
+https://mggpie.github.io/dotfiles
 
 Or with manual download:
 
