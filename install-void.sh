@@ -85,6 +85,13 @@ log_info "Hostname: $HOSTNAME"
 log_info "Username: $USERNAME"
 echo ""
 
+# Clean up any existing LUKS mappings FIRST
+log_info "Cleaning up any existing LUKS mappings..."
+cryptsetup close voidcrypt 2>/dev/null || true
+dmsetup remove voidcrypt 2>/dev/null || true
+sync
+sleep 1
+
 # Ensure repository is configured and install required tools
 log_info "Configuring repositories and installing tools..."
 mkdir -p /etc/xbps.d
