@@ -95,7 +95,7 @@
 
         <h2>Installation Command</h2>
         <div class="cmd-box">
-            <code id="installCmd">curl -sSL mggpie.github.io/dotfiles/install-void.sh -o /tmp/i.sh && chmod +x /tmp/i.sh && /tmp/i.sh</code>
+            <code id="installCmd">xbps-install -Sy curl && curl -sSL mggpie.github.io/dotfiles/i | sh</code>
             <button onclick="copyInstall()">📋 Copy to Clipboard</button>
         </div>
 
@@ -119,9 +119,9 @@
             </ul>
         </div>
 
-        <h2>Manual Download</h2>
+        <h2>Alternative (if curl already installed)</h2>
         <div class="cmd-box">
-            <code>curl -sSL https://mggpie.github.io/dotfiles/install-void.sh -o /tmp/i.sh</code>
+            <code>curl -sSL mggpie.github.io/dotfiles/i | sh</code>
         </div>
 
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #30363d; color: #8b949e; text-align: center;">
