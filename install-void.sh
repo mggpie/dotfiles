@@ -310,7 +310,21 @@ log_info "Step 8: Creating user and setting passwords..."
 # Set root password
 echo ""
 log_warn "Set root password:"
-chroot /mnt passwd root
+stty -echo </dev/tty
+printf "Enter root password: " >/dev/tty
+read ROOT_PASSWORD </dev/tty
+printf "\n" >/dev/tty
+printf "Confirm root password: " >/dev/tty
+read ROOT_PASSWORD_CONFIRM </dev/tty
+printf "\n" >/dev/tty
+stty echo </dev/tty
+
+if [ "$ROOT_PASSWORD" != "$ROOT_PASSWORD_CONFIRM" ]; then
+    log_error "Passwords do not match!"
+    exit 1
+fi
+
+echo "root:$ROOT_PASSWORD" | chroot /mnt chpasswd
 
 # Create user
 chroot /mnt useradd -m -G wheel,audio,video,storage,network,input,optical,kvm,lp -s /bin/sh "$USERNAME"
@@ -318,7 +332,21 @@ chroot /mnt useradd -m -G wheel,audio,video,storage,network,input,optical,kvm,lp
 # Set user password
 echo ""
 log_warn "Set password for user $USERNAME:"
-chroot /mnt passwd "$USERNAME"
+stty -echo </dev/tty
+printf "Enter password for $USERNAME: " >/dev/tty
+read USER_PASSWORD </dev/tty
+printf "\n" >/dev/tty
+printf "Confirm password for $USERNAME: " >/dev/tty
+read USER_PASSWORD_CONFIRM </dev/tty
+printf "\n" >/dev/tty
+stty echo </dev/tty
+
+if [ "$USER_PASSWORD" != "$USER_PASSWORD_CONFIRM" ]; then
+    log_error "Passwords do not match!"
+    exit 1
+fi
+
+echo "$USERNAME:$USER_PASSWORD" | chroot /mnt chpasswd
 
 # Configure sudo
 echo "%wheel ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers.d/wheel
