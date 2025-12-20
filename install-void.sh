@@ -267,7 +267,7 @@ mkdir -p /mnt/var/db/xbps/keys
 cp -a /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
 
 # Install base system (microcode will be installed later via Ansible)
-BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo"
+BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo binutils"
 
 # Add selected network manager
 if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
@@ -359,13 +359,13 @@ chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 log_info "Step 8: Creating user and setting passwords..."
 
 # Set root password (using password collected at start)
-printf '%s:%s\n' "root" "$ROOT_PASSWORD" | chroot /mnt chpasswd
+printf "%s\n" "root:$ROOT_PASSWORD" | chroot /mnt chpasswd
 
 # Create user
 chroot /mnt useradd -m -G wheel,audio,video,storage,network,input,optical,kvm,lp -s /bin/sh "$USERNAME"
 
 # Set user password (using password collected at start)
-printf '%s:%s\n' "$USERNAME" "$USER_PASSWORD" | chroot /mnt chpasswd
+printf "%s\n" "$USERNAME:$USER_PASSWORD" | chroot /mnt chpasswd
 
 # Configure sudo
 echo "%wheel ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers.d/wheel
