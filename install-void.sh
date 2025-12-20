@@ -210,7 +210,7 @@ log_info "Step 5: Installing base system..."
 # Ensure we have the latest xbps
 xbps-install -Suy xbps
 
-# Install base system (microcode packages often unavailable, skip them)
+# Install base system (microcode will be installed later via Ansible)
 BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo"
 
 # Add selected network manager
@@ -222,15 +222,6 @@ fi
 
 log_info "Installing packages: $BASE_PACKAGES"
 XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES
-
-# Try to install microcode separately (optional, don't fail if unavailable)
-if grep -q "GenuineIntel" /proc/cpuinfo; then
-    log_info "Intel CPU detected, attempting to install intel-ucode (optional)..."
-    XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt intel-ucode 2>/dev/null || log_warn "intel-ucode not available in repository, continuing without microcode..."
-elif grep -q "AuthenticAMD" /proc/cpuinfo; then
-    log_info "AMD CPU detected, attempting to install amd-ucode (optional)..."
-    XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt amd-ucode 2>/dev/null || log_warn "amd-ucode not available in repository, continuing without microcode..."
-fi
 
 # ============================================================================
 # STEP 6: Configure the system
