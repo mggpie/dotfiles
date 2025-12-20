@@ -95,7 +95,7 @@
 
         <h2>Installation Command</h2>
         <div class="cmd-box">
-            <code id="installCmd">curl -sSL "https://mggpie.github.io/dotfiles/install-void.sh?$(date +%s)" -o /tmp/i.sh && chmod +x /tmp/i.sh && /tmp/i.sh</code>
+            <code id="installCmd">curl -sSL mggpie.github.io/dotfiles/install-void.sh -o /tmp/i.sh && chmod +x /tmp/i.sh && /tmp/i.sh</code>
             <button onclick="copyInstall()">📋 Copy to Clipboard</button>
         </div>
 
@@ -132,10 +132,8 @@
     <script>
         function copyInstall() {
             const cmd = document.getElementById('installCmd').textContent;
-            const timestamp = Math.floor(Date.now() / 1000);
-            const finalCmd = cmd.replace('$(date +%s)', timestamp);
             
-            navigator.clipboard.writeText(finalCmd).then(() => {
+            navigator.clipboard.writeText(cmd).then(() => {
                 const btn = event.target;
                 const oldText = btn.textContent;
                 btn.textContent = '✓ Copied!';
