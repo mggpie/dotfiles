@@ -210,6 +210,11 @@ log_info "Step 5: Installing base system..."
 # Ensure we have the latest xbps
 xbps-install -Suy xbps
 
+# Import Void Linux RSA keys to avoid prompts
+log_info "Importing Void Linux repository keys..."
+mkdir -p /mnt/var/db/xbps/keys
+cp -a /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
+
 # Install base system (microcode will be installed later via Ansible)
 BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo"
 
