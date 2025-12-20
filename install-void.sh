@@ -221,7 +221,7 @@ else
 fi
 
 log_info "Installing packages: $BASE_PACKAGES"
-XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES
+yes | XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES
 
 # ============================================================================
 # STEP 6: Configure the system
