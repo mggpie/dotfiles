@@ -154,13 +154,13 @@ dd if=/dev/zero of="$PART3" bs=1M count=10 2>/dev/null || true
 sync
 sleep 1
 
-# Get encryption passphrase (stty -echo hides input in POSIX sh)
+# Get encryption passphrase using /dev/tty (works even when piped)
 echo ""
-printf "Enter disk encryption passphrase: "
-stty -echo
-read PASSPHRASE
-stty echo
-echo ""
+printf "Enter disk encryption passphrase: " > /dev/tty
+stty -echo < /dev/tty
+read PASSPHRASE < /dev/tty
+stty echo < /dev/tty
+echo "" > /dev/tty
 
 # Format and open LUKS partition
 log_info "Encrypting partition..."
