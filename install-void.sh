@@ -314,10 +314,10 @@ cat > /mnt/etc/fstab << EOF
 # /etc/fstab: static file system information
 #
 # <file system> <mount point> <type> <options> <dump> <pass>
-UUID=$EFI_UUID  /boot/efi  vfat  defaults,noatime  0 2
-UUID=$BOOT_UUID /boot      ext4  defaults,noatime  0 2
-/dev/mapper/voidcrypt /    ext4  defaults,noatime  0 1
-tmpfs           /tmp       tmpfs defaults,nosuid,nodev 0 0
+/dev/mapper/voidcrypt /         ext4  defaults,noatime  0 1
+UUID=$BOOT_UUID       /boot     ext4  defaults,noatime  0 2
+UUID=$EFI_UUID        /boot/efi vfat  defaults,noatime  0 2
+tmpfs                 /tmp      tmpfs defaults,nosuid,nodev 0 0
 EOF
 
 # Configure crypttab
