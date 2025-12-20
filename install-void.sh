@@ -441,7 +441,7 @@ log_info ""
 log_info "Next steps after reboot:"
 log_info "  1. Enter LUKS passphrase at boot"
 log_info "  2. Login as: $USERNAME"
-log_info "  3. Set up WiFi and run Ansible playbook"
+log_info "  3. Run Ansible playbook to configure system"
 echo ""
 log_info "Rebooting in 5 seconds..."
 sleep 5
