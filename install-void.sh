@@ -210,17 +210,8 @@ log_info "Step 5: Installing base system..."
 # Ensure we have the latest xbps
 xbps-install -Suy xbps
 
-# Install base system
+# Install base system (microcode packages often unavailable, skip them)
 BASE_PACKAGES="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo"
-
-# Add CPU microcode if available (optional, not critical)
-if grep -q "GenuineIntel" /proc/cpuinfo; then
-    log_info "Intel CPU detected, will try to install intel-ucode..."
-    BASE_PACKAGES="$BASE_PACKAGES intel-ucode"
-elif grep -q "AuthenticAMD" /proc/cpuinfo; then
-    log_info "AMD CPU detected, will try to install amd-ucode..."
-    BASE_PACKAGES="$BASE_PACKAGES amd-ucode"
-fi
 
 # Add selected network manager
 if [ "$NETWORK_MANAGER" = "NetworkManager" ]; then
@@ -230,12 +221,16 @@ else
 fi
 
 log_info "Installing packages: $BASE_PACKAGES"
-XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES || {
-    log_warn "Some packages failed to install, retrying without microcode..."
-    BASE_PACKAGES_MINIMAL="base-system grub-x86_64-efi efibootmgr cryptsetup lvm2 linux linux-firmware curl git micro sudo"
-    [ "$NETWORK_MANAGER" = "NetworkManager" ] && BASE_PACKAGES_MINIMAL="$BASE_PACKAGES_MINIMAL NetworkManager" || BASE_PACKAGES_MINIMAL="$BASE_PACKAGES_MINIMAL dhcpcd"
-    XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES_MINIMAL
-}
+XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt $BASE_PACKAGES
+
+# Try to install microcode separately (optional, don't fail if unavailable)
+if grep -q "GenuineIntel" /proc/cpuinfo; then
+    log_info "Intel CPU detected, attempting to install intel-ucode (optional)..."
+    XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt intel-ucode 2>/dev/null || log_warn "intel-ucode not available in repository, continuing without microcode..."
+elif grep -q "AuthenticAMD" /proc/cpuinfo; then
+    log_info "AMD CPU detected, attempting to install amd-ucode (optional)..."
+    XBPS_ARCH=x86_64 xbps-install -Sy -R https://repo-default.voidlinux.org/current -r /mnt amd-ucode 2>/dev/null || log_warn "amd-ucode not available in repository, continuing without microcode..."
+fi
 
 # ============================================================================
 # STEP 6: Configure the system
