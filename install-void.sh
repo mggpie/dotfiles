@@ -359,13 +359,17 @@ chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 log_info "Step 8: Creating user and setting passwords..."
 
 # Set root password (using password collected at start)
-printf '%s\n' "root:$ROOT_PASSWORD" | chroot /mnt chpasswd
+# Hash the password using openssl and set it with usermod
+ROOT_HASH=$(printf '%s\n' "$ROOT_PASSWORD" | openssl passwd -6 -stdin)
+chroot /mnt usermod -p "$ROOT_HASH" root
 
 # Create user
 chroot /mnt useradd -m -G wheel,audio,video,storage,network,input,optical,kvm,lp -s /bin/sh "$USERNAME"
 
 # Set user password (using password collected at start)
-printf '%s\n' "$USERNAME:$USER_PASSWORD" | chroot /mnt chpasswd
+# Hash the password using openssl and set it with usermod
+USER_HASH=$(printf '%s\n' "$USER_PASSWORD" | openssl passwd -6 -stdin)
+chroot /mnt usermod -p "$USER_HASH" "$USERNAME"
 
 # Configure sudo
 echo "%wheel ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers.d/wheel
