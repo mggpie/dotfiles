@@ -96,10 +96,10 @@ echo ""
 log_warn "Set disk encryption passphrase:"
 stty -echo </dev/tty
 printf "Enter passphrase: " >/dev/tty
-read LUKS_PASSPHRASE </dev/tty
+read -r LUKS_PASSPHRASE </dev/tty
 printf "\n" >/dev/tty
 printf "Confirm passphrase: " >/dev/tty
-read LUKS_PASSPHRASE_CONFIRM </dev/tty
+read -r LUKS_PASSPHRASE_CONFIRM </dev/tty
 printf "\n" >/dev/tty
 stty echo </dev/tty
 
@@ -113,10 +113,10 @@ echo ""
 log_warn "Set root password:"
 stty -echo </dev/tty
 printf "Enter root password: " >/dev/tty
-read ROOT_PASSWORD </dev/tty
+read -r ROOT_PASSWORD </dev/tty
 printf "\n" >/dev/tty
 printf "Confirm root password: " >/dev/tty
-read ROOT_PASSWORD_CONFIRM </dev/tty
+read -r ROOT_PASSWORD_CONFIRM </dev/tty
 printf "\n" >/dev/tty
 stty echo </dev/tty
 
@@ -129,11 +129,11 @@ echo ""
 # Collect user password
 log_warn "Set password for user $USERNAME:"
 stty -echo </dev/tty
-printf "Enter password for $USERNAME: " >/dev/tty
-read USER_PASSWORD </dev/tty
+printf "Enter password for %s: " "$USERNAME" >/dev/tty
+read -r USER_PASSWORD </dev/tty
 printf "\n" >/dev/tty
-printf "Confirm password for $USERNAME: " >/dev/tty
-read USER_PASSWORD_CONFIRM </dev/tty
+printf "Confirm password for %s: " "$USERNAME" >/dev/tty
+read -r USER_PASSWORD_CONFIRM </dev/tty
 printf "\n" >/dev/tty
 stty echo </dev/tty
 
@@ -295,7 +295,7 @@ cat > /mnt/etc/hosts << EOF
 EOF
 
 # Set timezone
-ln -sf /usr/share/zoneinfo/$TIMEZONE /mnt/etc/localtime
+ln -sf "/usr/share/zoneinfo/$TIMEZONE" /mnt/etc/localtime
 
 # Set locale
 echo "LANG=$LOCALE" > /mnt/etc/locale.conf
