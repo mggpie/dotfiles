@@ -3,11 +3,29 @@
 # User and Groups Configuration
 # =============================================================================
 
+# First, ensure base groups exist (some are created by package installation)
+- name: Ensure base groups exist
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - wheel
+    - audio
+    - video
+    - storage
+    - network
+    - input
+    - optical
+    - plugdev
+    - bluetooth
+    - lp
+  failed_when: false
+
 - name: Ensure user exists with correct shell
   ansible.builtin.user:
     name: "{{ username }}"
     shell: "{{ default_shell }}"
-    groups: "{{ user_groups | join(',') }}"
+    groups: wheel,audio,video,storage,network,input,optical,plugdev,bluetooth,lp
     append: true
     create_home: true
 

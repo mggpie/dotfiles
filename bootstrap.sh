@@ -46,9 +46,8 @@ sudo xbps-install -Sy git ansible opendoas
 # Step 2: Configure doas (passwordless for this user)
 # =============================================================================
 log_info "Configuring doas..."
-sudo mkdir -p /etc/doas.d
-echo "permit nopass $USERNAME" | sudo tee /etc/doas.d/doas.conf > /dev/null
-sudo chmod 600 /etc/doas.d/doas.conf
+echo "permit nopass $USERNAME" | sudo tee /etc/doas.conf > /dev/null
+sudo chmod 600 /etc/doas.conf
 
 # =============================================================================
 # Step 3: Clone dotfiles
