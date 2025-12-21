@@ -11,7 +11,7 @@ mod="Mod4"
 # =============================================================================
 
 # Application launcher (bemenu) - Super+D
-riverctl map normal $mod D spawn 'bemenu-run -p "run:" --fn "{{ fonts.mono }} {{ fonts.size.ui }}" -H 24 --tb "#{{ colors.background }}" --tf "#{{ colors.foreground }}" --fb "#{{ colors.background }}" --ff "#{{ colors.foreground }}" --nb "#{{ colors.background }}" --nf "#{{ colors.foreground }}" --hb "#{{ colors.blue }}" --hf "#{{ colors.background }}"'
+riverctl map normal $mod D spawn 'bemenu-run -p "run:" --fn "{{ fonts['mono'] }} {{ fonts['size']['ui'] }}" -H 24 --tb "#{{ colors['background'] }}" --tf "#{{ colors['foreground'] }}" --fb "#{{ colors['background'] }}" --ff "#{{ colors['foreground'] }}" --nb "#{{ colors['background'] }}" --nf "#{{ colors['foreground'] }}" --hb "#{{ colors['blue'] }}" --hf "#{{ colors['background'] }}"'
 
 # Terminal - Super+Shift+Enter
 riverctl map normal $mod+Shift Return spawn footclient
@@ -142,7 +142,7 @@ done
 # Appearance
 # =============================================================================
 
-riverctl background-color 0x{{ colors.background }}
+riverctl background-color 0x{{ colors['background'] }}
 riverctl border-color-focused 0x{{ theme.border_focused }}
 riverctl border-color-unfocused 0x{{ theme.border_unfocused }}
 riverctl border-width {{ theme.border_width }}

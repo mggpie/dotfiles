@@ -15,27 +15,23 @@
   args:
     creates: /nix
   when: not nix_installed.stat.exists
+  changed_when: true
 
 - name: Add Nix channel (stable)
-  become: true
-  become_user: "{{ username }}"
   ansible.builtin.shell: |
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-    nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
-    nix-channel --update
+    su - {{ username }} -c '. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh && nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && nix-channel --update'
   args:
     creates: "{{ user_home }}/.nix-channels"
+  changed_when: true
   failed_when: false
 
 - name: Install packages from Nix
-  become: true
-  become_user: "{{ username }}"
   ansible.builtin.shell: |
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-    nix-env -iA nixpkgs.{{ item }}
+    su - {{ username }} -c '. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh && nix-env -iA nixpkgs.{{ item }}'
   loop:
     - vscode        # Microsoft VS Code
     - wezterm       # Latest wezterm
+  changed_when: true
   failed_when: false
 
 # Flatpak installation
@@ -50,15 +46,6 @@
   changed_when: true
   failed_when: false
 
-# Optional: Install some flatpak apps
-# - name: Install Flatpak applications
-#   ansible.builtin.command:
-#     cmd: flatpak install -y flathub {{ item }}
-#   loop:
-#     - com.spotify.Client
-#     - org.telegram.desktop
-#   failed_when: false
-
 - name: Create fish nix integration
   ansible.builtin.copy:
     content: |
@@ -66,7 +53,7 @@
       if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
           source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
       end
-
+      
       # Add nix profile to path
       if test -d ~/.nix-profile/bin
           set -gx PATH ~/.nix-profile/bin $PATH

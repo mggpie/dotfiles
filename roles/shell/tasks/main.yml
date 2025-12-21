@@ -30,28 +30,22 @@
     mode: '0755'
 
 - name: Install fisher (fish plugin manager)
-  become: true
-  become_user: "{{ username }}"
   ansible.builtin.shell: |
-    fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
+    su - {{ username }} -c "fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'"
   args:
     creates: "{{ user_home }}/.config/fish/functions/fisher.fish"
   changed_when: true
 
 - name: Install tide prompt via fisher
-  become: true
-  become_user: "{{ username }}"
   ansible.builtin.shell: |
-    fish -c 'fisher install IlanCosman/tide@v6'
+    su - {{ username }} -c "fish -c 'fisher install IlanCosman/tide@v6'"
   args:
     creates: "{{ user_home }}/.config/fish/functions/tide.fish"
   changed_when: true
 
 - name: Install additional fish plugins
-  become: true
-  become_user: "{{ username }}"
   ansible.builtin.shell: |
-    fish -c 'fisher install {{ item }}'
+    su - {{ username }} -c "fish -c 'fisher install {{ item }}'"
   loop:
     - PatrickF1/fzf.fish        # fzf integration
     - jethrokuan/z              # directory jumping
@@ -84,15 +78,13 @@
     mode: '0644'
 
 - name: Configure tide prompt style
-  become: true
-  become_user: "{{ username }}"
   ansible.builtin.shell: |
-    fish -c 'set -U tide_left_prompt_items pwd git newline character'
-    fish -c 'set -U tide_right_prompt_items status cmd_duration context jobs'
-    fish -c 'set -U tide_prompt_add_newline_before true'
-    fish -c 'set -U tide_character_icon "❯"'
-    fish -c 'set -U tide_character_color green'
-    fish -c 'set -U tide_pwd_color_anchors blue'
-    fish -c 'set -U tide_pwd_color_dirs blue'
+    su - {{ username }} -c "fish -c 'set -U tide_left_prompt_items pwd git newline character'"
+    su - {{ username }} -c "fish -c 'set -U tide_right_prompt_items status cmd_duration context jobs'"
+    su - {{ username }} -c "fish -c 'set -U tide_prompt_add_newline_before true'"
+    su - {{ username }} -c "fish -c 'set -U tide_character_icon \"❯\"'"
+    su - {{ username }} -c "fish -c 'set -U tide_character_color green'"
+    su - {{ username }} -c "fish -c 'set -U tide_pwd_color_anchors blue'"
+    su - {{ username }} -c "fish -c 'set -U tide_pwd_color_dirs blue'"
   changed_when: true
   failed_when: false
