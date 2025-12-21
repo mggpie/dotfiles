@@ -18,3 +18,24 @@
 - name: Include kernel cleanup
   ansible.builtin.import_tasks: kernel.yml
   tags: [kernel]
+
+# VirtualBox specific fixes
+- name: Detect if running in VirtualBox
+  ansible.builtin.set_fact:
+    is_virtualbox: "{{ ansible_product_name | default('') is search('VirtualBox') or ansible_system_vendor | default('') is search('innotek') }}"
+
+- name: Blacklist vmwgfx driver in VirtualBox
+  ansible.builtin.copy:
+    content: |
+      # Blacklist VMware graphics driver in VirtualBox
+      # This prevents conflicts with vboxvideo
+      blacklist vmwgfx
+    dest: /etc/modprobe.d/blacklist-vmwgfx.conf
+    mode: '0644'
+  when: is_virtualbox | bool
+
+- name: Regenerate initramfs after blacklist
+  ansible.builtin.command:
+    cmd: dracut --force
+  when: is_virtualbox | bool
+  changed_when: true
