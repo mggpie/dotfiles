@@ -6,126 +6,64 @@
 # Making this repository the single source of truth for all configs
 # =============================================================================
 
-- name: Ensure dotfiles directory exists
+# Define symlinks to create
+# Using loop for cleaner, more maintainable code
+
+- name: Define dotfiles symlinks
+  ansible.builtin.set_fact:
+    dotfiles_symlinks:
+      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/mpv"
+        dest: "{{ user_home }}/.config/mpv"
+      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/newsboat"
+        dest: "{{ user_home }}/.config/newsboat"
+      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/zathura"
+        dest: "{{ user_home }}/.config/zathura"
+      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/lf"
+        dest: "{{ user_home }}/.config/lf"
+      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/qutebrowser"
+        dest: "{{ user_home }}/.config/qutebrowser"
+      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/micro"
+        dest: "{{ user_home }}/.config/micro"
+
+- name: Ensure config directories exist
   ansible.builtin.file:
-    path: "{{ dotfiles_dir }}"
+    path: "{{ user_home }}/.config"
     state: directory
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0755'
 
-- name: Clone/update dotfiles repository
-  become: true
-  become_user: "{{ username }}"
-  ansible.builtin.git:
-    repo: "https://github.com/mggpie/dotfiles.git"
-    dest: "{{ dotfiles_dir }}"
-    version: main
-    update: true
-  failed_when: false
-
-# Create symlinks for all configurations
-- name: Create symlink for mpv config
+- name: Remove existing config directories/files (before symlinking)
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/mpv"
-    dest: "{{ user_home }}/.config/mpv"
+    path: "{{ item.dest }}"
+    state: absent
+  loop: "{{ dotfiles_symlinks }}"
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: Create dotfiles symlinks
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     state: link
     owner: "{{ username }}"
     group: "{{ username }}"
     force: true
-  failed_when: false
+  loop: "{{ dotfiles_symlinks }}"
+  loop_control:
+    label: "{{ item.dest }}"
 
-- name: Create symlink for newsboat config
+# Make scripts executable
+- name: Make lf scripts executable
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/newsboat"
-    dest: "{{ user_home }}/.config/newsboat"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
+    path: "{{ item }}"
+    mode: '0755'
+  loop:
+    - "{{ dotfiles_dir }}/roles/dotfiles/files/lf/preview"
+    - "{{ dotfiles_dir }}/roles/dotfiles/files/lf/cleaner"
   failed_when: false
 
-- name: Create symlink for zathura config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/zathura"
-    dest: "{{ user_home }}/.config/zathura"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-- name: Create symlink for lf config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/lf"
-    dest: "{{ user_home }}/.config/lf"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-- name: Create symlink for htop config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/htop"
-    dest: "{{ user_home }}/.config/htop"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-- name: Create symlink for imv config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/imv"
-    dest: "{{ user_home }}/.config/imv"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-- name: Create symlink for qutebrowser config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/qutebrowser"
-    dest: "{{ user_home }}/.config/qutebrowser"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-- name: Create symlink for luakit config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/luakit"
-    dest: "{{ user_home }}/.config/luakit"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-- name: Create symlink for alacritty config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/alacritty"
-    dest: "{{ user_home }}/.config/alacritty"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-- name: Create symlink for pcmanfm config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/dotfiles/files/pcmanfm"
-    dest: "{{ user_home }}/.config/pcmanfm"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  failed_when: false
-
-# Create local bin directory and add scripts
+# Create local bin directory for scripts
 - name: Create local bin directory
   ansible.builtin.file:
     path: "{{ user_home }}/.local/bin"
@@ -134,5 +72,5 @@
     group: "{{ username }}"
     mode: '0755'
 
-# Note: Templated configs (fish, foot, river, yambar, kanshi) are managed
+# Note: Templated configs (fish, foot, river, waybar, kanshi) are managed
 # by their respective roles and NOT symlinked, as they need variable substitution

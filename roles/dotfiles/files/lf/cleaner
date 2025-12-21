@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# =============================================================================
+# lf Cleaner Script
+# =============================================================================
+# Cleans up previews (mainly for image protocols)
+# =============================================================================
+
+# For sixel/kitty graphics, usually nothing needed
+# For ueberzug, you'd need to clear here
+
+exit 0
