@@ -72,10 +72,10 @@ wayland_packages:
   - bemenu-wayland
   - grim
   - slurp
-  - mako            # notification daemon (optional, user said not needed)
+  - mako            # notification daemon
   - foot
   - wezterm
-  - yambar
+  - waybar          # status bar (replaces yambar)
   - xdg-desktop-portal
   - xdg-desktop-portal-wlr
   - xorg-server-xwayland  # XWayland for compatibility
