@@ -165,22 +165,19 @@
                 <h2 style="margin: 0;">Instalacja systemu (z Live ISO)</h2>
             </div>
             <p>Uruchom z Void Linux Live ISO, połącz z siecią i wykonaj:</p>
-            <code id="cmd1">curl -sL dotfiles.local/installer/bootstrap | sh</code>
+            <code id="cmd1">xbps-install -Sy curl && curl -sL https://raw.githubusercontent.com/mggpie/dotfiles/main/installer/bootstrap | sh</code>
             <button class="copy-btn" onclick="copyCmd('cmd1')">📋 Kopiuj</button>
-            
-            <p style="margin-top: 1rem;">Lub pełna ścieżka przez GitHub:</p>
-            <code id="cmd2">curl -sL https://raw.githubusercontent.com/me/dotfiles/main/installer/bootstrap | sh</code>
-            <button class="copy-btn" onclick="copyCmd('cmd2')">📋 Kopiuj</button>
         </div>
         
         <div class="phase">
             <div class="phase-title">
                 <span class="phase-number">2</span>
-                <h2 style="margin: 0;">Konfiguracja (po restarcie)</h2>
+                <h2 style="margin: 0;">Konfiguracja (po restarcie) - jednolinijkowiec!</h2>
             </div>
-            <p>Po pierwszym uruchomieniu systemu, zaloguj się i wykonaj:</p>
-            <code id="cmd3">curl -sL https://raw.githubusercontent.com/me/dotfiles/main/bootstrap.sh | sh</code>
+            <p>Po pierwszym uruchomieniu systemu, zaloguj się jako użytkownik i wykonaj:</p>
+            <code id="cmd3">sudo xbps-install -Sy curl && curl -sL https://raw.githubusercontent.com/mggpie/dotfiles/main/bootstrap.sh | sh</code>
             <button class="copy-btn" onclick="copyCmd('cmd3')">📋 Kopiuj</button>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.7;">To zainstaluje git, ansible, sklonuje repo i uruchomi cały playbook automatycznie.</p>
         </div>
         
         <div class="note">
