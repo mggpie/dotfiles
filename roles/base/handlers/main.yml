@@ -18,3 +18,9 @@
     cmd: sv restart chronyd
   changed_when: true
   failed_when: false
+
+- name: Restart dhcpcd
+  ansible.builtin.command:
+    cmd: sv restart dhcpcd
+  changed_when: true
+  failed_when: false

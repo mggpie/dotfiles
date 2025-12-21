@@ -48,3 +48,7 @@
 - name: Include SSH configuration
   ansible.builtin.import_tasks: ssh.yml
   tags: [ssh]
+
+- name: Include network configuration
+  ansible.builtin.import_tasks: network.yml
+  tags: [network]
