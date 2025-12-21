@@ -40,18 +40,26 @@
     group: "{{ username }}"
     mode: '0644'
 
-- name: Create yambar config directory
+- name: Create waybar config directory
   ansible.builtin.file:
-    path: "{{ user_home }}/.config/yambar"
+    path: "{{ user_home }}/.config/waybar"
     state: directory
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0755'
 
-- name: Deploy yambar configuration
+- name: Deploy waybar configuration
   ansible.builtin.template:
-    src: yambar/config.yml.j2
-    dest: "{{ user_home }}/.config/yambar/config.yml"
+    src: waybar/config.j2
+    dest: "{{ user_home }}/.config/waybar/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Deploy waybar styles
+  ansible.builtin.template:
+    src: waybar/style.css.j2
+    dest: "{{ user_home }}/.config/waybar/style.css"
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0644'
@@ -72,36 +80,17 @@
     group: "{{ username }}"
     mode: '0644'
 
-- name: Install screenshot tools
-  ansible.builtin.command:
-    cmd: xbps-install -Sy grim slurp wl-clipboard
-  changed_when: true
-
 - name: Create screenshot script
   ansible.builtin.copy:
     content: |
       #!/bin/sh
-      # Screenshot tool - similar to GNOME screenshot
-      # Usage: screenshot.sh [area|full|window]
-
       SCREENSHOT_DIR="{{ user_home }}/Pictures/Screenshots"
       mkdir -p "$SCREENSHOT_DIR"
-
       FILENAME="$SCREENSHOT_DIR/screenshot-$(date +%Y%m%d-%H%M%S).png"
-
       case "${1:-area}" in
-          area)
-              grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy
-              ;;
-          full)
-              grim - | tee "$FILENAME" | wl-copy
-              ;;
-          window)
-              # For river, we'll use slurp
-              grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy
-              ;;
+          area) grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy ;;
+          full) grim - | tee "$FILENAME" | wl-copy ;;
       esac
-
       notify-send "Screenshot saved" "$FILENAME" 2>/dev/null || true
     dest: /usr/local/bin/screenshot.sh
     mode: '0755'
@@ -110,14 +99,24 @@
   ansible.builtin.command:
     cmd: xbps-install -Sy cliphist
   changed_when: true
-  ignore_errors: true
+  failed_when: false
 
-- name: Setup XDG portal for screen sharing
-  ansible.builtin.command:
-    cmd: xbps-install -Sy xdg-desktop-portal xdg-desktop-portal-wlr
-  changed_when: true
+- name: Create swaylock config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/swaylock"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
 
-- name: Install swaylock for screen locking
-  ansible.builtin.command:
-    cmd: xbps-install -Sy swaylock
-  changed_when: true
+- name: Setup swaylock configuration
+  ansible.builtin.copy:
+    content: |
+      color={{ colors['background'] }}
+      inside-color={{ colors['background'] }}
+      ring-color={{ colors['bright_black'] }}
+      text-color={{ colors['foreground'] }}
+    dest: "{{ user_home }}/.config/swaylock/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'

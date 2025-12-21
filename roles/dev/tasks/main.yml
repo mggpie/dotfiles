@@ -50,26 +50,20 @@
 
 # Python development
 - name: Install Python development tools
-  ansible.builtin.command:
-    cmd: pip3 install --user black flake8 mypy pylint pytest ipython
-  become: true
-  become_user: "{{ username }}"
+  ansible.builtin.shell: |
+    su - {{ username }} -c 'pip3 install --user black flake8 mypy pylint pytest ipython'
   changed_when: true
   failed_when: false
 
 # Install ansible-lint
 - name: Install ansible-lint
-  ansible.builtin.command:
-    cmd: pip3 install --user ansible-lint yamllint
-  become: true
-  become_user: "{{ username }}"
+  ansible.builtin.shell: |
+    su - {{ username }} -c 'pip3 install --user ansible-lint yamllint'
   changed_when: true
   failed_when: false
 
 # Git configuration
 - name: Configure git
-  become: true
-  become_user: "{{ username }}"
   ansible.builtin.copy:
     content: |
       [user]

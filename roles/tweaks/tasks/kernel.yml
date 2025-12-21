@@ -2,11 +2,7 @@
 # =============================================================================
 # Kernel Cleanup Configuration
 # =============================================================================
-
-- name: Install vkpurge for kernel cleanup
-  ansible.builtin.command:
-    cmd: xbps-install -Sy vkpurge
-  changed_when: true
+# Note: vkpurge is included with xbps, no separate installation needed
 
 - name: Create kernel cleanup script
   ansible.builtin.copy:

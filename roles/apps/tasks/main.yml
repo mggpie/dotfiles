@@ -91,11 +91,8 @@
     group: "{{ username }}"
     mode: '0644'
 
-# Solaar for Logitech devices
-- name: Enable udev rules for Solaar
-  ansible.builtin.command:
-    cmd: xbps-install -Sy solaar
-  changed_when: true
+# Solaar for Logitech devices - SKIPPED (not in xbps)
+# If needed, install manually or from Nix
 
 - name: Add user to plugdev group
   ansible.builtin.user:
