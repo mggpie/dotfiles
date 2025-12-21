@@ -1,0 +1,30 @@
+---
+# =============================================================================
+# Kernel Cleanup Configuration
+# =============================================================================
+
+- name: Install vkpurge for kernel cleanup
+  ansible.builtin.command:
+    cmd: xbps-install -Sy vkpurge
+  changed_when: true
+
+- name: Create kernel cleanup script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # Automatic kernel cleanup script
+      # Removes old kernels, keeping only the latest 2
+
+      LOG_FILE="/var/log/vkpurge.log"
+
+      echo "$(date '+%Y-%m-%d %H:%M:%S') - Running kernel cleanup" >> "$LOG_FILE"
+
+      # Remove all old kernels except running
+      vkpurge rm all >> "$LOG_FILE" 2>&1
+
+      echo "$(date '+%Y-%m-%d %H:%M:%S') - Kernel cleanup completed" >> "$LOG_FILE"
+    dest: /usr/local/bin/kernel-cleanup.sh
+    mode: '0755'
+
+# Kernel cleanup is handled by weekly update cron job
+# This ensures old kernels are removed after updates

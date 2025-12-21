@@ -1,0 +1,51 @@
+---
+# =============================================================================
+# TTY Configuration - Only keep TTY1 and TTY2
+# =============================================================================
+
+- name: Disable TTY3-6 by masking agetty services
+  ansible.builtin.file:
+    src: /dev/null
+    dest: "/etc/sv/agetty-tty{{ item }}"
+    state: link
+    force: true
+  loop: [3, 4, 5, 6]
+  failed_when: false
+
+- name: Remove symlinks for TTY3-6 from runsvdir
+  ansible.builtin.file:
+    path: "/var/service/agetty-tty{{ item }}"
+    state: absent
+  loop: [3, 4, 5, 6]
+  failed_when: false
+
+# Auto-login configuration for TTY1
+- name: Create agetty-tty1 service directory
+  ansible.builtin.file:
+    path: /etc/sv/agetty-tty1
+    state: directory
+    mode: '0755'
+  when: auto_login.enabled | default(false)
+
+- name: Configure auto-login on TTY1
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # Auto-login for {{ username }} on TTY1
+      exec chpst -b agetty-tty1 agetty --autologin {{ username }} --noclear tty1 linux
+    dest: /etc/sv/agetty-tty1/run
+    mode: '0755'
+  when: auto_login.enabled | default(false)
+
+- name: Ensure agetty-tty1 is enabled
+  ansible.builtin.file:
+    src: /etc/sv/agetty-tty1
+    dest: /var/service/agetty-tty1
+    state: link
+  when: auto_login.enabled | default(false)
+
+- name: Ensure agetty-tty2 is enabled (fallback)
+  ansible.builtin.file:
+    src: /etc/sv/agetty-tty2
+    dest: /var/service/agetty-tty2
+    state: link

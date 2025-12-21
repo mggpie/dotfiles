@@ -1,0 +1,12 @@
+---
+# Handlers for tweaks role
+
+- name: Regenerate GRUB
+  ansible.builtin.command:
+    cmd: grub-mkconfig -o /boot/grub/grub.cfg
+  changed_when: true
+
+- name: Restart TLP
+  ansible.builtin.command:
+    cmd: sv restart tlp
+  ignore_errors: true
