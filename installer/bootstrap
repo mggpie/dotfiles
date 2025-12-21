@@ -1,8 +1,21 @@
 #!/bin/sh
 # Void Linux installer bootstrap
-# Downloads and runs the installation script
-echo "Downloading Void Linux installer..."
+# Downloads and runs the installation script from live ISO
+#
+# Usage: xbps-install -Sy curl && curl -sL https://raw.githubusercontent.com/mggpie/dotfiles/main/installer/bootstrap | sh
+
+set -e
+
+echo "╔════════════════════════════════════════════╗"
+echo "║    Void Linux Installer Bootstrap          ║"
+echo "╚════════════════════════════════════════════╝"
+
+# Download installer and config
+echo "[INFO] Downloading installer scripts..."
 curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/installer/install-void.sh -o /tmp/install-void.sh
+curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/installer/config.sh -o /tmp/config.sh
 chmod +x /tmp/install-void.sh
-echo "Starting installation..."
+
+echo "[INFO] Starting installation..."
+echo ""
 /tmp/install-void.sh

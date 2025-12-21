@@ -33,18 +33,19 @@ Repozytorium składa się z dwóch faz:
 
 ## 🚀 Szybki start
 
-### Z Void Linux Live ISO
+### Faza 1: Z Void Linux Live ISO
 
 ```bash
-xbps-install -Sy curl
-curl -sL https://raw.githubusercontent.com/me/dotfiles/main/installer/bootstrap | sh
+xbps-install -Sy curl && curl -sL https://raw.githubusercontent.com/mggpie/dotfiles/main/installer/bootstrap | sh
 ```
 
-### Po pierwszym uruchomieniu
+### Faza 2: Po pierwszym uruchomieniu (jednolinijkowiec!)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/me/dotfiles/main/bootstrap.sh | sh
+sudo xbps-install -Sy curl && curl -sL https://raw.githubusercontent.com/mggpie/dotfiles/main/bootstrap.sh | sh
 ```
+
+To automatycznie: zainstaluje git i ansible, sklonuje repo, uruchomi cały playbook.
 
 ## 📁 Struktura repozytorium
 
