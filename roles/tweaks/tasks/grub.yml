@@ -3,16 +3,10 @@
 # GRUB Configuration with Performance Tweaks
 # =============================================================================
 
-- name: Get LUKS UUID for GRUB
+- name: Get LUKS UUID from existing GRUB config
   ansible.builtin.shell: |
-    blkid -s UUID -o value $(findmnt -n -o SOURCE /) 2>/dev/null | head -1
-  register: root_uuid
-  changed_when: false
-  failed_when: false
-
-- name: Get encrypted partition UUID
-  ansible.builtin.shell: |
-    cryptsetup status voidcrypt 2>/dev/null | grep device | awk '{print $2}' | xargs blkid -s UUID -o value
+    grep -oP 'rd\.luks\.uuid=\K[a-f0-9-]+' /etc/default/grub 2>/dev/null || \
+    blkid -t TYPE=crypto_LUKS -s UUID -o value | head -1
   register: luks_uuid_result
   changed_when: false
   failed_when: false
@@ -20,6 +14,10 @@
 - name: Set LUKS UUID fact
   ansible.builtin.set_fact:
     luks_uuid: "{{ luks_uuid_result.stdout | default('') }}"
+
+- name: Debug LUKS UUID
+  ansible.builtin.debug:
+    msg: "LUKS UUID detected: {{ luks_uuid }}"
 
 - name: Configure GRUB
   ansible.builtin.template:
