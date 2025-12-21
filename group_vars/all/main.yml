@@ -45,7 +45,7 @@ base_packages:
   - bash
   - bash-completion
   - fish-shell
-  - doas
+  - opendoas
   - chrony          # NTP time sync
   - cronie          # Cron daemon
   - util-linux      # fstrim, etc
