@@ -218,11 +218,11 @@ cron_jobs:
 
 # GRUB kernel parameters (performance + security trade-offs)
 # Note: Simplified for VirtualBox VM compatibility
-grub_cmdline_default: "loglevel=3"
+# Root UUID is detected dynamically from existing GRUB config
+grub_cmdline_default: "loglevel=4 quiet"
 grub_cmdline_linux: >-
   rd.luks.uuid={{ luks_uuid | default('') }}
   rd.lvm=0
-  root=/dev/mapper/void-root
 
 # Note: Advanced kernel params removed for VM compatibility
 # Re-enable for bare metal: mitigations=off, nowatchdog, intel_iommu=on, etc.
