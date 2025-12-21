@@ -10,9 +10,31 @@
 
 # Note: Fonts are installed via Nix in the nix role
 
-- name: Install graphics packages (Intel)
+# Graphics drivers - detect VM vs bare metal
+- name: Detect if running in VirtualBox
+  ansible.builtin.set_fact:
+    is_virtualbox: "{{ ansible_product_name | default('') is search('VirtualBox') or ansible_system_vendor | default('') is search('innotek') }}"
+
+- name: Install VirtualBox Guest Additions (VM)
+  ansible.builtin.command:
+    cmd: "xbps-install -Sy virtualbox-ose-guest virtualbox-ose-guest-dkms"
+  when: is_virtualbox | bool
+  changed_when: true
+
+- name: Enable VirtualBox services (VM)
+  ansible.builtin.file:
+    src: /etc/sv/{{ item }}
+    dest: /var/service/{{ item }}
+    state: link
+  loop:
+    - vboxservice
+  when: is_virtualbox | bool
+  ignore_errors: true
+
+- name: Install graphics packages (Intel - bare metal only)
   ansible.builtin.command:
     cmd: "xbps-install -Sy {{ graphics_packages | join(' ') }}"
+  when: not (is_virtualbox | bool)
   changed_when: true
 
 - name: Update font cache
