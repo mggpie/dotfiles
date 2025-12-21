@@ -1,0 +1,58 @@
+---
+# =============================================================================
+# Time and Locale Configuration
+# =============================================================================
+
+- name: Install chrony for time synchronization
+  ansible.builtin.command:
+    cmd: xbps-install -Sy chrony
+  changed_when: true
+
+- name: Set timezone
+  ansible.builtin.file:
+    src: "/usr/share/zoneinfo/{{ timezone }}"
+    dest: /etc/localtime
+    state: link
+    force: true
+
+- name: Configure timezone name
+  ansible.builtin.copy:
+    content: "{{ timezone }}"
+    dest: /etc/timezone
+    mode: '0644'
+
+- name: Set locale
+  ansible.builtin.copy:
+    content: "LANG={{ locale }}"
+    dest: /etc/locale.conf
+    mode: '0644'
+
+- name: Configure libc-locales
+  ansible.builtin.lineinfile:
+    path: /etc/default/libc-locales
+    line: "{{ locale }} UTF-8"
+    create: true
+    mode: '0644'
+
+- name: Regenerate locales
+  ansible.builtin.command:
+    cmd: xbps-reconfigure -f glibc-locales
+  changed_when: true
+
+- name: Set keyboard layout
+  ansible.builtin.copy:
+    content: "KEYMAP={{ keymap }}"
+    dest: /etc/vconsole.conf
+    mode: '0644'
+
+- name: Enable chrony service
+  ansible.builtin.file:
+    src: /etc/sv/chronyd
+    dest: /var/service/chronyd
+    state: link
+
+- name: Force time sync
+  ansible.builtin.command:
+    cmd: chronyc makestep
+  changed_when: true
+  failed_when: false

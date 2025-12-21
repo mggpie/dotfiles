@@ -1,0 +1,123 @@
+---
+# =============================================================================
+# Wayland Role - River WM and Desktop Environment
+# =============================================================================
+
+- name: Install wayland packages
+  ansible.builtin.command:
+    cmd: "xbps-install -Sy {{ wayland_packages | join(' ') }}"
+  changed_when: true
+
+- name: Create river config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/river"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Deploy river configuration
+  ansible.builtin.template:
+    src: river/init.j2
+    dest: "{{ user_home }}/.config/river/init"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Create foot config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/foot"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Deploy foot configuration
+  ansible.builtin.template:
+    src: foot/foot.ini.j2
+    dest: "{{ user_home }}/.config/foot/foot.ini"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Create yambar config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/yambar"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Deploy yambar configuration
+  ansible.builtin.template:
+    src: yambar/config.yml.j2
+    dest: "{{ user_home }}/.config/yambar/config.yml"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Create kanshi config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/kanshi"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Deploy kanshi configuration
+  ansible.builtin.template:
+    src: kanshi/config.j2
+    dest: "{{ user_home }}/.config/kanshi/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Install screenshot tools
+  ansible.builtin.command:
+    cmd: xbps-install -Sy grim slurp wl-clipboard
+  changed_when: true
+
+- name: Create screenshot script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # Screenshot tool - similar to GNOME screenshot
+      # Usage: screenshot.sh [area|full|window]
+
+      SCREENSHOT_DIR="{{ user_home }}/Pictures/Screenshots"
+      mkdir -p "$SCREENSHOT_DIR"
+
+      FILENAME="$SCREENSHOT_DIR/screenshot-$(date +%Y%m%d-%H%M%S).png"
+
+      case "${1:-area}" in
+          area)
+              grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy
+              ;;
+          full)
+              grim - | tee "$FILENAME" | wl-copy
+              ;;
+          window)
+              # For river, we'll use slurp
+              grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy
+              ;;
+      esac
+
+      notify-send "Screenshot saved" "$FILENAME" 2>/dev/null || true
+    dest: /usr/local/bin/screenshot.sh
+    mode: '0755'
+
+- name: Install clipboard manager (cliphist)
+  ansible.builtin.command:
+    cmd: xbps-install -Sy cliphist
+  changed_when: true
+  ignore_errors: true
+
+- name: Setup XDG portal for screen sharing
+  ansible.builtin.command:
+    cmd: xbps-install -Sy xdg-desktop-portal xdg-desktop-portal-wlr
+  changed_when: true
+
+- name: Install swaylock for screen locking
+  ansible.builtin.command:
+    cmd: xbps-install -Sy swaylock
+  changed_when: true

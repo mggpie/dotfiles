@@ -1,0 +1,19 @@
+# =============================================================================
+# Ansible Inventory
+# =============================================================================
+
+[local]
+localhost ansible_connection=local
+
+[vm]
+192.168.0.45 ansible_user=me ansible_become_method=doas
+
+[workstation:children]
+local
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+# Usage:
+# Local deployment:  ansible-playbook playbook.yml
+# VM deployment:     ansible-playbook playbook.yml -l vm

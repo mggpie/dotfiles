@@ -1,330 +1,185 @@
-# Void Linux Automated Installation
+# Void Linux Dotfiles & Automation
 
-This repository contains scripts for automated installation and configuration of Void Linux with full disk encryption (LUKS).
+Kompletna automatyzacja instalacji i konfiguracji Void Linux z LUKS encryption, zarządzana przez Ansible.
 
-## Overview
+## 🎯 Przegląd
 
-The installation is split into two phases:
+Repozytorium składa się z dwóch faz:
 
-1. **Phase 1: Base System Installation** (from live ISO)
-   - Automated partitioning with LUKS encryption
-   - Base system installation
-   - GRUB bootloader configuration
-   - User creation
+### Faza 1: Instalacja systemu (`installer/`)
+- Automatyczne partycjonowanie z LUKS2 encryption
+- Instalacja bazowego systemu Void Linux (glibc)
+- Konfiguracja GRUB z obsługą szyfrowania
+- Tworzenie użytkownika
 
-2. **Phase 2: Post-Installation Configuration** (after first boot)
-   - Ansible playbooks for package installation
-   - Dotfiles deployment
-   - System configuration
+### Faza 2: Konfiguracja (`roles/`)
+- Ansible playbooki do instalacji pakietów
+- Symlinki do dotfiles
+- Konfiguracja systemu (doas, PipeWire, River WM, etc.)
 
-## Prerequisites
+## ⚙️ Co zostanie skonfigurowane
 
-- Void Linux live ISO (glibc variant)
-- USB drive or VM with the ISO
-- Internet connection
-- Your target disk backed up (will be erased!)
+| Komponent | Technologia |
+|-----------|-------------|
+| **Init** | runit |
+| **Shell** | Fish + Tide prompt |
+| **WM** | River (Wayland) |
+| **Terminal** | Foot + Intel One Mono |
+| **Audio** | PipeWire + Bluetooth |
+| **Packages** | xbps + Nix (stable) + Flatpak |
+| **Privilege** | doas (passwordless) |
+| **Network** | wpa_supplicant |
+| **Dev** | Python, Go, Lua, Docker, KVM/QEMU |
 
-## Quick Start
+## 🚀 Szybki start
 
-### 1. Boot into Void Linux Live ISO
-
-Boot from the Void Linux live ISO and log in as root (password: `voidlinux`).
-
-### 2. Get Internet Connection
-
-```bash
-# For ethernet (usually works automatically)
-dhcpcd
-
-# For WiFi (if needed during install)
-# Configure manually or wait for post-install
-```
-
-### 3. Install and Run
-
-**Quick installation (one command):**
+### Z Void Linux Live ISO
 
 ```bash
-xbps-install -Sy curl && curl -sSL mggpie.github.io/dotfiles/i | sh
+xbps-install -Sy curl
+curl -sL https://raw.githubusercontent.com/me/dotfiles/main/installer/bootstrap | sh
 ```
 
-**Or visit the installation page:**
-
-https://mggpie.github.io/dotfiles
-
-Or with manual download:
+### Po pierwszym uruchomieniu
 
 ```bash
-curl -sSL raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh -o /tmp/install.sh
-chmod +x /tmp/install.sh
-/tmp/install.sh
+curl -sL https://raw.githubusercontent.com/me/dotfiles/main/bootstrap.sh | sh
 ```
 
-This will use default configuration:
-- **Disk:** `/dev/nvme0n1` (will be auto-detected)
-- **Hostname:** `here`
-- **Username:** `me`
-- **Timezone:** `Europe/Warsaw`
-- **Locale:** `en_US.UTF-8`
-- **Keyboard:** `pl`
+## 📁 Struktura repozytorium
 
-To customize, download and edit `config.sh` first:
+```
+├── installer/              # Faza 1: Instalacja systemu
+│   ├── bootstrap          # Skrypt pobierający instalator
+│   ├── install-void.sh    # Główny skrypt instalacyjny
+│   ├── config.sh          # Konfiguracja instalacji
+│   └── index.html         # Strona z instrukcjami
+│
+├── roles/                  # Faza 2: Ansible roles
+│   ├── base/              # Repozytoria, doas, użytkownicy, pakiety
+│   ├── shell/             # Fish + Tide + aliasy
+│   ├── wayland/           # River, foot, yambar, kanshi
+│   ├── audio/             # PipeWire, Bluetooth
+│   ├── nix/               # Nix package manager, Flatpak
+│   ├── dev/               # Narzędzia deweloperskie
+│   ├── apps/              # Aplikacje użytkownika
+│   ├── dotfiles/          # Symlinki do konfiguracji
+│   └── tweaks/            # GRUB, SSD, power management
+│
+├── group_vars/             # Zmienne Ansible
+│   └── all/
+│       ├── main.yml       # Główne zmienne
+│       └── vault.yml      # Sekretne zmienne (encrypted)
+│
+├── files/
+│   └── colors/
+│       └── palette.yml    # Paleta kolorów (Catppuccin Mocha)
+│
+├── playbook.yml            # Główny playbook
+├── hosts                   # Inventory
+├── ansible.cfg             # Konfiguracja Ansible
+└── bootstrap.sh            # Skrypt post-instalacyjny
+```
+
+## 🔧 Konfiguracja
+
+### Przed instalacją systemu
+
+Edytuj `installer/config.sh`:
 
 ```bash
-# Create working directory
-mkdir -p /tmp/void-install
-cd /tmp/void-install
-
-# Download installation scripts
-curl -O https://raw.githubusercontent.com/mggpie/dotfiles/main/install-void.sh
-curl -O https://raw.githubusercontent.com/mggpie/dotfiles/main/config.sh
-
-# Make scripts executable
-chmod +x install-void.sh config.sh
-
-# Edit config if needed
-vi config.sh
-
-# Run installation
-./install-void.sh
+TARGET_DISK="/dev/nvme0n1"   # Dysk docelowy
+HOSTNAME="here"              # Nazwa hosta
+USERNAME="me"                # Nazwa użytkownika
+TIMEZONE="Europe/Warsaw"     # Strefa czasowa
+KEYMAP="pl"                  # Układ klawiatury
 ```
 
-### 4. Configure Installation (Optional)
+### Przed konfiguracją Ansible
+
+1. Skopiuj przykładowy vault:
+   ```bash
+   cp group_vars/all/vault.yml.example group_vars/all/vault.yml
+   ```
+
+2. Zaszyfruj vault:
+   ```bash
+   ansible-vault encrypt group_vars/all/vault.yml
+   ```
+
+3. Edytuj zmienne w `group_vars/all/main.yml`
+
+## 🎨 Paleta kolorów
+
+Używamy zmodyfikowanego schematu Catppuccin Mocha:
+
+| Kolor | Hex | Zastosowanie |
+|-------|-----|--------------|
+| Background | `#1e1e2e` | Tła |
+| Foreground | `#cdd6f4` | Tekst |
+| Blue | `#89b4fa` | Akcenty, linki |
+| Green | `#a6e3a1` | Sukces, git add |
+| Red | `#f38ba8` | Błędy, git remove |
+| Yellow | `#f9e2af` | Ostrzeżenia |
+| Mauve | `#cba6f7` | Specjalne |
+
+## 🖥️ Hardware
+
+Skonfigurowane dla:
+- **CPU:** Intel i5-11600
+- **GPU:** Intel UHD 750
+- **Motherboard:** ASUS ROG STRIX B560-I GAMING WIFI
+- **RAM:** 32GB DDR4
+- **Storage:** NVMe SSD (LUKS encrypted)
+- **Monitors:**
+  - DP-1: IVM PL3493WQ 3440x1440@75Hz (scale 0.9)
+  - HDMI-A-2: VESTEL TV 4K@60Hz (scale 2.0)
+
+## 📦 Uruchamianie playbooka
 
 ```bash
-vim config.sh
-```
-
-Key configuration options:
-- `TARGET_DISK`: Your target disk (default: `/dev/nvme0n1`)
-- `HOSTNAME`: Computer name (default: `here`)
-- `USERNAME`: Your username (default: `me`)
-- `TIMEZONE`: Timezone (default: `Europe/Warsaw`)
-- `LOCALE`: System locale (default: `en_US.UTF-8`)
-- `KEYMAP`: Keyboard layout (default: `pl`)
-
-**⚠️ WARNING:** The installation will ERASE all data on `TARGET_DISK`!
-
-### 5. Run the Installation
-
-```bash
-chmod +x install-void.sh
-./install-void.sh
-```
-
-The script will:
-1. Confirm the target disk
-2. Partition the disk (EFI + Boot + Encrypted Root)
-3. Prompt for LUKS encryption passphrase (⚠️ **Remember this!**)
-4. Install the base system
-5. Configure GRUB with encryption support
-6. Prompt for root password
-5. Prompt for user password
-6. Complete installation
-
-### 6. Reboot
-
-After installation completes:
-
-```bash
-reboot
-```
-
-Remove the installation media and boot into your new system.
-
-### 7. Post-Installation Setup
-
-After first boot and login:
-
-```bash
-# Run the post-installation helper script
-./post-install.sh
-```
-
-This will:
-1. Update the system
-2. Install Ansible
-2. Clone your dotfiles repository
-3. Prepare for Ansible playbook execution
-
-### 8. Configure Ansible Vault
-
-Store sensitive data (WiFi passwords, API keys, etc.) in an Ansible vault:
-
-```bash
-cd ~/dotfiles
-ansible-vault create group_vars/all/vault.yml
-```
-
-Add your secrets:
-
-```yaml
----
-# WiFi Configuration
-wifi_ssid: "YourNetworkName"
-wifi_password: "YourWiFiPassword"
-
-# Other secrets...
-```
-
-### 9. Run Ansible Playbook
-
-```bash
+# Cały playbook
 ansible-playbook playbook.yml --ask-vault-pass
+
+# Tylko wybrane role
+ansible-playbook playbook.yml --tags "shell,wayland"
+
+# Bez restartu usług
+ansible-playbook playbook.yml --skip-tags "restart"
+
+# Dry run
+ansible-playbook playbook.yml --check --diff
 ```
 
-This will install and configure:
-- Desktop environment
-- Applications
-- Development tools
-- Dotfiles
-- System tweaks
+## 🔐 Ansible Vault
 
-## Configuration Details
-
-### Disk Layout
-
-The installation creates the following partition scheme:
-
-```
-/dev/nvme0n1
-├── nvme0n1p1  512MB   EFI System Partition (FAT32)
-├── nvme0n1p2  1GB     Boot Partition (ext4)
-└── nvme0n1p3  Rest    Encrypted Root Partition (LUKS → ext4)
-    └── voidcrypt      Unlocked LUKS container
-```
-
-### Encryption
-
-- **Type:** LUKS2
-- **Scope:** Root partition only (boot is unencrypted for GRUB compatibility)
-- **Passphrase:** Set during installation
-- **Unlock:** Required at every boot
-
-### Services
-
-Enabled by default:
-- `dhcpcd` - DHCP client for networking
-- `sshd` - SSH daemon (optional, if configured)
-
-### Swap
-
-- **Type:** Swap file (on encrypted partition)
-- **Size:** Configurable (default: auto = RAM size)
-- **Location:** `/swapfile`
-
-For desktop systems, you may want to reduce swap size or disable it entirely in `config.sh`.
-
-## File Structure
-
-```
-dotfiles/
-├── install-void.sh      # Main installation script
-├── config.sh            # Configuration file
-├── README.md            # This file
-├── playbook.yml         # Ansible playbook (to be created)
-├── group_vars/          # Ansible variables (to be created)
-└── roles/               # Ansible roles (to be created)
-```
-
-## Troubleshooting
-
-### Boot Issues
-
-If the system doesn't boot:
-
-1. **LUKS passphrase prompt not appearing:**
-   - Check GRUB configuration: `/etc/default/grub`
-   - Ensure `GRUB_ENABLE_CRYPTODISK=y` is set
-   - Regenerate GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
-
-2. **Kernel panic or initramfs issues:**
-   - Regenerate initramfs: `xbps-reconfigure -f linux`
-   - Check `/etc/crypttab` for correct UUID
-   - Verify `/etc/dracut.conf.d/10-crypt.conf` includes crypto modules
-
-3. **Wrong keyboard layout at LUKS prompt:**
-   - The early boot uses US layout
-   - Plan your passphrase accordingly
-
-### Network Issues
+Sekretne dane (hasła WiFi, tokeny) przechowywane są w zaszyfrowanym vault:
 
 ```bash
-# Check network interfaces
-ip link
+# Edycja vault
+ansible-vault edit group_vars/all/vault.yml
 
-# Start dhcpcd manually
-sudo sv start dhcpcd
-
-# Or use NetworkManager (if preferred)
-sudo xbps-install NetworkManager
-sudo ln -sf /etc/sv/NetworkManager /var/service/
+# Zmiana hasła
+ansible-vault rekey group_vars/all/vault.yml
 ```
 
-### System Updates
+## ✅ TODO
 
-```bash
-# Update package database
-sudo xbps-install -S
+- [ ] Profile-sync-daemon dla Firefox
+- [ ] OpenRGB/AURA LED control dla płyty ASUS
+- [ ] Settings TUI app
+- [ ] Automatyczne wykrywanie hardware
 
-# Update all packages
-sudo xbps-install -u
+## ⚠️ Ostrzeżenia
 
-# Remove orphaned packages
-sudo xbps-remove -o
-```
+1. **Faza 1 formatuje dysk!** Zrób backup przed instalacją.
+2. **Zapamiętaj hasło LUKS!** Bez niego nie odszyfrujesz dysku.
+3. **doas jest bez hasła** - nie używaj na współdzielonym systemie.
 
-## Customization
+## 📄 Licencja
 
-### Changing Installation Parameters
-
-Edit `config.sh` before running the installation script. Key options:
-
-- **Swap size:** Set `SWAP_SIZE="8G"` or `SWAP_SIZE="no"` to disable
-- **Filesystem:** Change `FILESYSTEM="btrfs"` for Btrfs (requires additional setup)
-- **Network:** Change `NETWORK_MANAGER="NetworkManager"` for GUI network management
-
-### Adding Packages to Base Install
-
-Edit `install-void.sh` and modify the `xbps-install` command in Step 5 to add packages.
-
-**Note:** It's recommended to keep the base installation minimal and install additional packages via Ansible.
-
-## Security Considerations
-
-1. **LUKS Passphrase:** Use a strong passphrase. It's the only protection for your encrypted disk.
-2. **Root Password:** Set a strong root password during installation.
-3. **SSH:** If enabling SSH, configure key-based authentication via Ansible.
-4. **Ansible Vault:** Always encrypt sensitive data (passwords, keys) in your playbooks.
-
-## Next Steps
-
-After completing the installation and post-install setup:
-
-1. **Create Ansible Playbook** (`playbook.yml`)
-2. **Define System Roles:**
-   - Desktop environment (GNOME, KDE, etc.)
-   - Development tools
-   - Applications
-   - System configuration
-3. **Add Dotfiles** (shell configs, editor configs, etc.)
-4. **Configure Services** (Docker, databases, etc.)
-
-## Resources
-
-- [Void Linux Documentation](https://docs.voidlinux.org/)
-- [Void Linux Handbook](https://docs.voidlinux.org/config/index.html)
-- [XBPS Package Manager](https://docs.voidlinux.org/xbps/index.html)
-- [Runit Service Management](https://docs.voidlinux.org/config/services/index.html)
-
-## License
-
-This is personal configuration. Feel free to use as reference, but customize for your needs.
-
-## Contributing
-
-This is a personal repository, but suggestions and improvements are welcome via issues or PRs.
+MIT
 
 ---
 
-**Happy Voiding! 🚀**
+🚀 *Void Linux + Ansible = ❤️*

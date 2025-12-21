@@ -1,0 +1,44 @@
+---
+# =============================================================================
+# SSH Configuration - Disabled on bare metal, enabled on VM
+# =============================================================================
+
+- name: Install openssh
+  ansible.builtin.command:
+    cmd: xbps-install -Sy openssh
+  changed_when: true
+
+- name: Check if running in VM
+  ansible.builtin.set_fact:
+    is_vm: "{{ ansible_virtualization_role == 'guest' }}"
+
+- name: Enable SSH service on VM only
+  ansible.builtin.file:
+    src: /etc/sv/sshd
+    dest: /var/service/sshd
+    state: link
+  when: is_vm | bool
+
+- name: Disable SSH service on bare metal
+  ansible.builtin.file:
+    path: /var/service/sshd
+    state: absent
+  when: not (is_vm | bool)
+
+- name: Configure SSH to be more secure
+  ansible.builtin.blockinfile:
+    path: /etc/ssh/sshd_config
+    block: |
+      # Security hardening
+      PermitRootLogin no
+      PasswordAuthentication {{ 'yes' if is_vm else 'no' }}
+      PubkeyAuthentication yes
+      ChallengeResponseAuthentication no
+      UsePAM yes
+      X11Forwarding no
+      PrintMotd no
+      AcceptEnv LANG LC_*
+    create: true
+    mode: '0644'
+  notify: Restart sshd
+  when: is_vm | bool

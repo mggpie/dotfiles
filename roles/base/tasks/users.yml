@@ -1,0 +1,38 @@
+---
+# =============================================================================
+# User and Groups Configuration
+# =============================================================================
+
+- name: Ensure user exists with correct shell
+  ansible.builtin.user:
+    name: "{{ username }}"
+    shell: "{{ default_shell }}"
+    groups: "{{ user_groups | join(',') }}"
+    append: true
+    create_home: true
+
+- name: Ensure user home directory permissions
+  ansible.builtin.file:
+    path: "{{ user_home }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0700'
+
+- name: Create standard user directories
+  ansible.builtin.file:
+    path: "{{ user_home }}/{{ item }}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+  loop:
+    - .local
+    - .local/bin
+    - .local/share
+    - .config
+    - .cache
+    - Downloads
+    - Documents
+    - Pictures
+    - Videos
+    - Music

@@ -1,0 +1,20 @@
+---
+# Handlers for base role
+
+- name: Restart sshd
+  ansible.builtin.command:
+    cmd: sv restart sshd
+  changed_when: true
+  failed_when: false
+
+- name: Restart cronie
+  ansible.builtin.command:
+    cmd: sv restart cronie
+  changed_when: true
+  failed_when: false
+
+- name: Restart chronyd
+  ansible.builtin.command:
+    cmd: sv restart chronyd
+  changed_when: true
+  failed_when: false

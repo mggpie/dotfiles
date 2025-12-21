@@ -1,0 +1,8 @@
+#!/bin/sh
+# Void Linux installer bootstrap
+# Downloads and runs the installation script
+echo "Downloading Void Linux installer..."
+curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/installer/install-void.sh -o /tmp/install-void.sh
+chmod +x /tmp/install-void.sh
+echo "Starting installation..."
+/tmp/install-void.sh

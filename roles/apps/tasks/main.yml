@@ -1,0 +1,113 @@
+---
+# =============================================================================
+# User Applications Role
+# =============================================================================
+
+- name: Install user applications
+  ansible.builtin.command:
+    cmd: "xbps-install -Sy {{ user_apps | join(' ') }}"
+  changed_when: true
+
+# Firefox setup for Wayland
+- name: Configure Firefox for Wayland
+  ansible.builtin.copy:
+    content: |
+      MOZ_ENABLE_WAYLAND=1
+      MOZ_WEBRENDER=1
+    dest: /etc/environment.d/firefox.conf
+    mode: '0644'
+  failed_when: false
+
+# Firefox profile sync daemon (psd)
+- name: Install profile-sync-daemon
+  ansible.builtin.command:
+    cmd: xbps-install -Sy profile-sync-daemon
+  changed_when: true
+  failed_when: false
+
+- name: Create psd config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/psd"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Configure profile-sync-daemon for Firefox
+  ansible.builtin.copy:
+    content: |
+      # Profile-sync-daemon configuration
+      BROWSERS="firefox"
+      USE_OVERLAYFS="yes"
+    dest: "{{ user_home }}/.config/psd/psd.conf"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+# Micro editor
+- name: Create micro config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/micro"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Deploy micro settings
+  ansible.builtin.copy:
+    content: |
+      {
+          "autosu": true,
+          "colorscheme": "gotham",
+          "eofnewline": false,
+          "hlsearch": true,
+          "hltaberrors": true,
+          "hltrailingws": true,
+          "keepautoindent": true,
+          "savecursor": true,
+          "saveundo": true,
+          "softwrap": true,
+          "wordwrap": true
+      }
+    dest: "{{ user_home }}/.config/micro/settings.json"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Deploy micro keybindings
+  ansible.builtin.copy:
+    content: |
+      {
+          "Alt-/": "lua:comment.comment",
+          "CtrlUnderscore": "lua:comment.comment",
+          "CtrlUp": "MoveLinesUp",
+          "CtrlDown": "MoveLinesDown",
+          "CtrlBackspace": "DeleteWordLeft",
+          "AltLeft": "WordLeft",
+          "AltRight": "WordRight"
+      }
+    dest: "{{ user_home }}/.config/micro/bindings.json"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+# Solaar for Logitech devices
+- name: Enable udev rules for Solaar
+  ansible.builtin.command:
+    cmd: xbps-install -Sy solaar
+  changed_when: true
+
+- name: Add user to plugdev group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: plugdev
+    append: true
+
+# Install wpa_supplicant (disabled by default)
+- name: Install wpa_supplicant
+  ansible.builtin.command:
+    cmd: xbps-install -Sy wpa_supplicant
+  changed_when: true
+
+# Note: wpa_supplicant service NOT enabled by default
+# WiFi passwords should be configured via vault and wpa_supplicant.conf

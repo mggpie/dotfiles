@@ -1,0 +1,94 @@
+---
+# =============================================================================
+# Void Linux Post-Installation Playbook
+# =============================================================================
+# Run with: ansible-playbook playbook.yml --ask-vault-pass
+# Or with vault file: ansible-playbook playbook.yml
+# =============================================================================
+
+- name: Configure Void Linux Workstation
+  hosts: local
+  become: true
+
+  pre_tasks:
+    - name: Load color palette
+      ansible.builtin.include_vars:
+        file: files/colors/palette.yml
+      tags: always
+
+    - name: Detect CPU vendor for microcode
+      ansible.builtin.set_fact:
+        cpu_vendor: "{{ 'intel' if 'GenuineIntel' in ansible_processor else 'amd' }}"
+      tags: always
+
+    - name: Display system info
+      ansible.builtin.debug:
+        msg: |
+          Hostname: {{ ansible_hostname }}
+          CPU: {{ ansible_processor[2] | default('Unknown') }}
+          CPU Vendor: {{ cpu_vendor }}
+          Memory: {{ ansible_memtotal_mb }} MB
+          Virtualization: {{ ansible_virtualization_role | default('physical') }}
+      tags: always
+
+  roles:
+    # Phase 1: Base system configuration
+    - role: base
+      tags: [base, always]
+
+    # Phase 2: Shell setup (fish + tide)
+    - role: shell
+      tags: [shell]
+
+    # Phase 3: Nix and Flatpak package managers
+    - role: nix
+      tags: [nix, packages]
+
+    # Phase 4: Development environment
+    - role: dev
+      tags: [dev]
+
+    # Phase 5: Wayland compositor and desktop
+    - role: wayland
+      tags: [wayland, desktop]
+
+    # Phase 6: Audio and Bluetooth
+    - role: audio
+      tags: [audio, bluetooth]
+
+    # Phase 7: User applications
+    - role: apps
+      tags: [apps]
+
+    # Phase 8: Dotfiles (symlinks)
+    - role: dotfiles
+      tags: [dotfiles]
+
+    # Phase 9: System tweaks and optimizations
+    - role: tweaks
+      tags: [tweaks, performance]
+
+  post_tasks:
+    - name: Final system reconfiguration
+      ansible.builtin.command:
+        cmd: xbps-reconfigure -fa
+      changed_when: true
+      tags: always
+
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: |
+          ╔══════════════════════════════════════════════════════════════╗
+          ║           Void Linux Configuration Complete!                  ║
+          ╠══════════════════════════════════════════════════════════════╣
+          ║  Next steps:                                                  ║
+          ║  1. Reboot the system                                         ║
+          ║  2. Login as {{ username }}                                   ║
+          ║  3. River WM will start automatically on TTY1                 ║
+          ║                                                               ║
+          ║  Useful commands:                                             ║
+          ║  - Super+D        : Application launcher (bemenu)             ║
+          ║  - Super+Shift+Q  : Close window                              ║
+          ║  - Super+Shift+Enter : Open terminal                          ║
+          ╚══════════════════════════════════════════════════════════════╝
+      tags: always

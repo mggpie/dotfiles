@@ -1,0 +1,276 @@
+# =============================================================================
+# Global Variables for All Hosts
+# =============================================================================
+
+# User configuration
+username: me
+user_home: "/home/{{ username }}"
+dotfiles_dir: "{{ user_home }}/dotfiles"
+
+# System configuration
+hostname: here
+timezone: Europe/Warsaw
+locale: en_US.UTF-8
+keymap: pl
+
+# Hardware detection (will be set by facts)
+# cpu_vendor: set by ansible_processor[1] (GenuineIntel or AuthenticAMD)
+
+# Repository mirrors (closest to Warsaw)
+void_mirror: "https://repo-de.voidlinux.org"  # Germany - closest with good speed
+void_nonfree_mirror: "{{ void_mirror }}/current/nonfree"
+
+# Package groups
+base_packages:
+  - base-system
+  - linux
+  - linux-firmware
+  - linux-headers
+  - dracut
+  - grub-x86_64-efi
+  - efibootmgr
+  - cryptsetup
+  - lvm2
+  - curl
+  - wget
+  - git
+  - micro
+  - htop
+  - tree
+  - unzip
+  - zip
+  - p7zip
+  - xz
+  - man-pages
+  - bash
+  - bash-completion
+  - fish-shell
+  - doas
+  - chrony          # NTP time sync
+  - cronie          # Cron daemon
+  - util-linux      # fstrim, etc
+  - fwupd           # Firmware updates
+
+# Shell configuration
+default_shell: /usr/bin/fish
+editor: micro
+browser: firefox
+terminal: foot
+
+# Wayland configuration
+wayland_compositor: river  # primary: river, backup: sway
+wayland_packages:
+  - river
+  - sway
+  - swaybg
+  - swayidle
+  - swaylock
+  - wl-clipboard
+  - wlr-randr
+  - kanshi
+  - bemenu
+  - bemenu-wayland
+  - grim
+  - slurp
+  - mako            # notification daemon (optional, user said not needed)
+  - foot
+  - wezterm
+  - yambar
+  - xdg-desktop-portal
+  - xdg-desktop-portal-wlr
+  - xorg-server-xwayland  # XWayland for compatibility
+
+# Audio packages (PipeWire)
+audio_packages:
+  - pipewire
+  - wireplumber
+  - libspa-bluetooth  # Bluetooth audio
+  - alsa-utils
+  - alsa-plugins
+  - pamixer
+  - playerctl
+  - pavucontrol
+
+# Bluetooth packages
+bluetooth_packages:
+  - bluez
+  - bluez-alsa
+  - libspa-bluetooth
+
+# Display/Graphics packages (Intel UHD 750)
+graphics_packages:
+  - mesa
+  - mesa-dri
+  - mesa-vulkan-intel
+  - intel-video-accel
+  - vulkan-loader
+  - libva
+  - libva-intel-driver
+  - intel-media-driver
+
+# Nix package manager
+nix_packages:
+  - vscode           # Microsoft VS Code from Nix
+  - wezterm          # Terminal from Nix for latest version
+
+# Flatpak setup
+flatpak_remotes:
+  - name: flathub
+    url: https://flathub.org/repo/flathub.flatpakrepo
+
+# Development tools
+dev_packages:
+  - python3
+  - python3-pip
+  - python3-ansible-lint
+  - lua
+  - luarocks
+  - go
+  - docker
+  - docker-compose
+  - terraform
+  - shellcheck       # Shell script linter
+  - yamllint         # YAML linter
+  - ansible-lint     # Ansible linter (via pip if not available)
+
+# Virtualization
+virt_packages:
+  - qemu
+  - libvirt
+  - virt-manager
+  - virt-viewer
+  - dnsmasq
+  - bridge-utils
+  - iptables
+
+# User applications
+user_apps:
+  - firefox
+  - deadbeef
+  - qbittorrent
+  - solaar
+  - telegram-desktop
+  - krita
+  - imv
+  - mpv
+  - zathura
+  - zathura-pdf-mupdf
+  - newsboat
+  - calcurse
+  - lf
+  - neofetch         # or fastfetch as alternative
+  - alacritty
+  - qutebrowser
+  - luakit
+  - lite-xl
+  - pcmanfm          # File manager (lighter than Thunar)
+  # - steam          # Commented - for future GPU
+
+# Fonts
+font_packages:
+  - font-inter
+  - font-intel-one-mono
+  - nerd-fonts-symbols-only
+  - noto-fonts-ttf
+  - noto-fonts-emoji
+  - fontconfig
+
+# Power management
+power_packages:
+  - tlp
+  - tlp-rdw
+
+# User groups
+user_groups:
+  - wheel
+  - audio
+  - video
+  - storage
+  - network
+  - input
+  - optical
+  - kvm
+  - libvirt
+  - docker
+  - plugdev
+  - bluetooth
+  - lp
+
+# Cron jobs
+cron_jobs:
+  # Weekly system update on Saturday at 3 AM
+  - name: weekly_update
+    minute: "0"
+    hour: "3"
+    weekday: "6"
+    job: "/usr/local/bin/void-update.sh >> /var/log/void-update.log 2>&1"
+  
+  # Daily TRIM at 4 AM
+  - name: daily_trim
+    minute: "0"
+    hour: "4"
+    job: "/usr/bin/fstrim -av >> /var/log/fstrim.log 2>&1"
+  
+  # Maza ad-block update daily at 5 AM
+  - name: maza_update
+    minute: "0"
+    hour: "5"
+    job: "/usr/local/bin/maza update >> /var/log/maza.log 2>&1"
+
+# GRUB kernel parameters (performance + security trade-offs)
+grub_cmdline_default: "loglevel=0 quiet"
+grub_cmdline_linux: >-
+  rd.luks.uuid={{ luks_uuid | default('') }}
+  rd.lvm=0
+  console=tty2
+  udev.log_level=0
+  vt.global_cursor_default=0
+  mitigations=off
+  nowatchdog
+  msr.allow_writes=on
+  pcie_aspm=force
+  module.sig_unenforce
+  intel_idle.max_cstate=1
+  cryptomgr.notests
+  intel_iommu=on
+  no_timer_check
+  noreplace-smp
+  page_alloc.shuffle=1
+  rcupdate.rcu_expedited=1
+  tsc=reliable
+
+# Note: Removed initcall_debug (debug noise), kept intel_iommu=on for KVM
+
+# TTY configuration - only keep TTY1 and TTY2
+tty_keep:
+  - 1
+  - 2
+
+# Auto-login configuration
+auto_login:
+  enabled: true
+  tty: 1
+  user: "{{ username }}"
+
+# Monitor configuration
+monitors:
+  primary:
+    name: "DP-1"
+    vendor: "IVM"
+    product: "PL3493WQ"
+    resolution: "3440x1440"
+    refresh: "75"
+    scale: "0.9"
+  secondary:
+    name: "HDMI-A-2"
+    vendor: "VES"
+    product: "55UHD_LCD_TV"
+    resolution: "3840x2160"
+    refresh: "60"
+    scale: "2.0"
+
+# SSH configuration (disabled on bare metal, enabled on VM)
+ssh_enabled: "{{ 'yes' if ansible_virtualization_role == 'guest' else 'no' }}"
+
+# WiFi (to be configured via vault)
+# wifi_networks: defined in vault.yml

@@ -1,0 +1,34 @@
+---
+# =============================================================================
+# Repository Configuration
+# =============================================================================
+
+- name: Create xbps.d directory
+  ansible.builtin.file:
+    path: /etc/xbps.d
+    state: directory
+    mode: '0755'
+
+- name: Configure main repository mirror
+  ansible.builtin.copy:
+    content: "repository={{ void_mirror }}/current"
+    dest: /etc/xbps.d/00-repository-main.conf
+    mode: '0644'
+
+- name: Configure nonfree repository
+  ansible.builtin.copy:
+    content: "repository={{ void_nonfree_mirror }}"
+    dest: /etc/xbps.d/10-repository-nonfree.conf
+    mode: '0644'
+
+- name: Update package cache
+  ansible.builtin.command:
+    cmd: xbps-install -Sy
+  changed_when: true
+  register: xbps_update
+
+- name: Upgrade all packages
+  ansible.builtin.command:
+    cmd: xbps-install -yu
+  changed_when: "'xbps' in xbps_update.stdout or 'Update' in xbps_update.stdout"
+  when: xbps_update.changed
