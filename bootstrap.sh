@@ -36,11 +36,11 @@ log_info "╚══════════════════════�
 log_info "User: $USERNAME"
 
 # =============================================================================
-# Step 1: Install dependencies (git, ansible)
+# Step 1: Install dependencies (git, ansible, opendoas)
 # =============================================================================
-log_info "Installing git and ansible..."
+log_info "Installing git, ansible, opendoas..."
 sudo xbps-install -Syu
-sudo xbps-install -Sy git ansible doas
+sudo xbps-install -Sy git ansible opendoas
 
 # =============================================================================
 # Step 2: Configure doas (passwordless for this user)
