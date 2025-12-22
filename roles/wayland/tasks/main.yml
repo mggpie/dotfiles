@@ -130,17 +130,17 @@
 - name: Setup swaylock configuration
   ansible.builtin.copy:
     content: |
-      color={{ colors.base }}
-      inside-color={{ colors.base }}
+      color={{ colors.background }}
+      inside-color={{ colors.background }}
       inside-clear-color={{ colors.green }}
       inside-ver-color={{ colors.blue }}
       inside-wrong-color={{ colors.red }}
-      key-hl-color={{ colors.mauve }}
-      ring-color={{ colors.surface0 }}
+      key-hl-color={{ colors.magenta }}
+      ring-color={{ colors.bright_black }}
       ring-clear-color={{ colors.green }}
       ring-ver-color={{ colors.blue }}
       ring-wrong-color={{ colors.red }}
-      text-color={{ colors.text }}
+      text-color={{ colors.foreground }}
     dest: "{{ user_home }}/.config/swaylock/config"
     owner: "{{ username }}"
     group: "{{ username }}"
