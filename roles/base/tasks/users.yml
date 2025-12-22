@@ -56,7 +56,7 @@
     - Music
 
 # Create XDG_RUNTIME_DIR for user (required for Wayland)
-# This is normally handled by elogind but we ensure it exists
+# This is normally handled by elogind but we ensure it exists via runit
 - name: Get user ID
   ansible.builtin.command:
     cmd: "id -u {{ username }}"
@@ -76,6 +76,31 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0700'
+
+# Create a runit oneshot service to ensure XDG_RUNTIME_DIR exists at boot
+- name: Create xdg-runtime-dir service directory
+  ansible.builtin.file:
+    path: /etc/sv/xdg-runtime-dir
+    state: directory
+    mode: '0755'
+
+- name: Create xdg-runtime-dir run script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # Create XDG_RUNTIME_DIR for user {{ username }}
+      mkdir -p /run/user/{{ user_uid.stdout }}
+      chown {{ username }}:{{ username }} /run/user/{{ user_uid.stdout }}
+      chmod 700 /run/user/{{ user_uid.stdout }}
+      exec chpst -b xdg-runtime-dir pause
+    dest: /etc/sv/xdg-runtime-dir/run
+    mode: '0755'
+
+- name: Enable xdg-runtime-dir service
+  ansible.builtin.file:
+    src: /etc/sv/xdg-runtime-dir
+    dest: /var/service/xdg-runtime-dir
+    state: link
 
 - name: Create tmpfiles.d directory
   ansible.builtin.file:
