@@ -46,6 +46,15 @@
   changed_when: true
   failed_when: false
 
+# Optional: Install some flatpak apps
+# - name: Install Flatpak applications
+#   ansible.builtin.command:
+#     cmd: flatpak install -y flathub {{ item }}
+#   loop:
+#     - com.spotify.Client
+#     - org.telegram.desktop
+#   ignore_errors: true
+
 - name: Create fish nix integration
   ansible.builtin.copy:
     content: |

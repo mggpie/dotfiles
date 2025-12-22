@@ -8,6 +8,19 @@
     cmd: "xbps-install -Sy {{ wayland_packages | join(' ') }}"
   changed_when: true
 
+# Seatd is required for River/Sway to access DRM/input devices
+- name: Enable seatd service
+  ansible.builtin.file:
+    src: /etc/sv/seatd
+    dest: /var/service/seatd
+    state: link
+
+- name: Add user to _seatd group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: _seatd
+    append: true
+
 - name: Create river config directory
   ansible.builtin.file:
     path: "{{ user_home }}/.config/river"
@@ -84,12 +97,17 @@
   ansible.builtin.copy:
     content: |
       #!/bin/sh
+      # Screenshot tool
       SCREENSHOT_DIR="{{ user_home }}/Pictures/Screenshots"
       mkdir -p "$SCREENSHOT_DIR"
       FILENAME="$SCREENSHOT_DIR/screenshot-$(date +%Y%m%d-%H%M%S).png"
       case "${1:-area}" in
-          area) grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy ;;
-          full) grim - | tee "$FILENAME" | wl-copy ;;
+          area)
+              grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy
+              ;;
+          full)
+              grim - | tee "$FILENAME" | wl-copy
+              ;;
       esac
       notify-send "Screenshot saved" "$FILENAME" 2>/dev/null || true
     dest: /usr/local/bin/screenshot.sh
@@ -112,10 +130,17 @@
 - name: Setup swaylock configuration
   ansible.builtin.copy:
     content: |
-      color={{ colors['background'] }}
-      inside-color={{ colors['background'] }}
-      ring-color={{ colors['bright_black'] }}
-      text-color={{ colors['foreground'] }}
+      color={{ colors.base }}
+      inside-color={{ colors.base }}
+      inside-clear-color={{ colors.green }}
+      inside-ver-color={{ colors.blue }}
+      inside-wrong-color={{ colors.red }}
+      key-hl-color={{ colors.mauve }}
+      ring-color={{ colors.surface0 }}
+      ring-clear-color={{ colors.green }}
+      ring-ver-color={{ colors.blue }}
+      ring-wrong-color={{ colors.red }}
+      text-color={{ colors.text }}
     dest: "{{ user_home }}/.config/swaylock/config"
     owner: "{{ username }}"
     group: "{{ username }}"
