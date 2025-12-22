@@ -23,7 +23,7 @@ set -gx XDG_STATE_HOME "$HOME/.local/state"
 
 # Wayland
 set -gx XDG_SESSION_TYPE "wayland"
-set -gx XDG_CURRENT_DESKTOP "river"
+set -gx XDG_CURRENT_DESKTOP "sway"
 set -gx MOZ_ENABLE_WAYLAND "1"
 set -gx QT_QPA_PLATFORM "wayland"
 set -gx QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
@@ -93,7 +93,7 @@ set -U fish_pager_color_description {{ colors.yellow }}
 if status is-login
     if test -z "$DISPLAY" -a -z "$WAYLAND_DISPLAY"
         if test (tty) = "/dev/tty1"
-            exec river
+            exec sway
         end
     end
 end
