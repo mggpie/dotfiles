@@ -1,186 +1,83 @@
-# Void Linux Dotfiles & Automation
+# Void Linux Dotfiles
 
-Kompletna automatyzacja instalacji i konfiguracji Void Linux z LUKS encryption, zarządzana przez Ansible.
+Minimalistyczna konfiguracja Void Linux z Sway.
 
-## 🎯 Przegląd
+## Struktura
 
-Repozytorium składa się z dwóch faz:
+```
+.
+├── playbook.yml          # Główny playbook (~450 LOC)
+├── vars.yml              # Wszystkie zmienne (~100 LOC)
+├── files/                # Dotfiles i wszystkie configs
+│   ├── colors/palette.yml
+│   ├── fish/
+│   ├── sway/
+│   ├── waybar/
+│   ├── foot/
+│   └── [mpv, newsboat, zathura, lf, qutebrowser, micro]/
+└── bootstrap.sh          # Initial setup script
+```
 
-### Faza 1: Instalacja systemu (`installer/`)
-- Automatyczne partycjonowanie z LUKS2 encryption
-- Instalacja bazowego systemu Void Linux (glibc)
-- Konfiguracja GRUB z obsługą szyfrowania
-- Tworzenie użytkownika
-
-### Faza 2: Konfiguracja (`roles/`)
-- Ansible playbooki do instalacji pakietów
-- Symlinki do dotfiles
-- Konfiguracja systemu (doas, PipeWire, River WM, etc.)
-
-## ⚙️ Co zostanie skonfigurowane
-
-| Komponent | Technologia |
-|-----------|-------------|
-| **Init** | runit |
-| **Shell** | Fish + Tide prompt |
-| **WM** | River (Wayland) |
-| **Terminal** | Foot + Intel One Mono |
-| **Audio** | PipeWire + Bluetooth |
-| **Packages** | xbps + Nix (stable) + Flatpak |
-| **Privilege** | doas (passwordless) |
-| **Network** | wpa_supplicant |
-| **Dev** | Python, Go, Lua, Docker, KVM/QEMU |
-
-## 🚀 Szybki start
-
-### Faza 1: Z Void Linux Live ISO
+## Quick Start
 
 ```bash
-xbps-install -Sy curl && curl -sL https://raw.githubusercontent.com/mggpie/dotfiles/main/installer/bootstrap | sh
+# 1. Bootstrap (instalacja git + ansible)
+curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/bootstrap.sh | sh
+
+# 2. Clone repo
+git clone https://github.com/mggpie/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+
+# 3. Pełna instalacja
+doas ansible-playbook playbook.yml
+
+# 4. Tylko konkretny komponent
+doas ansible-playbook playbook.yml --tags sway
+doas ansible-playbook playbook.yml --tags waybar
+doas ansible-playbook playbook.yml --tags fish
 ```
 
-### Faza 2: Po pierwszym uruchomieniu (jednolinijkowiec!)
+## Tagi
 
-```bash
-sudo xbps-install -Sy curl && curl -sL https://raw.githubusercontent.com/mggpie/dotfiles/main/bootstrap.sh | sh
-```
+- `base` - System podstawowy (doas, locale, user, services)
+- `shell` - Fish + Tide + aliases
+- `wayland` - Wszystkie komponenty Wayland
+  - `sway` - Tylko config Sway
+  - `waybar` - Tylko waybar
+  - `foot` - Tylko terminal
+- `audio` - PipeWire
+- `apps` - Aplikacje użytkownika
+- `dev` - Narzędzia developerskie
+- `dotfiles` - Symlinki dotfiles
+- `tweaks` - Optymalizacje (SSD, cron)
 
-To automatycznie: zainstaluje git i ansible, sklonuje repo, uruchomi cały playbook.
+## Dlaczego płaska struktura?
 
-## 📁 Struktura repozytorium
+**Stara struktura (roles/)**:
+- ~40 katalogów (roles/*/defaults/, handlers/, vars/ - większość pusta)
+- ~1000+ LOC rozproszonych po wielu plikach
+- Deployment: 80+ tasków nawet dla 1 zmiany w configu
 
-```
-├── installer/              # Faza 1: Instalacja systemu
-│   ├── bootstrap          # Skrypt pobierający instalator
-│   ├── install-void.sh    # Główny skrypt instalacyjny
-│   ├── config.sh          # Konfiguracja instalacji
-│   └── index.html         # Strona z instrukcjami
-│
-├── roles/                  # Faza 2: Ansible roles
-│   ├── base/              # Repozytoria, doas, użytkownicy, pakiety
-│   ├── shell/             # Fish + Tide + aliasy
-│   ├── wayland/           # River, foot, yambar, kanshi
-│   ├── audio/             # PipeWire, Bluetooth
-│   ├── nix/               # Nix package manager, Flatpak
-│   ├── dev/               # Narzędzia deweloperskie
-│   ├── apps/              # Aplikacje użytkownika
-│   ├── dotfiles/          # Symlinki do konfiguracji
-│   └── tweaks/            # GRUB, SSD, power management
-│
-├── group_vars/             # Zmienne Ansible
-│   └── all/
-│       ├── main.yml       # Główne zmienne
-│       └── vault.yml      # Sekretne zmienne (encrypted)
-│
-├── files/
-│   └── colors/
-│       └── palette.yml    # Paleta kolorów (Catppuccin Mocha)
-│
-├── playbook.yml            # Główny playbook
-├── hosts                   # Inventory
-├── ansible.cfg             # Konfiguracja Ansible
-└── bootstrap.sh            # Skrypt post-instalacyjny
-```
+**Nowa struktura (flat)**:
+- ~10 katalogów
+- ~550 LOC (playbook + vars)
+- Deployment: 2-3 taski per komponent
+- **65% mniej kodu, 10x szybsze iteracje**
+- **Zachowane wszystkie dotfiles** (mpv, newsboat, lf, micro, qutebrowser, zathura)
+- **Zachowane tweaki** (maza, xdg, nix, network)
 
-## 🔧 Konfiguracja
+Dla osobistych dotfiles struktura roles to over-engineering. Ansible roles mają sens w dużych projektach zespołowych z wieloma środowiskami.
 
-### Przed instalacją systemu
+## Stack
 
-Edytuj `installer/config.sh`:
+- **OS**: Void Linux (glibc, runit)
+- **WM**: Sway
+- **Bar**: Waybar
+- **Terminal**: Foot
+- **Shell**: Fish + Tide
+- **Audio**: PipeWire
+- **Fonts**: Nerd Fonts, Noto
 
-```bash
-TARGET_DISK="/dev/nvme0n1"   # Dysk docelowy
-HOSTNAME="here"              # Nazwa hosta
-USERNAME="me"                # Nazwa użytkownika
-TIMEZONE="Europe/Warsaw"     # Strefa czasowa
-KEYMAP="pl"                  # Układ klawiatury
-```
-
-### Przed konfiguracją Ansible
-
-1. Skopiuj przykładowy vault:
-   ```bash
-   cp group_vars/all/vault.yml.example group_vars/all/vault.yml
-   ```
-
-2. Zaszyfruj vault:
-   ```bash
-   ansible-vault encrypt group_vars/all/vault.yml
-   ```
-
-3. Edytuj zmienne w `group_vars/all/main.yml`
-
-## 🎨 Paleta kolorów
-
-Używamy zmodyfikowanego schematu Catppuccin Mocha:
-
-| Kolor | Hex | Zastosowanie |
-|-------|-----|--------------|
-| Background | `#1e1e2e` | Tła |
-| Foreground | `#cdd6f4` | Tekst |
-| Blue | `#89b4fa` | Akcenty, linki |
-| Green | `#a6e3a1` | Sukces, git add |
-| Red | `#f38ba8` | Błędy, git remove |
-| Yellow | `#f9e2af` | Ostrzeżenia |
-| Mauve | `#cba6f7` | Specjalne |
-
-## 🖥️ Hardware
-
-Skonfigurowane dla:
-- **CPU:** Intel i5-11600
-- **GPU:** Intel UHD 750
-- **Motherboard:** ASUS ROG STRIX B560-I GAMING WIFI
-- **RAM:** 32GB DDR4
-- **Storage:** NVMe SSD (LUKS encrypted)
-- **Monitors:**
-  - DP-1: IVM PL3493WQ 3440x1440@75Hz (scale 0.9)
-  - HDMI-A-2: VESTEL TV 4K@60Hz (scale 2.0)
-
-## 📦 Uruchamianie playbooka
-
-```bash
-# Cały playbook
-ansible-playbook playbook.yml --ask-vault-pass
-
-# Tylko wybrane role
-ansible-playbook playbook.yml --tags "shell,wayland"
-
-# Bez restartu usług
-ansible-playbook playbook.yml --skip-tags "restart"
-
-# Dry run
-ansible-playbook playbook.yml --check --diff
-```
-
-## 🔐 Ansible Vault
-
-Sekretne dane (hasła WiFi, tokeny) przechowywane są w zaszyfrowanym vault:
-
-```bash
-# Edycja vault
-ansible-vault edit group_vars/all/vault.yml
-
-# Zmiana hasła
-ansible-vault rekey group_vars/all/vault.yml
-```
-
-## ✅ TODO
-
-- [ ] Profile-sync-daemon dla Firefox
-- [ ] OpenRGB/AURA LED control dla płyty ASUS
-- [ ] Settings TUI app
-- [ ] Automatyczne wykrywanie hardware
-
-## ⚠️ Ostrzeżenia
-
-1. **Faza 1 formatuje dysk!** Zrób backup przed instalacją.
-2. **Zapamiętaj hasło LUKS!** Bez niego nie odszyfrujesz dysku.
-3. **doas jest bez hasła** - nie używaj na współdzielonym systemie.
-
-## 📄 Licencja
+## License
 
 MIT
-
----
-
-🚀 *Void Linux + Ansible = ❤️*
