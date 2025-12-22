@@ -40,6 +40,10 @@
   ansible.builtin.copy:
     content: |
       #!/bin/sh
+      # Create XDG_RUNTIME_DIR before login
+      mkdir -p /run/user/1000
+      chown {{ username }}:{{ username }} /run/user/1000
+      chmod 700 /run/user/1000
       # Auto-login for {{ username }} on TTY1
       exec chpst -b agetty-tty1 agetty --autologin {{ username }} --noclear tty1 linux
     dest: /etc/sv/agetty-tty1/run
