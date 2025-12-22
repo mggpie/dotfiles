@@ -2,32 +2,38 @@
 # =============================================================================
 # GRUB Configuration with Performance Tweaks
 # =============================================================================
+# DISABLED: GRUB modification causes boot issues with LUKS
+# TODO: Fix GRUB template to not break encrypted boot
 
-- name: Get LUKS UUID from existing GRUB config
-  ansible.builtin.shell: |
-    grep -oP 'rd\.luks\.uuid=\K[a-f0-9-]+' /etc/default/grub 2>/dev/null || \
-    blkid -t TYPE=crypto_LUKS -s UUID -o value | head -1
-  register: luks_uuid_result
-  changed_when: false
-  failed_when: false
-
-- name: Set LUKS UUID fact
-  ansible.builtin.set_fact:
-    luks_uuid: "{{ luks_uuid_result.stdout | default('') }}"
-
-- name: Debug LUKS UUID
+- name: Skip GRUB modification (preserve working config)
   ansible.builtin.debug:
-    msg: "LUKS UUID detected: {{ luks_uuid }}"
+    msg: "Skipping GRUB modification to preserve working LUKS boot config"
 
-- name: Configure GRUB
-  ansible.builtin.template:
-    src: grub.j2
-    dest: /etc/default/grub
-    mode: '0644'
-    backup: true
-  notify: Regenerate GRUB
+# - name: Get LUKS UUID from existing GRUB config
+#   ansible.builtin.shell: |
+#     grep -oP 'rd\.luks\.uuid=\K[a-f0-9-]+' /etc/default/grub 2>/dev/null || \
+#     blkid -t TYPE=crypto_LUKS -s UUID -o value | head -1
+#   register: luks_uuid_result
+#   changed_when: false
+#   failed_when: false
 
-- name: Regenerate GRUB configuration
-  ansible.builtin.command:
-    cmd: grub-mkconfig -o /boot/grub/grub.cfg
-  changed_when: true
+# - name: Set LUKS UUID fact
+#   ansible.builtin.set_fact:
+#     luks_uuid: "{{ luks_uuid_result.stdout | default('') }}"
+
+# - name: Debug LUKS UUID
+#   ansible.builtin.debug:
+#     msg: "LUKS UUID detected: {{ luks_uuid }}"
+
+# - name: Configure GRUB
+#   ansible.builtin.template:
+#     src: grub.j2
+#     dest: /etc/default/grub
+#     mode: '0644'
+#     backup: true
+#   notify: Regenerate GRUB
+
+# - name: Regenerate GRUB configuration
+#   ansible.builtin.command:
+#     cmd: grub-mkconfig -o /boot/grub/grub.cfg
+#   changed_when: true
