@@ -1,0 +1,138 @@
+---
+# =============================================================================
+# Variables for Simplified Playbook
+# =============================================================================
+
+# User
+username: me
+user_home: "/home/{{ username }}"
+dotfiles_dir: "{{ user_home }}/dotfiles"
+
+# System
+hostname: here
+timezone: Europe/Warsaw
+locale: en_US.UTF-8
+keymap: pl
+
+# Shell
+default_shell: /usr/bin/fish
+editor: micro
+browser: firefox
+terminal: foot
+
+# Packages
+base_packages:
+  - base-system
+  - linux
+  - linux-firmware
+  - linux-headers
+  - dracut
+  - grub-x86_64-efi
+  - efibootmgr
+  - cryptsetup
+  - lvm2
+  - curl
+  - wget
+  - git
+  - micro
+  - htop
+  - tree
+  - unzip
+  - zip
+  - p7zip
+  - man-pages
+  - bash
+  - bash-completion
+  - fish-shell
+  - opendoas
+  - fontconfig
+  - chrony
+  - cronie
+  - util-linux
+  - elogind
+  - dbus-elogind
+  - polkit-elogind
+
+wayland_packages:
+  - seatd
+  - sway
+  - swaybg
+  - swayidle
+  - swaylock
+  - wl-clipboard
+  - wlr-randr
+  - kanshi
+  - bemenu
+  - grim
+  - slurp
+  - mako
+  - foot
+  - Waybar
+  - xdg-desktop-portal
+  - xdg-desktop-portal-wlr
+  - xorg-server-xwayland
+
+audio_packages:
+  - pipewire
+  - wireplumber
+  - libspa-bluetooth
+  - alsa-utils
+  - alsa-plugins
+  - pamixer
+  - playerctl
+  - pavucontrol
+
+dev_packages:
+  - python3-pip
+  - python3-ansible-lint
+  - lua
+  - luarocks
+  - go
+  - docker
+  - docker-compose
+  - terraform
+  - shellcheck
+
+user_apps:
+  - firefox
+  - deadbeef
+  - qbittorrent
+  - telegram-desktop
+  - krita
+  - imv
+  - mpv
+  - zathura
+  - zathura-pdf-mupdf
+  - newsboat
+  - calcurse
+  - lf
+  - fastfetch
+  - alacritty
+  - qutebrowser
+  - luakit
+  - lite-xl
+  - pcmanfm
+  - nerd-fonts-symbols-ttf
+  - noto-fonts-ttf
+  - noto-fonts-emoji
+
+# User groups
+user_groups:
+  - wheel
+  - audio
+  - video
+  - storage
+  - network
+  - input
+  - optical
+  - kvm
+  - docker
+  - plugdev
+  - bluetooth
+
+# Cron jobs
+cron_jobs:
+  - name: daily_trim
+    minute: "0"
+    hour: "4"
+    job: "/usr/bin/fstrim -av >> /var/log/fstrim.log 2>&1"
