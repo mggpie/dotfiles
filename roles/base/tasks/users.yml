@@ -77,6 +77,12 @@
     group: "{{ username }}"
     mode: '0700'
 
+- name: Create tmpfiles.d directory
+  ansible.builtin.file:
+    path: /etc/tmpfiles.d
+    state: directory
+    mode: '0755'
+
 - name: Create tmpfiles.d config for XDG_RUNTIME_DIR persistence
   ansible.builtin.copy:
     content: |
