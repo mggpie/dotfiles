@@ -1,0 +1,19 @@
+---
+# =============================================================================
+# Zathura Configuration (symlink)
+# Tag: zathura
+# =============================================================================
+
+- name: Remove existing zathura config
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/zathura"
+    state: absent
+
+- name: Create zathura symlink
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/dotfiles/files/zathura"
+    dest: "{{ user_home }}/.config/zathura"
+    state: link
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    force: true

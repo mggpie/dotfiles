@@ -1,0 +1,19 @@
+---
+# =============================================================================
+# Qutebrowser Configuration (symlink)
+# Tag: qutebrowser
+# =============================================================================
+
+- name: Remove existing qutebrowser config
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/qutebrowser"
+    state: absent
+
+- name: Create qutebrowser symlink
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/dotfiles/files/qutebrowser"
+    dest: "{{ user_home }}/.config/qutebrowser"
+    state: link
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    force: true

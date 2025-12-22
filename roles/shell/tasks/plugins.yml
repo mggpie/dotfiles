@@ -1,0 +1,29 @@
+---
+# =============================================================================
+# Fish Plugins (fisher, tide, etc)
+# Tag: fish-plugins
+# =============================================================================
+
+- name: Install fisher (fish plugin manager)
+  ansible.builtin.shell: |
+    su - {{ username }} -c "fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'"
+  args:
+    creates: "{{ user_home }}/.config/fish/functions/fisher.fish"
+  changed_when: true
+
+- name: Install tide prompt via fisher
+  ansible.builtin.shell: |
+    su - {{ username }} -c "fish -c 'fisher install IlanCosman/tide@v6'"
+  args:
+    creates: "{{ user_home }}/.config/fish/functions/tide.fish"
+  changed_when: true
+
+- name: Install additional fish plugins
+  ansible.builtin.shell: |
+    su - {{ username }} -c "fish -c 'fisher install {{ item }}'"
+  loop:
+    - PatrickF1/fzf.fish
+    - jethrokuan/z
+    - danhper/fish-ssh-agent
+  changed_when: true
+  failed_when: false

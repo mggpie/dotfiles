@@ -1,90 +1,27 @@
 ---
 # =============================================================================
-# Shell Role - Fish Shell with Tide prompt
+# Shell Role - Main
+# =============================================================================
+# Usage:
+#   --tags shell          # everything
+#   --tags shell-packages # only packages
+#   --tags fish-plugins   # only fisher + plugins
+#   --tags fish           # only fish config files
+#   --tags tide           # only tide prompt settings
 # =============================================================================
 
-- name: Install shell packages
-  ansible.builtin.command:
-    cmd: xbps-install -Sy fish-shell bash bash-completion starship exa bat fd ripgrep fzf jq
-  changed_when: true
+- name: Include shell packages
+  ansible.builtin.import_tasks: packages.yml
+  tags: [shell, shell-packages]
 
-- name: Set fish as default shell for user
-  ansible.builtin.user:
-    name: "{{ username }}"
-    shell: /usr/bin/fish
+- name: Include fish plugins
+  ansible.builtin.import_tasks: plugins.yml
+  tags: [shell, fish-plugins]
 
-- name: Create fish config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/fish/functions"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0755'
+- name: Include fish configuration
+  ansible.builtin.import_tasks: fish.yml
+  tags: [shell, fish]
 
-- name: Create fish conf.d directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/fish/conf.d"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0755'
-
-- name: Install fisher (fish plugin manager)
-  ansible.builtin.shell: |
-    su - {{ username }} -c "fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'"
-  args:
-    creates: "{{ user_home }}/.config/fish/functions/fisher.fish"
-  changed_when: true
-
-- name: Install tide prompt via fisher
-  ansible.builtin.shell: |
-    su - {{ username }} -c "fish -c 'fisher install IlanCosman/tide@v6'"
-  args:
-    creates: "{{ user_home }}/.config/fish/functions/tide.fish"
-  changed_when: true
-
-- name: Install additional fish plugins
-  ansible.builtin.shell: |
-    su - {{ username }} -c "fish -c 'fisher install {{ item }}'"
-  loop:
-    - PatrickF1/fzf.fish        # fzf integration
-    - jethrokuan/z              # directory jumping
-    - danhper/fish-ssh-agent    # SSH agent
-  changed_when: true
-  failed_when: false
-
-- name: Deploy fish configuration
-  ansible.builtin.template:
-    src: config.fish.j2
-    dest: "{{ user_home }}/.config/fish/config.fish"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
-- name: Deploy fish aliases
-  ansible.builtin.template:
-    src: aliases.fish.j2
-    dest: "{{ user_home }}/.config/fish/conf.d/aliases.fish"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
-- name: Deploy async prompt function
-  ansible.builtin.copy:
-    src: async_prompt.fish
-    dest: "{{ user_home }}/.config/fish/functions/__async_prompt.fish"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
-- name: Configure tide prompt style
-  ansible.builtin.shell: |
-    su - {{ username }} -c "fish -c 'set -U tide_left_prompt_items pwd git newline character'"
-    su - {{ username }} -c "fish -c 'set -U tide_right_prompt_items status cmd_duration context jobs'"
-    su - {{ username }} -c "fish -c 'set -U tide_prompt_add_newline_before true'"
-    su - {{ username }} -c "fish -c 'set -U tide_character_icon \"❯\"'"
-    su - {{ username }} -c "fish -c 'set -U tide_character_color green'"
-    su - {{ username }} -c "fish -c 'set -U tide_pwd_color_anchors blue'"
-    su - {{ username }} -c "fish -c 'set -U tide_pwd_color_dirs blue'"
-  changed_when: true
-  failed_when: false
+- name: Include tide configuration
+  ansible.builtin.import_tasks: tide.yml
+  tags: [shell, tide]

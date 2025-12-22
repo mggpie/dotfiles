@@ -34,7 +34,7 @@
   roles:
     # Phase 1: Base system configuration
     - role: base
-      tags: [base, always]
+      tags: [base]
 
     # Phase 2: Shell setup (fish + tide)
     - role: shell
