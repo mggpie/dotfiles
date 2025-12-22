@@ -51,6 +51,9 @@ base_packages:
   - cronie          # Cron daemon
   - util-linux      # fstrim, etc
   - fwupd           # Firmware updates
+  - elogind         # Session manager (sets XDG_RUNTIME_DIR)
+  - dbus-elogind    # D-Bus with elogind integration
+  - polkit-elogind  # PolicyKit with elogind
 
 # Shell configuration
 default_shell: /usr/bin/fish
