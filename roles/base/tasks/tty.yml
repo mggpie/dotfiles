@@ -3,19 +3,28 @@
 # TTY Configuration - Only keep TTY1 and TTY2
 # =============================================================================
 
-- name: Disable TTY3-6 by masking agetty services
-  ansible.builtin.file:
-    src: /dev/null
-    dest: "/etc/sv/agetty-tty{{ item }}"
-    state: link
-    force: true
+# First stop the services
+- name: Stop TTY3-6 services
+  ansible.builtin.command:
+    cmd: "sv stop agetty-tty{{ item }}"
   loop: [3, 4, 5, 6]
   failed_when: false
+  changed_when: false
 
-- name: Remove symlinks for TTY3-6 from runsvdir
+# Remove from runsvdir (this disables them)
+- name: Remove TTY3-6 from runsvdir
   ansible.builtin.file:
     path: "/var/service/agetty-tty{{ item }}"
     state: absent
+  loop: [3, 4, 5, 6]
+  failed_when: false
+
+# Touch down file to keep them down
+- name: Create down file for TTY3-6
+  ansible.builtin.file:
+    path: "/etc/sv/agetty-tty{{ item }}/down"
+    state: touch
+    mode: '0644'
   loop: [3, 4, 5, 6]
   failed_when: false
 
