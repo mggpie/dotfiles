@@ -54,3 +54,33 @@
     - Pictures
     - Videos
     - Music
+
+# Create XDG_RUNTIME_DIR for user (required for Wayland)
+# This is normally handled by elogind but we ensure it exists
+- name: Get user ID
+  ansible.builtin.command:
+    cmd: "id -u {{ username }}"
+  register: user_uid
+  changed_when: false
+
+- name: Create XDG_RUNTIME_DIR parent
+  ansible.builtin.file:
+    path: /run/user
+    state: directory
+    mode: '0755'
+
+- name: Create XDG_RUNTIME_DIR for user
+  ansible.builtin.file:
+    path: "/run/user/{{ user_uid.stdout }}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0700'
+
+- name: Create tmpfiles.d config for XDG_RUNTIME_DIR persistence
+  ansible.builtin.copy:
+    content: |
+      # XDG_RUNTIME_DIR for user {{ username }}
+      d /run/user/{{ user_uid.stdout }} 0700 {{ username }} {{ username }} -
+    dest: /etc/tmpfiles.d/xdg-runtime-{{ username }}.conf
+    mode: '0644'
