@@ -1,0 +1,25 @@
+---
+# =============================================================================
+# Wayland Scripts
+# Tag: wayland-scripts
+# =============================================================================
+
+- name: Create screenshot script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # Screenshot tool
+      SCREENSHOT_DIR="{{ user_home }}/Pictures/Screenshots"
+      mkdir -p "$SCREENSHOT_DIR"
+      FILENAME="$SCREENSHOT_DIR/screenshot-$(date +%Y%m%d-%H%M%S).png"
+      case "${1:-area}" in
+          area)
+              grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy
+              ;;
+          full)
+              grim - | tee "$FILENAME" | wl-copy
+              ;;
+      esac
+      notify-send "Screenshot saved" "$FILENAME" 2>/dev/null || true
+    dest: /usr/local/bin/screenshot.sh
+    mode: '0755'

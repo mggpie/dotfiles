@@ -1,147 +1,41 @@
 ---
 # =============================================================================
-# Wayland Role - Sway WM and Desktop Environment
+# Wayland Role - Main
+# =============================================================================
+# Usage:
+#   --tags wayland           # everything
+#   --tags wayland-packages  # only packages + seatd
+#   --tags sway              # only sway config
+#   --tags foot              # only foot config
+#   --tags waybar            # only waybar config
+#   --tags kanshi            # only kanshi config
+#   --tags swaylock          # only swaylock config
 # =============================================================================
 
-- name: Install wayland packages
-  ansible.builtin.command:
-    cmd: "xbps-install -Sy {{ wayland_packages | join(' ') }}"
-  changed_when: true
+- name: Include wayland packages
+  ansible.builtin.import_tasks: packages.yml
+  tags: [wayland, wayland-packages]
 
-# Seatd is required for River/Sway to access DRM/input devices
-- name: Enable seatd service
-  ansible.builtin.file:
-    src: /etc/sv/seatd
-    dest: /var/service/seatd
-    state: link
+- name: Include sway configuration
+  ansible.builtin.import_tasks: sway.yml
+  tags: [wayland, sway]
 
-- name: Add user to _seatd group
-  ansible.builtin.user:
-    name: "{{ username }}"
-    groups: _seatd
-    append: true
+- name: Include foot configuration
+  ansible.builtin.import_tasks: foot.yml
+  tags: [wayland, foot]
 
-- name: Create sway config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/sway"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0755'
+- name: Include waybar configuration
+  ansible.builtin.import_tasks: waybar.yml
+  tags: [wayland, waybar]
 
-- name: Deploy sway configuration
-  ansible.builtin.template:
-    src: sway/config.j2
-    dest: "{{ user_home }}/.config/sway/config"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
+- name: Include kanshi configuration
+  ansible.builtin.import_tasks: kanshi.yml
+  tags: [wayland, kanshi]
 
-- name: Create foot config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/foot"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0755'
+- name: Include swaylock configuration
+  ansible.builtin.import_tasks: swaylock.yml
+  tags: [wayland, swaylock]
 
-- name: Deploy foot configuration
-  ansible.builtin.template:
-    src: foot/foot.ini.j2
-    dest: "{{ user_home }}/.config/foot/foot.ini"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
-- name: Create waybar config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/waybar"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0755'
-
-- name: Deploy waybar configuration
-  ansible.builtin.template:
-    src: waybar/config.j2
-    dest: "{{ user_home }}/.config/waybar/config"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
-- name: Deploy waybar styles
-  ansible.builtin.template:
-    src: waybar/style.css.j2
-    dest: "{{ user_home }}/.config/waybar/style.css"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
-- name: Create kanshi config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/kanshi"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0755'
-
-- name: Deploy kanshi configuration
-  ansible.builtin.template:
-    src: kanshi/config.j2
-    dest: "{{ user_home }}/.config/kanshi/config"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
-- name: Create screenshot script
-  ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      # Screenshot tool
-      SCREENSHOT_DIR="{{ user_home }}/Pictures/Screenshots"
-      mkdir -p "$SCREENSHOT_DIR"
-      FILENAME="$SCREENSHOT_DIR/screenshot-$(date +%Y%m%d-%H%M%S).png"
-      case "${1:-area}" in
-          area)
-              grim -g "$(slurp)" - | tee "$FILENAME" | wl-copy
-              ;;
-          full)
-              grim - | tee "$FILENAME" | wl-copy
-              ;;
-      esac
-      notify-send "Screenshot saved" "$FILENAME" 2>/dev/null || true
-    dest: /usr/local/bin/screenshot.sh
-    mode: '0755'
-
-- name: Install clipboard manager (cliphist)
-  ansible.builtin.command:
-    cmd: xbps-install -Sy cliphist
-  changed_when: true
-  failed_when: false
-
-- name: Create swaylock config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/swaylock"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0755'
-
-- name: Setup swaylock configuration
-  ansible.builtin.copy:
-    content: |
-      color={{ colors.background }}
-      inside-color={{ colors.background }}
-      inside-clear-color={{ colors.green }}
-      inside-ver-color={{ colors.blue }}
-      inside-wrong-color={{ colors.red }}
-      key-hl-color={{ colors.magenta }}
-      ring-color={{ colors.bright_black }}
-      ring-clear-color={{ colors.green }}
-      ring-ver-color={{ colors.blue }}
-      ring-wrong-color={{ colors.red }}
-      text-color={{ colors.foreground }}
-    dest: "{{ user_home }}/.config/swaylock/config"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
+- name: Include wayland scripts
+  ansible.builtin.import_tasks: scripts.yml
+  tags: [wayland, wayland-scripts]

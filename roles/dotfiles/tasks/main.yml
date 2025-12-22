@@ -1,69 +1,50 @@
 ---
 # =============================================================================
-# Dotfiles Role - Symlink Management
+# Dotfiles Role - Main
 # =============================================================================
-# This role creates symlinks from dotfiles repo to ~/.config
-# Making this repository the single source of truth for all configs
+# Usage:
+#   --tags dotfiles    # all symlinks
+#   --tags mpv         # only mpv
+#   --tags newsboat    # only newsboat
+#   --tags zathura     # only zathura
+#   --tags lf          # only lf
+#   --tags qutebrowser # only qutebrowser
+#   --tags micro       # only micro
 # =============================================================================
 
-# Define symlinks to create
-# Using loop for cleaner, more maintainable code
-
-- name: Define dotfiles symlinks
-  ansible.builtin.set_fact:
-    dotfiles_symlinks:
-      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/mpv"
-        dest: "{{ user_home }}/.config/mpv"
-      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/newsboat"
-        dest: "{{ user_home }}/.config/newsboat"
-      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/zathura"
-        dest: "{{ user_home }}/.config/zathura"
-      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/lf"
-        dest: "{{ user_home }}/.config/lf"
-      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/qutebrowser"
-        dest: "{{ user_home }}/.config/qutebrowser"
-      - src: "{{ dotfiles_dir }}/roles/dotfiles/files/micro"
-        dest: "{{ user_home }}/.config/micro"
-
-- name: Ensure config directories exist
+- name: Ensure config directory exists
   ansible.builtin.file:
     path: "{{ user_home }}/.config"
     state: directory
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0755'
+  tags: [dotfiles, mpv, newsboat, zathura, lf, qutebrowser, micro]
 
-- name: Remove existing config directories/files (before symlinking)
-  ansible.builtin.file:
-    path: "{{ item.dest }}"
-    state: absent
-  loop: "{{ dotfiles_symlinks }}"
-  loop_control:
-    label: "{{ item.dest }}"
+- name: Include mpv configuration
+  ansible.builtin.import_tasks: mpv.yml
+  tags: [dotfiles, mpv]
 
-- name: Create dotfiles symlinks
-  ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    force: true
-  loop: "{{ dotfiles_symlinks }}"
-  loop_control:
-    label: "{{ item.dest }}"
+- name: Include newsboat configuration
+  ansible.builtin.import_tasks: newsboat.yml
+  tags: [dotfiles, newsboat]
 
-# Make scripts executable
-- name: Make lf scripts executable
-  ansible.builtin.file:
-    path: "{{ item }}"
-    mode: '0755'
-  loop:
-    - "{{ dotfiles_dir }}/roles/dotfiles/files/lf/preview"
-    - "{{ dotfiles_dir }}/roles/dotfiles/files/lf/cleaner"
-  failed_when: false
+- name: Include zathura configuration
+  ansible.builtin.import_tasks: zathura.yml
+  tags: [dotfiles, zathura]
 
-# Create local bin directory for scripts
+- name: Include lf configuration
+  ansible.builtin.import_tasks: lf.yml
+  tags: [dotfiles, lf]
+
+- name: Include qutebrowser configuration
+  ansible.builtin.import_tasks: qutebrowser.yml
+  tags: [dotfiles, qutebrowser]
+
+- name: Include micro configuration
+  ansible.builtin.import_tasks: micro.yml
+  tags: [dotfiles, micro]
+
 - name: Create local bin directory
   ansible.builtin.file:
     path: "{{ user_home }}/.local/bin"
@@ -71,6 +52,4 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0755'
-
-# Note: Templated configs (fish, foot, river, waybar, kanshi) are managed
-# by their respective roles and NOT symlinked, as they need variable substitution
+  tags: [dotfiles]

@@ -1,0 +1,21 @@
+---
+# =============================================================================
+# Kanshi Configuration
+# Tag: kanshi
+# =============================================================================
+
+- name: Create kanshi config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/kanshi"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Deploy kanshi configuration
+  ansible.builtin.template:
+    src: kanshi/config.j2
+    dest: "{{ user_home }}/.config/kanshi/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
