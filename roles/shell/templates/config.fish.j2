@@ -57,36 +57,38 @@ end
 # Fish Colors (from palette)
 # =============================================================================
 
-set -U fish_color_command {{ colors['blue'] }}
-set -U fish_color_quote {{ colors['green'] }}
-set -U fish_color_redirection {{ colors['cyan'] }}
-set -U fish_color_end {{ colors['cyan'] }}
-set -U fish_color_error {{ colors['red'] }}
-set -U fish_color_param {{ colors['foreground'] }}
-set -U fish_color_comment {{ colors['bright_black'] }}
+set -U fish_color_command {{ colors.blue }}
+set -U fish_color_quote {{ colors.green }}
+set -U fish_color_redirection {{ colors.cyan }}
+set -U fish_color_end {{ colors.cyan }}
+set -U fish_color_error {{ colors.red }}
+set -U fish_color_param {{ colors.foreground }}
+set -U fish_color_comment {{ colors.bright_black }}
 set -U fish_color_match --background=brblue
 set -U fish_color_selection white --bold --background=brblack
 set -U fish_color_search_match bryellow --background=brblack
 set -U fish_color_history_current --bold
-set -U fish_color_operator {{ colors['cyan'] }}
-set -U fish_color_escape {{ colors['cyan'] }}
-set -U fish_color_cwd {{ colors['green'] }}
-set -U fish_color_cwd_root {{ colors['red'] }}
+set -U fish_color_operator {{ colors.cyan }}
+set -U fish_color_escape {{ colors.cyan }}
+set -U fish_color_cwd {{ colors.green }}
+set -U fish_color_cwd_root {{ colors.red }}
 set -U fish_color_valid_path --underline
-set -U fish_color_autosuggestion {{ colors['bright_black'] }}
+set -U fish_color_autosuggestion {{ colors.bright_black }}
 set -U fish_color_user brgreen
 set -U fish_color_host normal
 set -U fish_pager_color_prefix normal --bold --underline
 set -U fish_pager_color_progress brwhite --background=cyan
 set -U fish_pager_color_completion normal
-set -U fish_pager_color_description {{ colors['yellow'] }}
+set -U fish_pager_color_description {{ colors.yellow }}
 
 # =============================================================================
 # Auto-start River on TTY1
 # =============================================================================
 
 if status is-login
-    if test -z "$DISPLAY" -a "$XDG_VTNR" = 1
-        exec river
+    if test -z "$DISPLAY" -a -z "$WAYLAND_DISPLAY"
+        if test (tty) = "/dev/tty1"
+            exec river
+        end
     end
 end
