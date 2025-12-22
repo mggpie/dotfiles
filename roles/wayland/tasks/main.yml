@@ -1,6 +1,6 @@
 ---
 # =============================================================================
-# Wayland Role - River WM and Desktop Environment
+# Wayland Role - Sway WM and Desktop Environment
 # =============================================================================
 
 - name: Install wayland packages
@@ -21,21 +21,21 @@
     groups: _seatd
     append: true
 
-- name: Create river config directory
+- name: Create sway config directory
   ansible.builtin.file:
-    path: "{{ user_home }}/.config/river"
+    path: "{{ user_home }}/.config/sway"
     state: directory
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0755'
 
-- name: Deploy river configuration
+- name: Deploy sway configuration
   ansible.builtin.template:
-    src: river/init.j2
-    dest: "{{ user_home }}/.config/river/init"
+    src: sway/config.j2
+    dest: "{{ user_home }}/.config/sway/config"
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '0755'
+    mode: '0644'
 
 - name: Create foot config directory
   ansible.builtin.file:

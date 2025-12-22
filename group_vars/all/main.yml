@@ -59,10 +59,9 @@ browser: firefox
 terminal: foot
 
 # Wayland configuration
-wayland_compositor: river  # primary: river, backup: sway
+wayland_compositor: sway  # using sway for better compatibility
 wayland_packages:
   - seatd             # seat manager for wayland compositors
-  - river
   - sway
   - swaybg
   - swayidle
