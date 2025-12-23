@@ -1,22 +1,22 @@
 ---
 # =============================================================================
-# Void Linux Dotfiles - Simplified Playbook
+# Void Linux Post-Install Playbook
 # =============================================================================
-# Run: ansible-playbook playbook-simple.yml
-# Run specific section: ansible-playbook playbook-simple.yml --tags sway
+# Run: ansible-playbook -i hosts playbook.yml
+# Tags: ansible-playbook -i hosts playbook.yml --tags fish
 # =============================================================================
 
 - name: Configure Void Linux
-  hosts: local
+  hosts: all
   become: true
   vars_files:
     - vars.yml
-    - files/colors/palette.yml
 
   pre_tasks:
-    - name: Detect CPU vendor
+    - name: Detect CPU vendor for microcode
       set_fact:
         cpu_vendor: "{{ 'intel' if 'GenuineIntel' in ansible_processor else 'amd' }}"
+      tags: always
 
   tasks:
     # =========================================================================
@@ -28,7 +28,7 @@
         state: present
       tags: [base, packages]
 
-    - name: Configure doas
+    - name: Configure doas (passwordless for wheel)
       copy:
         content: |
           permit nopass :wheel
@@ -42,9 +42,10 @@
         src: "/usr/share/zoneinfo/{{ timezone }}"
         dest: /etc/localtime
         state: link
+        force: yes
       tags: [base, locale]
 
-    - name: Set locale
+    - name: Configure locale
       copy:
         content: "{{ locale }}"
         dest: /etc/locale.conf
@@ -55,7 +56,11 @@
         path: /etc/default/libc-locales
         regexp: "^#?{{ locale }}"
         line: "{{ locale }} UTF-8"
-      notify: regenerate locales
+      tags: [base, locale]
+
+    - name: Regenerate locales
+      command: xbps-reconfigure -f glibc-locales
+      changed_when: true
       tags: [base, locale]
 
     - name: Set keyboard layout
@@ -64,6 +69,12 @@
         dest: /etc/vconsole.conf
       tags: [base, locale]
 
+    - name: Install CPU microcode
+      community.general.xbps:
+        name: "{{ 'intel-ucode' if cpu_vendor == 'intel' else 'linux-firmware-amd' }}"
+        state: present
+      tags: [base, microcode]
+
     - name: Create user with groups
       user:
         name: "{{ username }}"
@@ -71,244 +82,6 @@
         groups: "{{ user_groups }}"
         append: yes
       tags: [base, user]
-
-    - name: Configure auto-login on TTY1
-      copy:
-        content: |
-          #!/bin/sh
-          [ -d /run/user/$(id -u {{ username }}) ] || {
-              mkdir -p /run/user/$(id -u {{ username }})
-              chown {{ username }}:{{ username }} /run/user/$(id -u {{ username }})
-              chmod 0700 /run/user/$(id -u {{ username }})
-          }
-          exec /sbin/agetty --autologin {{ username }} --noclear tty1 linux
-        dest: /etc/sv/agetty-tty1/run
-        mode: '0755'
-      tags: [base, autologin]
-
-    - name: Install microcode
-      community.general.xbps:
-        name: "{{ 'intel-ucode' if cpu_vendor == 'intel' else 'linux-firmware-amd' }}"
-        state: present
-      tags: [base, microcode]
-
-    - name: Enable services (chrony, dbus, elogind, seatd)
-      file:
-        src: "/etc/sv/{{ item }}"
-        dest: "/var/service/{{ item }}"
-        state: link
-      loop:
-        - chronyd
-        - dbus
-        - elogind
-        - seatd
-      tags: [base, services]
-
-    - name: Enable SSH (VM only)
-      file:
-        src: /etc/sv/sshd
-        dest: /var/service/sshd
-        state: "{{ 'link' if ansible_virtualization_role == 'guest' else 'absent' }}"
-      tags: [base, ssh]
-
-    # =========================================================================
-    # SHELL (Fish)
-    # =========================================================================
-    - name: Install Fish shell packages
-      community.general.xbps:
-        name:
-          - fish-shell
-          - fisher
-          - fzf
-          - eza
-          - bat
-          - fd
-          - ripgrep
-          - starship
-        state: present
-      tags: [shell, packages]
-
-    - name: Create Fish config directory
-      file:
-        path: "{{ user_home }}/.config/fish"
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [shell, fish]
-
-    - name: Deploy Fish configuration
-      template:
-        src: files/fish/config.fish.j2
-        dest: "{{ user_home }}/.config/fish/config.fish"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [shell, fish]
-
-    - name: Deploy Fish aliases
-      template:
-        src: files/fish/aliases.fish.j2
-        dest: "{{ user_home }}/.config/fish/aliases.fish"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [shell, fish]
-
-    - name: Install Tide prompt
-      become_user: "{{ username }}"
-      shell: fish -c "fisher install IlanCosman/tide@v6"
-      args:
-        creates: "{{ user_home }}/.config/fish/functions/tide.fish"
-      tags: [shell, tide]
-
-    # =========================================================================
-    # WAYLAND (Sway + Waybar + Foot)
-    # =========================================================================
-    - name: Install Wayland packages
-      community.general.xbps:
-        name: "{{ wayland_packages }}"
-        state: present
-      tags: [wayland, packages]
-
-    - name: Create Sway config directory
-      file:
-        path: "{{ user_home }}/.config/sway"
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [wayland, sway]
-
-    - name: Deploy Sway config
-      template:
-        src: files/sway/config.j2
-        dest: "{{ user_home }}/.config/sway/config"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [wayland, sway]
-
-    - name: Create Waybar config directory
-      file:
-        path: "{{ user_home }}/.config/waybar"
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [wayland, waybar]
-
-    - name: Deploy Waybar config
-      template:
-        src: files/waybar/{{ item }}.j2
-        dest: "{{ user_home }}/.config/waybar/{{ item }}"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      loop:
-        - config
-        - style.css
-      tags: [wayland, waybar]
-
-    - name: Create Foot config directory
-      file:
-        path: "{{ user_home }}/.config/foot"
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [wayland, foot]
-
-    - name: Deploy Foot config
-      template:
-        src: files/foot/foot.ini.j2
-        dest: "{{ user_home }}/.config/foot/foot.ini"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [wayland, foot]
-
-    # =========================================================================
-    # AUDIO (PipeWire)
-    # =========================================================================
-    - name: Install audio packages
-      community.general.xbps:
-        name: "{{ audio_packages }}"
-        state: present
-      tags: [audio, packages]
-
-    - name: Enable PipeWire services (user-level, symlinks in home)
-      file:
-        src: "/usr/share/applications/pipewire.desktop"
-        dest: "{{ user_home }}/.config/autostart/pipewire.desktop"
-        state: link
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [audio, pipewire]
-
-    # =========================================================================
-    # APPLICATIONS
-    # =========================================================================
-    - name: Install user applications
-      community.general.xbps:
-        name: "{{ user_apps }}"
-        state: present
-      tags: [apps]
-
-    - name: Install development tools
-      community.general.xbps:
-        name: "{{ dev_packages }}"
-        state: present
-      tags: [dev]
-
-    # =========================================================================
-    # DOTFILES (Symlinks)
-    # =========================================================================
-    - name: Create dotfile directories
-      file:
-        path: "{{ user_home }}/.config/{{ item }}"
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      loop:
-        - mpv
-        - newsboat
-        - zathura
-        - lf
-        - qutebrowser
-        - micro
-      tags: [dotfiles]
-
-    - name: Symlink dotfiles
-      file:
-        src: "{{ dotfiles_dir }}/files/{{ item.src }}"
-        dest: "{{ user_home }}/.config/{{ item.dest }}"
-        state: link
-        owner: "{{ username }}"
-        group: "{{ username }}"
-        force: yes
-      loop:
-        - { src: 'mpv/mpv.conf', dest: 'mpv/mpv.conf' }
-        - { src: 'mpv/input.conf', dest: 'mpv/input.conf' }
-        - { src: 'newsboat/config', dest: 'newsboat/config' }
-        - { src: 'newsboat/urls', dest: 'newsboat/urls' }
-        - { src: 'zathura/zathurarc', dest: 'zathura/zathurarc' }
-        - { src: 'lf/lfrc', dest: 'lf/lfrc' }
-        - { src: 'lf/icons', dest: 'lf/icons' }
-        - { src: 'qutebrowser/config.py', dest: 'qutebrowser/config.py' }
-        - { src: 'micro/settings.json', dest: 'micro/settings.json' }
-        - { src: 'micro/bindings.json', dest: 'micro/bindings.json' }
-      tags: [dotfiles]
-
-    # =========================================================================
-    # XDG USER DIRECTORIES
-    # =========================================================================
-    - name: Install xdg-user-dirs
-      community.general.xbps:
-        name:
-          - xdg-user-dirs
-          - xdg-utils
-        state: present
-      tags: [base, xdg]
-
-    - name: Create XDG config directory
-      file:
-        path: "{{ user_home }}/.config"
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [base, xdg]
 
     - name: Configure XDG user directories
       copy:
@@ -343,49 +116,224 @@
       loop:
         - Desktop
         - Downloads
-        - Templates
-        - Public
         - Documents
         - Music
         - Pictures
         - Videos
       tags: [base, xdg]
 
-    # =========================================================================
-    # MAZA AD-BLOCKING
-    # =========================================================================
-    - name: Download maza script
-      get_url:
-        url: https://raw.githubusercontent.com/tanrax/maza-ad-blocking/master/maza
-        dest: /usr/local/bin/maza
-        mode: '0755'
-      tags: [maza, adblock]
-
-    - name: Create maza update script
+    - name: Configure auto-login on TTY1
       copy:
         content: |
           #!/bin/sh
-          set -e
-          LOG_FILE="/var/log/maza.log"
-          echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting maza update" >> "$LOG_FILE"
-          /usr/local/bin/maza update >> "$LOG_FILE" 2>&1
-          /usr/local/bin/maza start >> "$LOG_FILE" 2>&1
-          echo "$(date '+%Y-%m-%d %H:%M:%S') - Maza update completed" >> "$LOG_FILE"
-        dest: /usr/local/bin/maza-update.sh
+          # Create XDG_RUNTIME_DIR before login
+          [ -d /run/user/$(id -u {{ username }}) ] || {
+              mkdir -p /run/user/$(id -u {{ username }})
+              chown {{ username }}:{{ username }} /run/user/$(id -u {{ username }})
+              chmod 0700 /run/user/$(id -u {{ username }})
+          }
+          exec /sbin/agetty --autologin {{ username }} --noclear tty1 linux
+        dest: /etc/sv/agetty-tty1/run
         mode: '0755'
-      tags: [maza, adblock]
+      tags: [base, autologin]
 
-    - name: Initialize maza
-      command: /usr/local/bin/maza update
-      changed_when: true
-      failed_when: false
-      tags: [maza, adblock]
+    - name: Disable TTY 3-6 (keep only 1-2)
+      file:
+        path: "/var/service/agetty-tty{{ item }}"
+        state: absent
+      loop: [3, 4, 5, 6]
+      tags: [base, tty]
 
-    - name: Start maza ad-blocking
-      command: /usr/local/bin/maza start
+    - name: Enable base services
+      file:
+        src: "/etc/sv/{{ item }}"
+        dest: "/var/service/{{ item }}"
+        state: link
+      loop:
+        - chronyd
+        - dbus
+        - elogind
+        - seatd
+        - cronie
+      tags: [base, services]
+
+    - name: Disable SSH on bare metal (enable on VM only)
+      file:
+        path: /var/service/sshd
+        state: "{{ 'link' if ansible_virtualization_role == 'guest' else 'absent' }}"
+        src: "{{ '/etc/sv/sshd' if ansible_virtualization_role == 'guest' else omit }}"
+      tags: [base, ssh]
+
+    # =========================================================================
+    # SHELL (Fish + Tide)
+    # =========================================================================
+    - name: Install shell packages
+      community.general.xbps:
+        name: "{{ shell_packages }}"
+        state: present
+      tags: [shell, fish]
+
+    - name: Install Tide prompt for Fish
+      become_user: "{{ username }}"
+      shell: fish -c "fisher install IlanCosman/tide@v6"
+      args:
+        creates: "{{ user_home }}/.config/fish/functions/tide.fish"
+      tags: [shell, fish, tide]
+
+    - name: Configure Tide (2 Spaced, Rainbow, Transient)
+      become_user: "{{ username }}"
+      shell: |
+        fish -c "tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='24-hour format' --rainbow_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='Two lines, character and frame' --prompt_connection=Solid --powerline_right_prompt_frame=No --prompt_connection_andor_frame_color=Darkest --prompt_spacing=Spaced --icons='Many icons' --transient=Yes"
       changed_when: true
+      tags: [shell, fish, tide]
+
+    # =========================================================================
+    # WAYLAND (Sway + Waybar + Foot)
+    # =========================================================================
+    - name: Install Wayland packages
+      community.general.xbps:
+        name: "{{ wayland_packages }}"
+        state: present
+      tags: [wayland, packages]
+
+    - name: Install graphics drivers (Intel)
+      community.general.xbps:
+        name: "{{ graphics_packages }}"
+        state: present
+      when: cpu_vendor == 'intel'
+      tags: [wayland, graphics]
+
+    - name: Create Sway config directory
+      file:
+        path: "{{ user_home }}/.config/sway"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+      tags: [wayland, sway]
+
+    - name: Copy default Sway config
+      copy:
+        src: /etc/sway/config
+        dest: "{{ user_home }}/.config/sway/config"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        remote_src: yes
+        force: no
+      tags: [wayland, sway]
+
+    - name: Create Waybar config directory
+      file:
+        path: "{{ user_home }}/.config/waybar"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+      tags: [wayland, waybar]
+
+    - name: Copy default Waybar config
+      copy:
+        src: "/etc/xdg/waybar/{{ item }}"
+        dest: "{{ user_home }}/.config/waybar/{{ item }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        remote_src: yes
+        force: no
+      loop:
+        - config
+        - style.css
       failed_when: false
-      tags: [maza, adblock]
+      tags: [wayland, waybar]
+
+    - name: Create Foot config directory
+      file:
+        path: "{{ user_home }}/.config/foot"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+      tags: [wayland, foot]
+
+    - name: Copy default Foot config
+      copy:
+        src: /etc/xdg/foot/foot.ini
+        dest: "{{ user_home }}/.config/foot/foot.ini"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        remote_src: yes
+        force: no
+      failed_when: false
+      tags: [wayland, foot]
+
+    - name: Add Fish auto-start Sway on TTY1
+      blockinfile:
+        path: "{{ user_home }}/.config/fish/config.fish"
+        create: yes
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        marker: "# {mark} ANSIBLE MANAGED - Sway autostart"
+        block: |
+          # Auto-start Sway on TTY1
+          if status is-login
+              if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" = "1"
+                  exec sway
+              end
+          end
+      tags: [wayland, sway, autostart]
+
+    # =========================================================================
+    # AUDIO (PipeWire + Bluetooth)
+    # =========================================================================
+    - name: Install audio packages
+      community.general.xbps:
+        name: "{{ audio_packages }}"
+        state: present
+      tags: [audio, pipewire]
+
+    - name: Install Bluetooth packages
+      community.general.xbps:
+        name: "{{ bluetooth_packages }}"
+        state: present
+      tags: [audio, bluetooth]
+
+    - name: Enable Bluetooth service
+      file:
+        src: /etc/sv/bluetoothd
+        dest: /var/service/bluetoothd
+        state: link
+      tags: [audio, bluetooth]
+
+    # =========================================================================
+    # APPLICATIONS
+    # =========================================================================
+    - name: Install user applications
+      community.general.xbps:
+        name: "{{ user_apps }}"
+        state: present
+      tags: [apps]
+
+    - name: Install development tools
+      community.general.xbps:
+        name: "{{ dev_packages }}"
+        state: present
+      tags: [dev]
+
+    - name: Install virtualization packages
+      community.general.xbps:
+        name: "{{ virt_packages }}"
+        state: present
+      tags: [virt]
+
+    - name: Enable Docker service
+      file:
+        src: /etc/sv/docker
+        dest: /var/service/docker
+        state: link
+      tags: [dev, docker]
+
+    - name: Enable libvirtd service
+      file:
+        src: /etc/sv/libvirtd
+        dest: /var/service/libvirtd
+        state: link
+      tags: [virt]
 
     # =========================================================================
     # NIX PACKAGE MANAGER
@@ -393,64 +341,53 @@
     - name: Check if Nix is installed
       stat:
         path: /nix
-      register: nix_installed
+      register: nix_check
       tags: [nix]
 
-    - name: Install Nix (stable channel)
-      become_user: "{{ username }}"
+    - name: Install Nix (stable, multi-user)
       shell: |
-        curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
-      when: not nix_installed.stat.exists
+        curl -L https://nixos.org/nix/install | sh -s -- --daemon
+      when: not nix_check.stat.exists
       tags: [nix]
 
-    - name: Add Nix to PATH in fish config
-      lineinfile:
-        path: "{{ user_home }}/.config/fish/config.fish"
-        line: 'fish_add_path $HOME/.nix-profile/bin'
-        create: yes
-        owner: "{{ username }}"
-        group: "{{ username }}"
-      tags: [nix, shell]
-
-    - name: Install Nix packages
+    - name: Install packages from Nix
       become_user: "{{ username }}"
       shell: |
-        source {{ user_home }}/.nix-profile/etc/profile.d/nix.sh
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         nix-env -iA nixpkgs.{{ item }}
       loop:
         - vscode
         - wezterm
-        - intel-one-mono
-        - inter
-      when: not nix_installed.stat.exists
+      when: not nix_check.stat.exists
       tags: [nix]
 
     # =========================================================================
-    # NETWORK (WiFi disabled by default)
+    # SYSTEM TWEAKS
     # =========================================================================
-    - name: Install network packages
+    - name: Install power management
       community.general.xbps:
-        name:
-          - NetworkManager
-          - wpa_supplicant
+        name: "{{ power_packages }}"
         state: present
-      tags: [network]
+      tags: [tweaks, power]
 
-    - name: Disable NetworkManager on bare metal
+    - name: Enable TLP service
       file:
-        path: /var/service/NetworkManager
-        state: absent
-      when: ansible_virtualization_role != 'guest'
-      tags: [network]
+        src: /etc/sv/tlp
+        dest: /var/service/tlp
+        state: link
+      tags: [tweaks, power]
 
-    # =========================================================================
-    # TWEAKS & PERFORMANCE
-    # =========================================================================
-    - name: Install SSD optimization packages
-      community.general.xbps:
-        name: util-linux
-        state: present
-      tags: [tweaks, ssd]
+    - name: Create system update script
+      copy:
+        content: |
+          #!/bin/sh
+          set -e
+          echo "$(date): Starting system update" >> /var/log/void-update.log
+          xbps-install -Su >> /var/log/void-update.log 2>&1
+          echo "$(date): Update complete" >> /var/log/void-update.log
+        dest: /usr/local/bin/void-update.sh
+        mode: '0755'
+      tags: [tweaks, updates]
 
     - name: Setup cron jobs
       cron:
@@ -463,15 +400,38 @@
       loop: "{{ cron_jobs }}"
       tags: [tweaks, cron]
 
-  handlers:
-    - name: regenerate locales
-      command: xbps-reconfigure -f glibc-locales
+    - name: Download Maza ad-blocking script
+      get_url:
+        url: https://raw.githubusercontent.com/tanrax/maza-ad-blocking/master/maza
+        dest: /usr/local/bin/maza
+        mode: '0755'
+      tags: [tweaks, maza]
+
+    - name: Initialize Maza
+      command: /usr/local/bin/maza update
+      changed_when: true
+      failed_when: false
+      tags: [tweaks, maza]
+
+    - name: Start Maza ad-blocking
+      command: /usr/local/bin/maza start
+      changed_when: true
+      failed_when: false
+      tags: [tweaks, maza]
 
   post_tasks:
     - name: Reconfigure all packages
       command: xbps-reconfigure -fa
       changed_when: true
+      tags: always
 
-    - name: Done
+    - name: Display completion message
       debug:
-        msg: "Setup complete! Reboot and login as {{ username }}"
+        msg: |
+          ===================================
+          Void Linux setup complete!
+          
+          Reboot and login as {{ username }}
+          Sway will start automatically on TTY1
+          ===================================
+      tags: always
