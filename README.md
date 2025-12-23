@@ -1,83 +1,103 @@
 # Void Linux Dotfiles
 
-Minimalistyczna konfiguracja Void Linux z Sway.
-
-## Struktura
-
-```
-.
-├── playbook.yml          # Główny playbook (~450 LOC)
-├── vars.yml              # Wszystkie zmienne (~100 LOC)
-├── files/                # Dotfiles i wszystkie configs
-│   ├── colors/palette.yml
-│   ├── fish/
-│   ├── sway/
-│   ├── waybar/
-│   ├── foot/
-│   └── [mpv, newsboat, zathura, lf, qutebrowser, micro]/
-└── bootstrap.sh          # Initial setup script
-```
+Minimalistyczny setup Void Linux z Sway, Fish i defaultowymi configami.
 
 ## Quick Start
 
 ```bash
-# 1. Bootstrap (instalacja git + ansible)
-curl -sSL https://raw.githubusercontent.com/mggpie/dotfiles/main/bootstrap.sh | sh
+# Na VMce testowej
+ssh me@192.168.0.87
+cd ~
+git clone https://github.com/mggpie/dotfiles.git
+cd dotfiles
 
-# 2. Clone repo
-git clone https://github.com/mggpie/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+# Pełna instalacja
+doas ansible-playbook -i hosts playbook.yml
 
-# 3. Pełna instalacja
-doas ansible-playbook playbook.yml
+# Tylko Fish + Tide
+doas ansible-playbook -i hosts playbook.yml --tags fish
 
-# 4. Tylko konkretny komponent
-doas ansible-playbook playbook.yml --tags sway
-doas ansible-playbook playbook.yml --tags waybar
-doas ansible-playbook playbook.yml --tags fish
+# Tylko Sway
+doas ansible-playbook -i hosts playbook.yml --tags sway
 ```
 
 ## Tagi
 
-- `base` - System podstawowy (doas, locale, user, services)
-- `shell` - Fish + Tide + aliases
-- `wayland` - Wszystkie komponenty Wayland
-  - `sway` - Tylko config Sway
-  - `waybar` - Tylko waybar
-  - `foot` - Tylko terminal
-- `audio` - PipeWire
-- `apps` - Aplikacje użytkownika
-- `dev` - Narzędzia developerskie
-- `dotfiles` - Symlinki dotfiles
-- `tweaks` - Optymalizacje (SSD, cron)
+**Base System:**
+- `base` - Wszystko base (doas, locale, user, services)
+- `doas` - Tylko doas config
+- `locale` - Język, timezone, keymap
+- `microcode` - Intel/AMD microcode
+- `user` - User creation
+- `xdg` - XDG directories
+- `autologin` - TTY1 autologin
+- `tty` - Disable TTY 3-6
+- `services` - Enable system services
+- `ssh` - SSH config (VM only)
 
-## Dlaczego płaska struktura?
+**Shell:**
+- `shell` - Fish + wszystkie narzędzia
+- `fish` - Tylko Fish
+- `tide` - Tide prompt
 
-**Stara struktura (roles/)**:
-- ~40 katalogów (roles/*/defaults/, handlers/, vars/ - większość pusta)
-- ~1000+ LOC rozproszonych po wielu plikach
-- Deployment: 80+ tasków nawet dla 1 zmiany w configu
+**Wayland:**
+- `wayland` - Wszystko Wayland
+- `sway` - Tylko Sway
+- `waybar` - Tylko Waybar  
+- `foot` - Tylko Foot terminal
+- `graphics` - Sterowniki Intel
+- `autostart` - Sway autostart on TTY1
 
-**Nowa struktura (flat)**:
-- ~10 katalogów
-- ~550 LOC (playbook + vars)
-- Deployment: 2-3 taski per komponent
-- **65% mniej kodu, 10x szybsze iteracje**
-- **Zachowane wszystkie dotfiles** (mpv, newsboat, lf, micro, qutebrowser, zathura)
-- **Zachowane tweaki** (maza, xdg, nix, network)
+**Audio:**
+- `audio` - PipeWire + Bluetooth
+- `pipewire` - Tylko PipeWire
+- `bluetooth` - Tylko Bluetooth
 
-Dla osobistych dotfiles struktura roles to over-engineering. Ansible roles mają sens w dużych projektach zespołowych z wieloma środowiskami.
+**Apps:**
+- `apps` - User applications
+- `dev` - Development tools
+- `docker` - Docker + compose
+- `virt` - QEMU + libvirt
+
+**Nix:**
+- `nix` - Nix package manager (VSCode, Wezterm)
+
+**Tweaks:**
+- `tweaks` - System optimizations
+- `power` - TLP power management
+- `updates` - Auto-updates script
+- `cron` - Cron jobs (TRIM, updates, maza)
+- `maza` - Ad-blocking
 
 ## Stack
 
-- **OS**: Void Linux (glibc, runit)
-- **WM**: Sway
-- **Bar**: Waybar
-- **Terminal**: Foot
-- **Shell**: Fish + Tide
-- **Audio**: PipeWire
-- **Fonts**: Nerd Fonts, Noto
+- **OS**: Void Linux glibc + runit
+- **Shell**: Fish + Tide (Rainbow, Transient)
+- **WM**: Sway (default config)
+- **Bar**: Waybar (default config)
+- **Terminal**: Foot (default config)
+- **Audio**: PipeWire + Bluetooth
+- **Apps**: Firefox, mpv, zathura, qutebrowser, micro, lf, imv
+- **Dev**: Python, Lua, Go, Docker, Ansible, Terraform
+- **Nix**: VSCode, Wezterm
 
-## License
+## Features
 
-MIT
+- ✅ Defaultowe configi (działają od razu)
+- ✅ Granularne tagi (fish, sway, waybar osobno)
+- ✅ Auto-login na TTY1
+- ✅ Sway autostart
+- ✅ Intel microcode auto-detect
+- ✅ XDG directories
+- ✅ Maza ad-blocking z auto-update
+- ✅ Tygodniowe auto-updates (sobota 3:00)
+- ✅ Daily TRIM (4:00)
+- ✅ SSH tylko na VM
+- ✅ TTY 3-6 disabled
+
+## TODO
+
+- [ ] Custom dotfiles (po testach)
+- [ ] GRUB performance tweaks
+- [ ] Kanshi display management
+- [ ] Screenshot tool config
