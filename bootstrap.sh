@@ -60,11 +60,27 @@ else
 fi
 
 # =============================================================================
-# Step 4: Run Ansible playbook
+# Step 4: Install Ansible community.general collection
+# =============================================================================
+log_info "Installing Ansible collection..."
+ansible-galaxy collection install community.general
+
+# =============================================================================
+# Step 5: Run Ansible playbook (localhost)
 # =============================================================================
 log_info "Running Ansible playbook..."
 cd "$DOTFILES_DIR"
-ansible-playbook playbook.yml
+
+# Create temporary localhost inventory
+cat > /tmp/ansible-hosts << EOF
+[localhost]
+127.0.0.1 ansible_connection=local
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+EOF
+
+doas ansible-playbook -i /tmp/ansible-hosts playbook.yml
 
 log_info "╔════════════════════════════════════════════╗"
 log_info "║            Setup Complete!                 ║"
