@@ -211,13 +211,12 @@
         group: "{{ username }}"
       tags: [wayland, sway]
 
-    - name: Copy default Sway config
+    - name: Deploy Sway config
       copy:
-        src: /etc/sway/config
+        src: files/sway/config
         dest: "{{ user_home }}/.config/sway/config"
         owner: "{{ username }}"
         group: "{{ username }}"
-        remote_src: yes
         force: no
       tags: [wayland, sway]
 
@@ -229,18 +228,16 @@
         group: "{{ username }}"
       tags: [wayland, waybar]
 
-    - name: Copy default Waybar config
+    - name: Deploy Waybar config
       copy:
-        src: "/etc/xdg/waybar/{{ item }}"
+        src: "files/waybar/{{ item }}"
         dest: "{{ user_home }}/.config/waybar/{{ item }}"
         owner: "{{ username }}"
         group: "{{ username }}"
-        remote_src: yes
         force: no
       loop:
         - config
         - style.css
-      failed_when: false
       tags: [wayland, waybar]
 
     - name: Create Foot config directory
@@ -253,32 +250,40 @@
 
     - name: Copy default Foot config
       copy:
-        src: /etc/xdg/foot/foot.ini
+    - name: Deploy Foot config
+      copy:
+        src: files/foot/foot.ini
         dest: "{{ user_home }}/.config/foot/foot.ini"
         owner: "{{ username }}"
         group: "{{ username }}"
-        remote_src: yes
         force: no
-      failed_when: false
-      tags: [wayland, foot]
-
-    - name: Add Fish auto-start Sway on TTY1
+      tags: [wayland, foot]tart Sway on TTY1
       blockinfile:
-        path: "{{ user_home }}/.config/fish/config.fish"
-        create: yes
+    - name: Deploy Fish config
+      copy:
+        src: files/fish/config.fish
+        dest: "{{ user_home }}/.config/fish/config.fish"
         owner: "{{ username }}"
         group: "{{ username }}"
-        marker: "# {mark} ANSIBLE MANAGED - Sway autostart"
-        block: |
-          # Auto-start Sway on TTY1
-          if status is-login
-              if test -z "$WAYLAND_DISPLAY" && test "$XDG_VTNR" = "1"
-                  exec sway
-              end
-          end
-      tags: [wayland, sway, autostart]
+        force: no
+      tags: [shell, fish]
 
-    # =========================================================================
+    - name: Create Mako config directory
+      file:
+        path: "{{ user_home }}/.config/mako"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+      tags: [wayland, mako]
+
+    - name: Deploy Mako config
+      copy:
+        src: files/mako/config
+        dest: "{{ user_home }}/.config/mako/config"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        force: no
+      tags: [wayland, mako]=========================================
     # AUDIO (PipeWire + Bluetooth)
     # =========================================================================
     - name: Install audio packages
