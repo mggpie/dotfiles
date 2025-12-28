@@ -1,0 +1,22 @@
+# Newsboat configuration
+
+auto-reload yes
+reload-time 30
+reload-threads 4
+
+browser "firefox %u"
+
+color background          color0   default
+color listnormal          color7   default
+color listnormal_unread   color4   default bold
+color listfocus           color0   color4
+color listfocus_unread    color0   color4 bold
+color info                color7   color8
+color article             color7   default
+
+bind-key j down
+bind-key k up
+bind-key g home
+bind-key G end
+bind-key l open
+bind-key h quit

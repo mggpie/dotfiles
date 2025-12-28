@@ -1,0 +1,26 @@
+---
+- name: Install fish
+  community.general.xbps:
+    name: fish-shell
+    state: present
+  become: yes
+  tags: [fish]
+
+- name: Set fish as default shell
+  user:
+    name: "{{ username }}"
+    shell: /bin/fish
+  become: yes
+  tags: [fish]
+
+- name: Create fish config directory
+  file:
+    path: "{{ user_home }}/.config/fish"
+    state: directory
+  tags: [fish]
+
+- name: Deploy fish config
+  copy:
+    src: fish/config.fish
+    dest: "{{ user_home }}/.config/fish/config.fish"
+  tags: [fish]

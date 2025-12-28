@@ -2,68 +2,88 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-My configuration files for Void Linux with Sway window manager.
+Configuration files for Void Linux with Sway.
 
-## Overview
+## Quick Start
 
-Minimal, keyboard-driven setup using Wayland-native applications.
+```sh
+# Install Void Linux first
+xbps-install -Syu xbps curl && curl -sL https://mggpie.github.io/void-installer/bootstrap.sh | sh
 
-| Component | Application |
-|-----------|-------------|
-| Shell | Fish + Tide prompt |
-| Window Manager | Sway |
-| Status Bar | Waybar |
-| Terminal | Foot |
-| Notifications | Mako |
-| File Manager | lf |
-| Media Player | mpv |
-| Image Viewer | imv |
-| PDF Viewer | Zathura |
-| RSS Reader | Newsboat |
-| System Monitor | htop |
+# After reboot, clone and run
+git clone https://github.com/mggpie/dotfiles.git
+cd dotfiles
+doas xbps-install -S ansible
+ansible-playbook playbook.yml
+```
+
+## Usage
+
+```sh
+# Full setup
+ansible-playbook playbook.yml
+
+# Only specific app
+ansible-playbook playbook.yml --tags sway
+ansible-playbook playbook.yml --tags fish,foot
+
+# List available tags
+ansible-playbook playbook.yml --list-tags
+```
 
 ## Structure
 
 ```
-roles/
-├── fish/files/config.fish      # Fish shell
-├── sway/files/config           # Sway window manager
-├── waybar/files/               # Waybar status bar
-│   ├── config
-│   └── style.css
-├── foot/files/foot.ini         # Foot terminal
-├── mako/files/config           # Mako notifications
-├── lf/files/lfrc               # lf file manager
-├── mpv/files/mpv.conf          # mpv media player
-├── imv/files/config            # imv image viewer
-├── zathura/files/zathurarc     # Zathura PDF viewer
-├── newsboat/files/config       # Newsboat RSS reader
-└── htop/files/htoprc           # htop system monitor
+dotfiles/
+├── playbook.yml
+├── ansible.cfg
+├── inventory/localhost.yml      # variables
+├── secrets.yml.example          # template for secrets
+└── roles/dotfiles/
+    ├── tasks/
+    │   ├── main.yml             # imports all
+    │   ├── base.yml             # system config
+    │   ├── fish.yml
+    │   ├── sway.yml
+    │   └── ...
+    └── files/
+        ├── fish/config.fish
+        ├── sway/config
+        └── ...
 ```
 
-## Installation
+## Tags
 
-### 1. Install Void Linux
+| Tag | Description |
+|-----|-------------|
+| `base` | System: locale, doas, services |
+| `fish` | Fish shell |
+| `sway` | Sway window manager |
+| `waybar` | Status bar |
+| `foot` | Terminal |
+| `mako` | Notifications |
+| `pipewire` | Audio |
+| `lf` | File manager |
+| `mpv` | Media player |
+| `imv` | Image viewer |
+| `zathura` | PDF viewer |
+| `newsboat` | RSS reader |
+| `htop` | System monitor |
+| `apps` | Extra applications |
 
-Use [void-installer](https://github.com/mggpie/void-installer) for automated installation with LUKS encryption:
+## Secrets
 
 ```sh
-xbps-install -Syu xbps curl && curl -sL https://mggpie.github.io/void-installer/bootstrap.sh | sh
+# Create secrets file from example
+cp secrets.yml.example secrets.yml
+ansible-vault encrypt secrets.yml
+
+# Edit secrets
+ansible-vault edit secrets.yml
+
+# Run with secrets
+ansible-playbook playbook.yml --ask-vault-pass
 ```
-
-### 2. Apply configurations
-
-After first boot, clone and apply:
-
-```sh
-git clone https://github.com/mggpie/dotfiles.git
-cd dotfiles
-# Apply configs manually or with your preferred method
-```
-
-## Screenshots
-
-*Coming soon*
 
 ## License
 
@@ -71,4 +91,4 @@ cd dotfiles
 
 ## Related
 
-- [void-installer](https://github.com/mggpie/void-installer) - Void Linux installer with LUKS encryption
+- [void-installer](https://github.com/mggpie/void-installer) - Void Linux installer with LUKS

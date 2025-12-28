@@ -1,0 +1,19 @@
+---
+- name: Install htop
+  community.general.xbps:
+    name: htop
+    state: present
+  become: yes
+  tags: [htop]
+
+- name: Create htop config directory
+  file:
+    path: "{{ user_home }}/.config/htop"
+    state: directory
+  tags: [htop]
+
+- name: Deploy htop config
+  copy:
+    src: htop/htoprc
+    dest: "{{ user_home }}/.config/htop/htoprc"
+  tags: [htop]

@@ -1,0 +1,22 @@
+---
+- name: Install waybar
+  community.general.xbps:
+    name: Waybar
+    state: present
+  become: yes
+  tags: [waybar]
+
+- name: Create waybar config directory
+  file:
+    path: "{{ user_home }}/.config/waybar"
+    state: directory
+  tags: [waybar]
+
+- name: Deploy waybar config
+  copy:
+    src: "waybar/{{ item }}"
+    dest: "{{ user_home }}/.config/waybar/{{ item }}"
+  loop:
+    - config
+    - style.css
+  tags: [waybar]

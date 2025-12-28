@@ -1,0 +1,19 @@
+---
+- name: Install lf
+  community.general.xbps:
+    name: lf
+    state: present
+  become: yes
+  tags: [lf]
+
+- name: Create lf config directory
+  file:
+    path: "{{ user_home }}/.config/lf"
+    state: directory
+  tags: [lf]
+
+- name: Deploy lf config
+  copy:
+    src: lf/lfrc
+    dest: "{{ user_home }}/.config/lf/lfrc"
+  tags: [lf]

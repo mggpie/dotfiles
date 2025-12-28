@@ -1,0 +1,19 @@
+---
+- name: Install foot
+  community.general.xbps:
+    name: foot
+    state: present
+  become: yes
+  tags: [foot]
+
+- name: Create foot config directory
+  file:
+    path: "{{ user_home }}/.config/foot"
+    state: directory
+  tags: [foot]
+
+- name: Deploy foot config
+  copy:
+    src: foot/foot.ini
+    dest: "{{ user_home }}/.config/foot/foot.ini"
+  tags: [foot]

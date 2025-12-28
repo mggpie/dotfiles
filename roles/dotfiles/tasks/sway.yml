@@ -1,0 +1,28 @@
+---
+- name: Install sway
+  community.general.xbps:
+    name:
+      - sway
+      - swaylock
+      - swayidle
+      - swaybg
+      - wl-clipboard
+      - grim
+      - slurp
+      - wlsunset
+      - fuzzel
+    state: present
+  become: yes
+  tags: [sway]
+
+- name: Create sway config directory
+  file:
+    path: "{{ user_home }}/.config/sway"
+    state: directory
+  tags: [sway]
+
+- name: Deploy sway config
+  copy:
+    src: sway/config
+    dest: "{{ user_home }}/.config/sway/config"
+  tags: [sway]

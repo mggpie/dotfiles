@@ -1,0 +1,14 @@
+set default-bg "#1e1e2e"
+set default-fg "#cdd6f4"
+
+set statusbar-bg "#313244"
+set statusbar-fg "#cdd6f4"
+
+set inputbar-bg "#313244"
+set inputbar-fg "#cdd6f4"
+
+set recolor true
+set recolor-lightcolor "#1e1e2e"
+set recolor-darkcolor "#cdd6f4"
+
+set selection-clipboard clipboard

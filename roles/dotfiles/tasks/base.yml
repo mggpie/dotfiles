@@ -1,0 +1,126 @@
+---
+# Base system configuration
+
+- name: Install base packages
+  community.general.xbps:
+    name:
+      - chrony
+      - opendoas
+      - fontconfig
+      - cronie
+      - util-linux
+      - elogind
+      - dbus-elogind
+      - polkit-elogind
+      - xdg-user-dirs
+      - xdg-utils
+      - seatd
+    state: present
+  become: yes
+  tags: [base]
+
+- name: Install CPU microcode
+  community.general.xbps:
+    name: "{{ 'intel-ucode' if cpu_vendor == 'intel' else 'linux-firmware-amd' }}"
+    state: present
+  become: yes
+  tags: [base]
+
+- name: Configure doas
+  copy:
+    content: |
+      permit nopass :wheel
+    dest: /etc/doas.conf
+    mode: '0400'
+  become: yes
+  tags: [base]
+
+- name: Set timezone
+  file:
+    src: "/usr/share/zoneinfo/{{ timezone }}"
+    dest: /etc/localtime
+    state: link
+    force: yes
+  become: yes
+  tags: [base]
+
+- name: Configure locale
+  copy:
+    content: "LANG={{ locale }}"
+    dest: /etc/locale.conf
+  become: yes
+  tags: [base]
+
+- name: Enable locale
+  lineinfile:
+    path: /etc/default/libc-locales
+    regexp: "^#?{{ locale }}"
+    line: "{{ locale }} UTF-8"
+  become: yes
+  tags: [base]
+
+- name: Regenerate locales
+  command: xbps-reconfigure -f glibc-locales
+  become: yes
+  changed_when: false
+  tags: [base]
+
+- name: Set keyboard layout
+  copy:
+    content: "KEYMAP={{ keymap }}"
+    dest: /etc/vconsole.conf
+  become: yes
+  tags: [base]
+
+- name: Configure auto-login on TTY1
+  copy:
+    content: |
+      #!/bin/sh
+      exec /sbin/agetty --autologin {{ username }} --noclear tty1 linux
+    dest: /etc/sv/agetty-tty1/run
+    mode: '0755'
+  become: yes
+  tags: [base]
+
+- name: Disable TTY 3-6
+  file:
+    path: "/var/service/agetty-tty{{ item }}"
+    state: absent
+  loop: [3, 4, 5, 6]
+  become: yes
+  tags: [base]
+
+- name: Enable base services
+  file:
+    src: "/etc/sv/{{ item }}"
+    dest: "/var/service/{{ item }}"
+    state: link
+  loop:
+    - chronyd
+    - dbus
+    - elogind
+    - seatd
+    - cronie
+  become: yes
+  tags: [base]
+
+- name: SSH only on VMs
+  file:
+    path: /var/service/sshd
+    state: "{{ 'link' if ansible_virtualization_role == 'guest' else 'absent' }}"
+    src: "{{ '/etc/sv/sshd' if ansible_virtualization_role == 'guest' else omit }}"
+  become: yes
+  tags: [base]
+
+- name: Create XDG directories
+  file:
+    path: "{{ user_home }}/{{ item }}"
+    state: directory
+  loop:
+    - Desktop
+    - Downloads
+    - Documents
+    - Music
+    - Pictures
+    - Videos
+  tags: [base]

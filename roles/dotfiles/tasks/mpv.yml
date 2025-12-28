@@ -1,0 +1,19 @@
+---
+- name: Install mpv
+  community.general.xbps:
+    name: mpv
+    state: present
+  become: yes
+  tags: [mpv]
+
+- name: Create mpv config directory
+  file:
+    path: "{{ user_home }}/.config/mpv"
+    state: directory
+  tags: [mpv]
+
+- name: Deploy mpv config
+  copy:
+    src: mpv/mpv.conf
+    dest: "{{ user_home }}/.config/mpv/mpv.conf"
+  tags: [mpv]

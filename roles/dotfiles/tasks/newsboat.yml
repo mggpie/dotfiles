@@ -1,0 +1,19 @@
+---
+- name: Install newsboat
+  community.general.xbps:
+    name: newsboat
+    state: present
+  become: yes
+  tags: [newsboat]
+
+- name: Create newsboat config directory
+  file:
+    path: "{{ user_home }}/.config/newsboat"
+    state: directory
+  tags: [newsboat]
+
+- name: Deploy newsboat config
+  copy:
+    src: newsboat/config
+    dest: "{{ user_home }}/.config/newsboat/config"
+  tags: [newsboat]

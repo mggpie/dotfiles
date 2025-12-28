@@ -1,0 +1,22 @@
+# lf configuration
+
+set hidden true
+set icons true
+set ignorecase true
+set previewer ~/.config/lf/preview
+set cleaner ~/.config/lf/clean
+
+# Key bindings
+map <enter> open
+map D delete
+map . set hidden!
+
+cmd open ${{
+    case $(file --mime-type "$f" -bL) in
+        text/*|application/json) $EDITOR "$f";;
+        video/*|audio/*) mpv "$f";;
+        image/*) imv "$f";;
+        application/pdf) zathura "$f";;
+        *) xdg-open "$f";;
+    esac
+}}
