@@ -13,4 +13,5 @@
 - import_tasks: newsboat.yml
 - import_tasks: htop.yml
 - import_tasks: wezterm.yml
+- import_tasks: vscode.yml
 - import_tasks: apps.yml
