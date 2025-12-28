@@ -14,4 +14,3 @@
 - import_tasks: htop.yml
 - import_tasks: wezterm.yml
 - import_tasks: apps.yml
-- import_tasks: nix.yml

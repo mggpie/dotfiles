@@ -1,8 +1,0 @@
----
-- name: Install Nix packages
-  shell: |
-    . ~/.nix-profile/etc/profile.d/nix.sh
-    nix-env -iA nixpkgs.vscode nixpkgs.wezterm
-  args:
-    executable: /bin/sh
-  tags: [nix]
