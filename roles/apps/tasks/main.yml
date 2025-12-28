@@ -1,0 +1,18 @@
+---
+# Applications
+
+- name: Install applications
+  community.general.xbps:
+    name:
+      - firefox
+      - mpv
+      - imv
+      - pcmanfm
+      - lf
+      - ncdu
+      - htop
+      - btop
+      - fastfetch
+      - zoxide
+    state: present
+  tags: [apps]

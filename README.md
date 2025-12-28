@@ -1,103 +1,34 @@
-# Void Linux Dotfiles
+# Dotfiles
 
-Minimalistyczny setup Void Linux z Sway, Fish i defaultowymi configami.
+My configuration files for Void Linux with Sway.
 
-## Quick Start
+## Structure
 
-```bash
-# Na VMce testowej
-ssh me@192.168.0.87
-cd ~
-git clone https://github.com/mggpie/dotfiles.git
-cd dotfiles
-
-# Pełna instalacja
-doas ansible-playbook -i hosts playbook.yml
-
-# Tylko Fish + Tide
-doas ansible-playbook -i hosts playbook.yml --tags fish
-
-# Tylko Sway
-doas ansible-playbook -i hosts playbook.yml --tags sway
+```
+roles/
+├── fish/files/config.fish      # Fish shell config
+├── sway/files/config           # Sway window manager
+├── waybar/files/               # Waybar status bar
+│   ├── config
+│   └── style.css
+├── foot/files/foot.ini         # Foot terminal
+├── mako/files/config           # Mako notifications
+├── lf/files/lfrc               # lf file manager
+├── mpv/files/mpv.conf          # mpv media player
+├── imv/files/config            # imv image viewer
+├── zathura/files/zathurarc     # zathura PDF viewer
+├── newsboat/files/config       # newsboat RSS reader
+└── btop/files/btop.conf        # btop system monitor
 ```
 
-## Tagi
+## Installation
 
-**Base System:**
-- `base` - Wszystko base (doas, locale, user, services)
-- `doas` - Tylko doas config
-- `locale` - Język, timezone, keymap
-- `microcode` - Intel/AMD microcode
-- `user` - User creation
-- `xdg` - XDG directories
-- `autologin` - TTY1 autologin
-- `tty` - Disable TTY 3-6
-- `services` - Enable system services
-- `ssh` - SSH config (VM only)
+First install Void Linux with LUKS using [void-installer](https://github.com/mggpie/void-installer):
 
-**Shell:**
-- `shell` - Fish + wszystkie narzędzia
-- `fish` - Tylko Fish
-- `tide` - Tide prompt
+```sh
+curl -sL https://raw.githubusercontent.com/mggpie/void-installer/main/bootstrap | sh
+```
 
-**Wayland:**
-- `wayland` - Wszystko Wayland
-- `sway` - Tylko Sway
-- `waybar` - Tylko Waybar  
-- `foot` - Tylko Foot terminal
-- `graphics` - Sterowniki Intel
-- `autostart` - Sway autostart on TTY1
+## Related
 
-**Audio:**
-- `audio` - PipeWire + Bluetooth
-- `pipewire` - Tylko PipeWire
-- `bluetooth` - Tylko Bluetooth
-
-**Apps:**
-- `apps` - User applications
-- `dev` - Development tools
-- `docker` - Docker + compose
-- `virt` - QEMU + libvirt
-
-**Nix:**
-- `nix` - Nix package manager (VSCode, Wezterm)
-
-**Tweaks:**
-- `tweaks` - System optimizations
-- `power` - TLP power management
-- `updates` - Auto-updates script
-- `cron` - Cron jobs (TRIM, updates, maza)
-- `maza` - Ad-blocking
-
-## Stack
-
-- **OS**: Void Linux glibc + runit
-- **Shell**: Fish + Tide (Rainbow, Transient)
-- **WM**: Sway (default config)
-- **Bar**: Waybar (default config)
-- **Terminal**: Foot (default config)
-- **Audio**: PipeWire + Bluetooth
-- **Apps**: Firefox, mpv, zathura, qutebrowser, micro, lf, imv
-- **Dev**: Python, Lua, Go, Docker, Ansible, Terraform
-- **Nix**: VSCode, Wezterm
-
-## Features
-
-- ✅ Defaultowe configi (działają od razu)
-- ✅ Granularne tagi (fish, sway, waybar osobno)
-- ✅ Auto-login na TTY1
-- ✅ Sway autostart
-- ✅ Intel microcode auto-detect
-- ✅ XDG directories
-- ✅ Maza ad-blocking z auto-update
-- ✅ Tygodniowe auto-updates (sobota 3:00)
-- ✅ Daily TRIM (4:00)
-- ✅ SSH tylko na VM
-- ✅ TTY 3-6 disabled
-
-## TODO
-
-- [ ] Custom dotfiles (po testach)
-- [ ] GRUB performance tweaks
-- [ ] Kanshi display management
-- [ ] Screenshot tool config
+- Installer: [github.com/mggpie/void-installer](https://github.com/mggpie/void-installer)

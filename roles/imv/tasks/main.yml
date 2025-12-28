@@ -1,0 +1,25 @@
+---
+# imv image viewer
+
+- name: Install imv
+  community.general.xbps:
+    name: imv
+    state: present
+  tags: [imv]
+
+- name: Create imv config directory
+  file:
+    path: "{{ user_home }}/.config/imv"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  tags: [imv, config]
+
+- name: Deploy imv config
+  copy:
+    src: config
+    dest: "{{ user_home }}/.config/imv/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    force: no
+  tags: [imv, config]
