@@ -1,0 +1,22 @@
+---
+- name: Install Nix packages
+  shell: |
+    . ~/.nix-profile/etc/profile.d/nix.sh
+    nix-env -iA nixpkgs.vscode nixpkgs.wezterm
+  args:
+    executable: /bin/sh
+  tags: [nix]
+
+- name: Create wezterm config directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/wezterm"
+    state: directory
+    mode: '0755'
+  tags: [nix, wezterm]
+
+- name: Copy wezterm config
+  copy:
+    src: wezterm/wezterm.lua
+    dest: "{{ ansible_env.HOME }}/.config/wezterm/wezterm.lua"
+    mode: '0644'
+  tags: [nix, wezterm]
