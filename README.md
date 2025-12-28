@@ -48,7 +48,7 @@ roles/
 Use [void-installer](https://github.com/mggpie/void-installer) for automated installation with LUKS encryption:
 
 ```sh
-curl -sL https://mggpie.github.io/void-installer/bootstrap.sh | sh
+xbps-install -Syu xbps curl && curl -sL https://mggpie.github.io/void-installer/bootstrap.sh | sh
 ```
 
 ### 2. Apply configurations
