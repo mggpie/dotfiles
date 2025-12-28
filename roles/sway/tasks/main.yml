@@ -1,0 +1,38 @@
+---
+# Sway window manager
+
+- name: Install Sway and related tools
+  community.general.xbps:
+    name:
+      - sway
+      - swaybg
+      - swayidle
+      - swaylock
+      - wl-clipboard
+      - wlr-randr
+      - kanshi
+      - bemenu
+      - grim
+      - slurp
+      - xdg-desktop-portal
+      - xdg-desktop-portal-wlr
+      - xorg-server-xwayland
+    state: present
+  tags: [sway, wayland]
+
+- name: Create Sway config directory
+  file:
+    path: "{{ user_home }}/.config/sway"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  tags: [sway, config]
+
+- name: Deploy Sway config
+  copy:
+    src: config
+    dest: "{{ user_home }}/.config/sway/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    force: no
+  tags: [sway, config]

@@ -1,0 +1,25 @@
+---
+# mpv media player
+
+- name: Install mpv
+  community.general.xbps:
+    name: mpv
+    state: present
+  tags: [mpv]
+
+- name: Create mpv config directory
+  file:
+    path: "{{ user_home }}/.config/mpv"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  tags: [mpv, config]
+
+- name: Deploy mpv config
+  copy:
+    src: mpv.conf
+    dest: "{{ user_home }}/.config/mpv/mpv.conf"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    force: no
+  tags: [mpv, config]
