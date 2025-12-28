@@ -1,4 +1,36 @@
 ---
+- name: Check if Nix is installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.nix-profile/etc/profile.d/nix.sh"
+  register: nix_installed
+  tags: [wezterm]
+
+- name: Install Nix
+  shell: |
+    curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
+  args:
+    executable: /bin/sh
+  when: not nix_installed.stat.exists
+  tags: [wezterm]
+
+- name: Add nixpkgs stable channel
+  shell: |
+    . ~/.nix-profile/etc/profile.d/nix.sh
+    nix-channel --add https://nixos.org/channels/nixpkgs-24.05-darwin nixpkgs
+    nix-channel --update
+  args:
+    executable: /bin/sh
+  when: not nix_installed.stat.exists
+  tags: [wezterm]
+
+- name: Install wezterm via Nix
+  shell: |
+    . ~/.nix-profile/etc/profile.d/nix.sh
+    nix-env -iA nixpkgs.wezterm
+  args:
+    executable: /bin/sh
+  tags: [wezterm]
+
 - name: Create wezterm config directory
   file:
     path: "{{ ansible_env.HOME }}/.config/wezterm"
