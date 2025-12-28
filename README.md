@@ -20,7 +20,7 @@ Minimal, keyboard-driven setup using Wayland-native applications.
 | Image Viewer | imv |
 | PDF Viewer | Zathura |
 | RSS Reader | Newsboat |
-| System Monitor | btop |
+| System Monitor | htop |
 
 ## Structure
 
@@ -38,7 +38,7 @@ roles/
 ├── imv/files/config            # imv image viewer
 ├── zathura/files/zathurarc     # Zathura PDF viewer
 ├── newsboat/files/config       # Newsboat RSS reader
-└── btop/files/btop.conf        # btop system monitor
+└── htop/files/htoprc           # htop system monitor
 ```
 
 ## Installation
