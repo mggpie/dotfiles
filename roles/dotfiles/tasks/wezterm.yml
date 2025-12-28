@@ -1,0 +1,14 @@
+---
+- name: Create wezterm config directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/wezterm"
+    state: directory
+    mode: '0755'
+  tags: [wezterm]
+
+- name: Copy wezterm config
+  copy:
+    src: wezterm/wezterm.lua
+    dest: "{{ ansible_env.HOME }}/.config/wezterm/wezterm.lua"
+    mode: '0644'
+  tags: [wezterm]
