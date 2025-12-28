@@ -1,0 +1,19 @@
+---
+- name: Install imv
+  community.general.xbps:
+    name: imv
+    state: present
+  become: yes
+  tags: [imv]
+
+- name: Create imv config directory
+  file:
+    path: "{{ user_home }}/.config/imv"
+    state: directory
+  tags: [imv]
+
+- name: Deploy imv config
+  copy:
+    src: imv/config
+    dest: "{{ user_home }}/.config/imv/config"
+  tags: [imv]

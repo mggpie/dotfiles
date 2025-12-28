@@ -1,0 +1,19 @@
+---
+- name: Install mako
+  community.general.xbps:
+    name: mako
+    state: present
+  become: yes
+  tags: [mako]
+
+- name: Create mako config directory
+  file:
+    path: "{{ user_home }}/.config/mako"
+    state: directory
+  tags: [mako]
+
+- name: Deploy mako config
+  copy:
+    src: mako/config
+    dest: "{{ user_home }}/.config/mako/config"
+  tags: [mako]

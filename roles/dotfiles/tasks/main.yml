@@ -1,0 +1,15 @@
+---
+- import_tasks: base.yml
+- import_tasks: fish.yml
+- import_tasks: sway.yml
+- import_tasks: waybar.yml
+- import_tasks: foot.yml
+- import_tasks: mako.yml
+- import_tasks: pipewire.yml
+- import_tasks: lf.yml
+- import_tasks: mpv.yml
+- import_tasks: imv.yml
+- import_tasks: zathura.yml
+- import_tasks: newsboat.yml
+- import_tasks: htop.yml
+- import_tasks: apps.yml

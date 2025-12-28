@@ -1,0 +1,21 @@
+---
+- name: Install zathura
+  community.general.xbps:
+    name:
+      - zathura
+      - zathura-pdf-mupdf
+    state: present
+  become: yes
+  tags: [zathura]
+
+- name: Create zathura config directory
+  file:
+    path: "{{ user_home }}/.config/zathura"
+    state: directory
+  tags: [zathura]
+
+- name: Deploy zathura config
+  copy:
+    src: zathura/zathurarc
+    dest: "{{ user_home }}/.config/zathura/zathurarc"
+  tags: [zathura]

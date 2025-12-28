@@ -1,0 +1,12 @@
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+  vars:
+    username: me
+    user_home: "/home/{{ username }}"
+    timezone: Europe/Warsaw
+    locale: en_US.UTF-8
+    keymap: pl
+    user_groups: wheel,audio,video,storage,network,input,optical,kvm,lp
+    cpu_vendor: intel
