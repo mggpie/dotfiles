@@ -15,19 +15,10 @@
       - ansible
       - shellcheck
       - bash
+      - micro
     state: present
   become: true
   tags: [dev]
-
-- name: Install micro editor from nix
-  ansible.builtin.shell: |
-    . ~/.nix-profile/etc/profile.d/nix.sh
-    nix-env -iA nixpkgs.micro
-  args:
-    executable: /bin/bash
-  register: dotfiles_micro_nix
-  changed_when: "'installing' in dotfiles_micro_nix.stdout"
-  tags: [dev, micro]
 
 - name: Add user to docker group
   ansible.builtin.user:
