@@ -3,17 +3,19 @@
   community.general.xbps:
     name: mpv
     state: present
-  become: yes
+  become: true
   tags: [mpv]
 
 - name: Create mpv config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/mpv"
     state: directory
+    mode: "0755"
   tags: [mpv]
 
 - name: Deploy mpv config
-  copy:
+  ansible.builtin.copy:
     src: mpv/mpv.conf
     dest: "{{ user_home }}/.config/mpv/mpv.conf"
+    mode: "0644"
   tags: [mpv]

@@ -3,17 +3,19 @@
   community.general.xbps:
     name: htop
     state: present
-  become: yes
+  become: true
   tags: [htop]
 
 - name: Create htop config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/htop"
     state: directory
+    mode: "0755"
   tags: [htop]
 
 - name: Deploy htop config
-  copy:
+  ansible.builtin.copy:
     src: htop/htoprc
     dest: "{{ user_home }}/.config/htop/htoprc"
+    mode: "0644"
   tags: [htop]

@@ -12,17 +12,19 @@
       - wlsunset
       - fuzzel
     state: present
-  become: yes
+  become: true
   tags: [sway]
 
 - name: Create sway config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/sway"
     state: directory
+    mode: "0755"
   tags: [sway]
 
 - name: Deploy sway config
-  copy:
+  ansible.builtin.copy:
     src: sway/config
     dest: "{{ user_home }}/.config/sway/config"
+    mode: "0644"
   tags: [sway]

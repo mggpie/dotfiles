@@ -3,19 +3,21 @@
   community.general.xbps:
     name: Waybar
     state: present
-  become: yes
+  become: true
   tags: [waybar]
 
 - name: Create waybar config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/waybar"
     state: directory
+    mode: "0755"
   tags: [waybar]
 
 - name: Deploy waybar config
-  copy:
+  ansible.builtin.copy:
     src: "waybar/{{ item }}"
     dest: "{{ user_home }}/.config/waybar/{{ item }}"
+    mode: "0644"
   loop:
     - config
     - style.css

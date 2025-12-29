@@ -5,17 +5,19 @@
       - zathura
       - zathura-pdf-mupdf
     state: present
-  become: yes
+  become: true
   tags: [zathura]
 
 - name: Create zathura config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/zathura"
     state: directory
+    mode: "0755"
   tags: [zathura]
 
 - name: Deploy zathura config
-  copy:
+  ansible.builtin.copy:
     src: zathura/zathurarc
     dest: "{{ user_home }}/.config/zathura/zathurarc"
+    mode: "0644"
   tags: [zathura]

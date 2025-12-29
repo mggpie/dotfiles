@@ -16,82 +16,84 @@
       - xdg-utils
       - seatd
     state: present
-  become: yes
+  become: true
   tags: [base]
 
 - name: Install CPU microcode
   community.general.xbps:
     name: "{{ 'intel-ucode' if cpu_vendor == 'intel' else 'linux-firmware-amd' }}"
     state: present
-  become: yes
+  become: true
   tags: [base]
 
 - name: Configure doas
-  copy:
+  ansible.builtin.copy:
     content: |
       permit nopass :wheel
     dest: /etc/doas.conf
-    mode: '0400'
-  become: yes
+    mode: "0400"
+  become: true
   tags: [base]
 
 - name: Set timezone
-  file:
+  ansible.builtin.file:
     src: "/usr/share/zoneinfo/{{ timezone }}"
     dest: /etc/localtime
     state: link
-    force: yes
-  become: yes
+    force: true
+  become: true
   tags: [base]
 
 - name: Configure locale
-  copy:
+  ansible.builtin.copy:
     content: "LANG={{ locale }}"
     dest: /etc/locale.conf
-  become: yes
+    mode: "0644"
+  become: true
   tags: [base]
 
 - name: Enable locale
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/default/libc-locales
     regexp: "^#?{{ locale }}"
     line: "{{ locale }} UTF-8"
-  become: yes
+  become: true
   tags: [base]
 
 - name: Regenerate locales
-  command: xbps-reconfigure -f glibc-locales
-  become: yes
+  ansible.builtin.command: xbps-reconfigure -f glibc-locales
+  become: true
   changed_when: false
   tags: [base]
 
 - name: Set keyboard layout
-  copy:
+  ansible.builtin.copy:
     content: "KEYMAP={{ keymap }}"
     dest: /etc/vconsole.conf
-  become: yes
+    mode: "0644"
+  become: true
   tags: [base]
 
 - name: Configure auto-login on TTY1
-  copy:
+  ansible.builtin.copy:
     content: |
       #!/bin/sh
       exec /sbin/agetty --autologin {{ username }} --noclear tty1 linux
     dest: /etc/sv/agetty-tty1/run
-    mode: '0755'
-  become: yes
+    mode: "0755"
+  become: true
   tags: [base]
 
 - name: Disable TTY 3-6
-  file:
+  ansible.builtin.file:
     path: "/var/service/agetty-tty{{ item }}"
     state: absent
   loop: [3, 4, 5, 6]
-  become: yes
+  become: true
   tags: [base]
 
 - name: Enable base services
-  file:
+  ansible.builtin.file:
     src: "/etc/sv/{{ item }}"
     dest: "/var/service/{{ item }}"
     state: link
@@ -101,21 +103,23 @@
     - elogind
     - seatd
     - cronie
-  become: yes
+  become: true
   tags: [base]
 
 - name: SSH only on VMs
-  file:
+  ansible.builtin.file:
     path: /var/service/sshd
     state: "{{ 'link' if ansible_virtualization_role == 'guest' else 'absent' }}"
     src: "{{ '/etc/sv/sshd' if ansible_virtualization_role == 'guest' else omit }}"
-  become: yes
+    mode: "{{ '0777' if ansible_virtualization_role == 'guest' else omit }}"
+  become: true
   tags: [base]
 
 - name: Create XDG directories
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/{{ item }}"
     state: directory
+    mode: "0755"
   loop:
     - Desktop
     - Downloads

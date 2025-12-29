@@ -3,17 +3,19 @@
   community.general.xbps:
     name: newsboat
     state: present
-  become: yes
+  become: true
   tags: [newsboat]
 
 - name: Create newsboat config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/newsboat"
     state: directory
+    mode: "0755"
   tags: [newsboat]
 
 - name: Deploy newsboat config
-  copy:
+  ansible.builtin.copy:
     src: newsboat/config
     dest: "{{ user_home }}/.config/newsboat/config"
+    mode: "0644"
   tags: [newsboat]

@@ -1,32 +1,36 @@
 ---
 - name: Check if Nix is installed
-  stat:
+  ansible.builtin.stat:
     path: "{{ ansible_env.HOME }}/.nix-profile/etc/profile.d/nix.sh"
-  register: nix_installed
+  register: dotfiles_nix_installed
   tags: [vscode]
 
 - name: Install Nix
-  shell: |
+  ansible.builtin.shell: |
+    set -o pipefail
     curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
   args:
-    executable: /bin/sh
-  when: not nix_installed.stat.exists
+    executable: /bin/bash
+  when: not dotfiles_nix_installed.stat.exists
+  changed_when: true
   tags: [vscode]
 
 - name: Add nixpkgs stable channel
-  shell: |
+  ansible.builtin.shell: |
     . ~/.nix-profile/etc/profile.d/nix.sh
     nix-channel --add https://nixos.org/channels/nixpkgs-24.05-darwin nixpkgs
     nix-channel --update
   args:
-    executable: /bin/sh
-  when: not nix_installed.stat.exists
+    executable: /bin/bash
+  when: not dotfiles_nix_installed.stat.exists
+  changed_when: true
   tags: [vscode]
 
 - name: Install VSCode via Nix
-  shell: |
+  ansible.builtin.shell: |
     . ~/.nix-profile/etc/profile.d/nix.sh
     nix-env -iA nixpkgs.vscode
   args:
-    executable: /bin/sh
+    executable: /bin/bash
+  changed_when: false
   tags: [vscode]

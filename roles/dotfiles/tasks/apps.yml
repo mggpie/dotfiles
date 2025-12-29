@@ -15,5 +15,5 @@
       - git
       - curl
     state: present
-  become: yes
+  become: true
   tags: [apps]

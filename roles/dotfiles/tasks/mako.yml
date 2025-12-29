@@ -3,17 +3,19 @@
   community.general.xbps:
     name: mako
     state: present
-  become: yes
+  become: true
   tags: [mako]
 
 - name: Create mako config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/mako"
     state: directory
+    mode: "0755"
   tags: [mako]
 
 - name: Deploy mako config
-  copy:
+  ansible.builtin.copy:
     src: mako/config
     dest: "{{ user_home }}/.config/mako/config"
+    mode: "0644"
   tags: [mako]

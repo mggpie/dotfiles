@@ -1,46 +1,50 @@
 ---
 - name: Check if Nix is installed
-  stat:
+  ansible.builtin.stat:
     path: "{{ ansible_env.HOME }}/.nix-profile/etc/profile.d/nix.sh"
-  register: nix_installed
+  register: dotfiles_nix_installed
   tags: [wezterm]
 
 - name: Install Nix
-  shell: |
+  ansible.builtin.shell: |
+    set -o pipefail
     curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
   args:
-    executable: /bin/sh
-  when: not nix_installed.stat.exists
+    executable: /bin/bash
+  when: not dotfiles_nix_installed.stat.exists
+  changed_when: true
   tags: [wezterm]
 
 - name: Add nixpkgs stable channel
-  shell: |
+  ansible.builtin.shell: |
     . ~/.nix-profile/etc/profile.d/nix.sh
     nix-channel --add https://nixos.org/channels/nixpkgs-24.05-darwin nixpkgs
     nix-channel --update
   args:
-    executable: /bin/sh
-  when: not nix_installed.stat.exists
+    executable: /bin/bash
+  when: not dotfiles_nix_installed.stat.exists
+  changed_when: true
   tags: [wezterm]
 
 - name: Install wezterm via Nix
-  shell: |
+  ansible.builtin.shell: |
     . ~/.nix-profile/etc/profile.d/nix.sh
     nix-env -iA nixpkgs.wezterm
   args:
-    executable: /bin/sh
+    executable: /bin/bash
+  changed_when: false
   tags: [wezterm]
 
 - name: Create wezterm config directory
-  file:
+  ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.config/wezterm"
     state: directory
-    mode: '0755'
+    mode: "0755"
   tags: [wezterm]
 
 - name: Copy wezterm config
-  copy:
+  ansible.builtin.copy:
     src: wezterm/wezterm.lua
     dest: "{{ ansible_env.HOME }}/.config/wezterm/wezterm.lua"
-    mode: '0644'
+    mode: "0644"
   tags: [wezterm]

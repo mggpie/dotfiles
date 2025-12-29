@@ -1,17 +1,33 @@
 ---
-- import_tasks: base.yml
-- import_tasks: fish.yml
-- import_tasks: sway.yml
-- import_tasks: waybar.yml
-- import_tasks: foot.yml
-- import_tasks: mako.yml
-- import_tasks: pipewire.yml
-- import_tasks: lf.yml
-- import_tasks: mpv.yml
-- import_tasks: imv.yml
-- import_tasks: zathura.yml
-- import_tasks: newsboat.yml
-- import_tasks: htop.yml
-- import_tasks: wezterm.yml
-- import_tasks: vscode.yml
-- import_tasks: apps.yml
+- name: Import base tasks
+  ansible.builtin.import_tasks: base.yml
+- name: Import fish tasks
+  ansible.builtin.import_tasks: fish.yml
+- name: Import sway tasks
+  ansible.builtin.import_tasks: sway.yml
+- name: Import waybar tasks
+  ansible.builtin.import_tasks: waybar.yml
+- name: Import foot tasks
+  ansible.builtin.import_tasks: foot.yml
+- name: Import mako tasks
+  ansible.builtin.import_tasks: mako.yml
+- name: Import pipewire tasks
+  ansible.builtin.import_tasks: pipewire.yml
+- name: Import lf tasks
+  ansible.builtin.import_tasks: lf.yml
+- name: Import mpv tasks
+  ansible.builtin.import_tasks: mpv.yml
+- name: Import imv tasks
+  ansible.builtin.import_tasks: imv.yml
+- name: Import zathura tasks
+  ansible.builtin.import_tasks: zathura.yml
+- name: Import newsboat tasks
+  ansible.builtin.import_tasks: newsboat.yml
+- name: Import htop tasks
+  ansible.builtin.import_tasks: htop.yml
+- name: Import wezterm tasks
+  ansible.builtin.import_tasks: wezterm.yml
+- name: Import vscode tasks
+  ansible.builtin.import_tasks: vscode.yml
+- name: Import apps tasks
+  ansible.builtin.import_tasks: apps.yml
