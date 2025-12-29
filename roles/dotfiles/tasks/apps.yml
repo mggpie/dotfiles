@@ -2,17 +2,11 @@
 - name: Install applications
   community.general.xbps:
     name:
-      - firefox
-      - pcmanfm
       - ncdu
-      - fastfetch
       - zoxide
       - fzf
-      - ripgrep
       - fd
-      - bat
       - eza
-      - git
       - curl
     state: present
   become: true

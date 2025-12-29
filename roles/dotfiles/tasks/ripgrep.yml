@@ -1,0 +1,14 @@
+---
+- name: Install ripgrep
+  community.general.xbps:
+    name: ripgrep
+    state: present
+  become: true
+  tags: [ripgrep]
+
+- name: Deploy ripgrep config
+  ansible.builtin.copy:
+    src: ripgrep/ripgreprc
+    dest: "{{ user_home }}/.ripgreprc"
+    mode: "0644"
+  tags: [ripgrep]

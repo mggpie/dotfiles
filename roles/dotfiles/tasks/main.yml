@@ -29,5 +29,17 @@
   ansible.builtin.import_tasks: wezterm.yml
 - name: Import vscode tasks
   ansible.builtin.import_tasks: vscode.yml
+- name: Import git tasks
+  ansible.builtin.import_tasks: git.yml
+- name: Import bat tasks
+  ansible.builtin.import_tasks: bat.yml
+- name: Import fastfetch tasks
+  ansible.builtin.import_tasks: fastfetch.yml
+- name: Import ripgrep tasks
+  ansible.builtin.import_tasks: ripgrep.yml
+- name: Import pcmanfm tasks
+  ansible.builtin.import_tasks: pcmanfm.yml
+- name: Import firefox tasks
+  ansible.builtin.import_tasks: firefox.yml
 - name: Import apps tasks
   ansible.builtin.import_tasks: apps.yml

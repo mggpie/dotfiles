@@ -1,0 +1,23 @@
+---
+- name: Install firefox
+  community.general.xbps:
+    name: firefox
+    state: present
+  become: true
+  tags: [firefox]
+
+- name: Get firefox profile directory
+  ansible.builtin.find:
+    paths: "{{ user_home }}/.mozilla/firefox"
+    patterns: "*.default-release"
+    file_type: directory
+  register: dotfiles_firefox_profile
+  tags: [firefox]
+
+- name: Deploy firefox user.js
+  ansible.builtin.copy:
+    src: firefox/user.js
+    dest: "{{ dotfiles_firefox_profile.files[0].path }}/user.js"
+    mode: "0644"
+  when: dotfiles_firefox_profile.files | length > 0
+  tags: [firefox]

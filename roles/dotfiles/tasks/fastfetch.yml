@@ -1,0 +1,21 @@
+---
+- name: Install fastfetch
+  community.general.xbps:
+    name: fastfetch
+    state: present
+  become: true
+  tags: [fastfetch]
+
+- name: Create fastfetch config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/fastfetch"
+    state: directory
+    mode: "0755"
+  tags: [fastfetch]
+
+- name: Deploy fastfetch config
+  ansible.builtin.copy:
+    src: fastfetch/config.jsonc
+    dest: "{{ user_home }}/.config/fastfetch/config.jsonc"
+    mode: "0644"
+  tags: [fastfetch]
