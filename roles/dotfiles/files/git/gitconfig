@@ -1,0 +1,20 @@
+[user]
+    name = mggpie
+    email = 
+
+[init]
+    defaultBranch = main
+
+[core]
+    editor = nvim
+    pager = bat --style=plain
+
+[pull]
+    rebase = true
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --oneline --graph --decorate

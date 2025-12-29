@@ -1,0 +1,21 @@
+---
+- name: Install pcmanfm
+  community.general.xbps:
+    name: pcmanfm
+    state: present
+  become: true
+  tags: [pcmanfm]
+
+- name: Create pcmanfm config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/pcmanfm/default"
+    state: directory
+    mode: "0755"
+  tags: [pcmanfm]
+
+- name: Deploy pcmanfm config
+  ansible.builtin.copy:
+    src: pcmanfm/default
+    dest: "{{ user_home }}/.config/pcmanfm/default/pcmanfm.conf"
+    mode: "0644"
+  tags: [pcmanfm]

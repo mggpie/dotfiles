@@ -1,0 +1,21 @@
+---
+- name: Install bat
+  community.general.xbps:
+    name: bat
+    state: present
+  become: true
+  tags: [bat]
+
+- name: Create bat config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/bat"
+    state: directory
+    mode: "0755"
+  tags: [bat]
+
+- name: Deploy bat config
+  ansible.builtin.copy:
+    src: bat/config
+    dest: "{{ user_home }}/.config/bat/config"
+    mode: "0644"
+  tags: [bat]

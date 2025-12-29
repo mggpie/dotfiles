@@ -1,0 +1,14 @@
+---
+- name: Install git
+  community.general.xbps:
+    name: git
+    state: present
+  become: true
+  tags: [git]
+
+- name: Deploy git config
+  ansible.builtin.copy:
+    src: git/gitconfig
+    dest: "{{ user_home }}/.gitconfig"
+    mode: "0644"
+  tags: [git]
