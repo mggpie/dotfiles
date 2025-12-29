@@ -15,10 +15,10 @@
   changed_when: true
   tags: [wezterm]
 
-- name: Add nixpkgs stable channel
+- name: Add nixpkgs unstable channel
   ansible.builtin.shell: |
     . ~/.nix-profile/etc/profile.d/nix.sh
-    nix-channel --add https://nixos.org/channels/nixpkgs-24.05-darwin nixpkgs
+    nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
     nix-channel --update
   args:
     executable: /bin/bash
