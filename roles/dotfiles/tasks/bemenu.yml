@@ -1,0 +1,7 @@
+---
+- name: Install bemenu
+  community.general.xbps:
+    name: bemenu
+    state: present
+  become: true
+  tags: [bemenu]

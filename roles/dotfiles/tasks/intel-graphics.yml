@@ -1,0 +1,15 @@
+---
+# Intel integrated graphics drivers
+
+- name: Install Intel graphics drivers
+  community.general.xbps:
+    name:
+      - mesa
+      - mesa-dri
+      - mesa-vulkan-intel
+      - intel-video-accel
+      - libva-intel-driver
+      - intel-media-driver
+    state: present
+  become: true
+  tags: [intel-graphics, graphics]

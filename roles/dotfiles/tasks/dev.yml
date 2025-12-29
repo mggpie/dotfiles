@@ -1,0 +1,54 @@
+---
+# Development tools
+
+- name: Install development packages
+  community.general.xbps:
+    name:
+      - python3
+      - python3-pip
+      - lua
+      - luarocks
+      - go
+      - docker
+      - docker-compose
+      - terraform
+      - ansible
+      - shellcheck
+      - bash
+    state: present
+  become: true
+  tags: [dev]
+
+- name: Install micro editor from nix
+  ansible.builtin.shell: |
+    . ~/.nix-profile/etc/profile.d/nix.sh
+    nix-env -iA nixpkgs.micro
+  args:
+    executable: /bin/bash
+  register: dotfiles_micro_nix
+  changed_when: "'installing' in dotfiles_micro_nix.stdout"
+  tags: [dev, micro]
+
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: docker
+    append: true
+  become: true
+  tags: [dev, docker]
+
+- name: Enable docker service
+  ansible.builtin.file:
+    src: /etc/sv/docker
+    dest: /var/service/docker
+    state: link
+  become: true
+  tags: [dev, docker]
+
+- name: Enable containerd service
+  ansible.builtin.file:
+    src: /etc/sv/containerd
+    dest: /var/service/containerd
+    state: link
+  become: true
+  tags: [dev, docker]

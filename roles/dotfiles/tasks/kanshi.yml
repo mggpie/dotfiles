@@ -1,0 +1,21 @@
+---
+- name: Install kanshi
+  community.general.xbps:
+    name: kanshi
+    state: present
+  become: true
+  tags: [kanshi]
+
+- name: Create kanshi config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/kanshi"
+    state: directory
+    mode: "0755"
+  tags: [kanshi]
+
+- name: Deploy kanshi config
+  ansible.builtin.copy:
+    src: kanshi/config
+    dest: "{{ user_home }}/.config/kanshi/config"
+    mode: "0644"
+  tags: [kanshi]
