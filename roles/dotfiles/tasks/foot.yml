@@ -3,17 +3,19 @@
   community.general.xbps:
     name: foot
     state: present
-  become: yes
+  become: true
   tags: [foot]
 
 - name: Create foot config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/foot"
     state: directory
+    mode: "0755"
   tags: [foot]
 
 - name: Deploy foot config
-  copy:
+  ansible.builtin.copy:
     src: foot/foot.ini
     dest: "{{ user_home }}/.config/foot/foot.ini"
+    mode: "0644"
   tags: [foot]

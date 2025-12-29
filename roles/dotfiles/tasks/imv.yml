@@ -3,17 +3,19 @@
   community.general.xbps:
     name: imv
     state: present
-  become: yes
+  become: true
   tags: [imv]
 
 - name: Create imv config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/imv"
     state: directory
+    mode: "0755"
   tags: [imv]
 
 - name: Deploy imv config
-  copy:
+  ansible.builtin.copy:
     src: imv/config
     dest: "{{ user_home }}/.config/imv/config"
+    mode: "0644"
   tags: [imv]

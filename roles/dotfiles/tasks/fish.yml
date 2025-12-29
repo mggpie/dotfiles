@@ -3,24 +3,26 @@
   community.general.xbps:
     name: fish-shell
     state: present
-  become: yes
+  become: true
   tags: [fish]
 
 - name: Set fish as default shell
-  user:
+  ansible.builtin.user:
     name: "{{ username }}"
     shell: /bin/fish
-  become: yes
+  become: true
   tags: [fish]
 
 - name: Create fish config directory
-  file:
+  ansible.builtin.file:
     path: "{{ user_home }}/.config/fish"
     state: directory
+    mode: "0755"
   tags: [fish]
 
 - name: Deploy fish config
-  copy:
+  ansible.builtin.copy:
     src: fish/config.fish
     dest: "{{ user_home }}/.config/fish/config.fish"
+    mode: "0644"
   tags: [fish]
