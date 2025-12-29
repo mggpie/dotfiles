@@ -6,6 +6,14 @@
   become: true
   tags: [tlp]
 
+- name: Deploy TLP config
+  ansible.builtin.copy:
+    src: tlp/tlp.conf
+    dest: /etc/tlp.conf
+    mode: "0644"
+  become: true
+  tags: [tlp]
+
 - name: Enable TLP service
   ansible.builtin.file:
     src: /etc/sv/tlp

@@ -16,6 +16,11 @@
       - shellcheck
       - bash
       - micro
+      - zoxide
+      - fzf
+      - fd
+      - eza
+      - curl
     state: present
   become: true
   tags: [dev]

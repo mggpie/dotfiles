@@ -1,4 +1,5 @@
 ---
+# === System ===
 - name: Import base tasks
   ansible.builtin.import_tasks: base.yml
 - name: Import intel-graphics tasks
@@ -7,24 +8,56 @@
   ansible.builtin.import_tasks: tlp.yml
 - name: Import virtualization tasks
   ansible.builtin.import_tasks: virtualization.yml
+- name: Import fonts tasks
+  ansible.builtin.import_tasks: fonts.yml
+
+# === Development ===
 - name: Import dev tasks
   ansible.builtin.import_tasks: dev.yml
-- name: Import apps tasks
-  ansible.builtin.import_tasks: apps.yml
-- name: Import fish tasks
-  ansible.builtin.import_tasks: fish.yml
+- name: Import git tasks
+  ansible.builtin.import_tasks: git.yml
+- name: Import vscode tasks
+  ansible.builtin.import_tasks: vscode.yml
+
+# === Desktop Environment ===
 - name: Import sway tasks
   ansible.builtin.import_tasks: sway.yml
 - name: Import waybar tasks
   ansible.builtin.import_tasks: waybar.yml
-- name: Import foot tasks
-  ansible.builtin.import_tasks: foot.yml
+- name: Import kanshi tasks
+  ansible.builtin.import_tasks: kanshi.yml
+- name: Import bemenu tasks
+  ansible.builtin.import_tasks: bemenu.yml
 - name: Import mako tasks
   ansible.builtin.import_tasks: mako.yml
 - name: Import pipewire tasks
   ansible.builtin.import_tasks: pipewire.yml
+
+# === Terminal ===
+- name: Import fish tasks
+  ansible.builtin.import_tasks: fish.yml
+- name: Import foot tasks
+  ansible.builtin.import_tasks: foot.yml
+- name: Import wezterm tasks
+  ansible.builtin.import_tasks: wezterm.yml
+
+# === CLI Tools ===
 - name: Import lf tasks
   ansible.builtin.import_tasks: lf.yml
+- name: Import bat tasks
+  ansible.builtin.import_tasks: bat.yml
+- name: Import ripgrep tasks
+  ansible.builtin.import_tasks: ripgrep.yml
+- name: Import fastfetch tasks
+  ansible.builtin.import_tasks: fastfetch.yml
+- name: Import htop tasks
+  ansible.builtin.import_tasks: htop.yml
+
+# === Applications ===
+- name: Import firefox tasks
+  ansible.builtin.import_tasks: firefox.yml
+- name: Import pcmanfm tasks
+  ansible.builtin.import_tasks: pcmanfm.yml
 - name: Import mpv tasks
   ansible.builtin.import_tasks: mpv.yml
 - name: Import imv tasks
@@ -33,27 +66,3 @@
   ansible.builtin.import_tasks: zathura.yml
 - name: Import newsboat tasks
   ansible.builtin.import_tasks: newsboat.yml
-- name: Import htop tasks
-  ansible.builtin.import_tasks: htop.yml
-- name: Import wezterm tasks
-  ansible.builtin.import_tasks: wezterm.yml
-- name: Import vscode tasks
-  ansible.builtin.import_tasks: vscode.yml
-- name: Import git tasks
-  ansible.builtin.import_tasks: git.yml
-- name: Import bat tasks
-  ansible.builtin.import_tasks: bat.yml
-- name: Import fastfetch tasks
-  ansible.builtin.import_tasks: fastfetch.yml
-- name: Import ripgrep tasks
-  ansible.builtin.import_tasks: ripgrep.yml
-- name: Import pcmanfm tasks
-  ansible.builtin.import_tasks: pcmanfm.yml
-- name: Import firefox tasks
-  ansible.builtin.import_tasks: firefox.yml
-- name: Import fonts tasks
-  ansible.builtin.import_tasks: fonts.yml
-- name: Import kanshi tasks
-  ansible.builtin.import_tasks: kanshi.yml
-- name: Import bemenu tasks
-  ansible.builtin.import_tasks: bemenu.yml
