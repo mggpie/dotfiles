@@ -128,3 +128,32 @@
     - Pictures
     - Videos
   tags: [base]
+
+# Nix package manager
+
+- name: Check if Nix is installed
+  ansible.builtin.stat:
+    path: "{{ user_home }}/.nix-profile/etc/profile.d/nix.sh"
+  register: dotfiles_nix_installed
+  tags: [base, nix]
+
+- name: Install Nix
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
+  args:
+    executable: /bin/bash
+  when: not dotfiles_nix_installed.stat.exists
+  changed_when: true
+  tags: [base, nix]
+
+- name: Add nixpkgs unstable channel
+  ansible.builtin.shell: |
+    . ~/.nix-profile/etc/profile.d/nix.sh
+    nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
+    nix-channel --update
+  args:
+    executable: /bin/bash
+  when: not dotfiles_nix_installed.stat.exists
+  changed_when: true
+  tags: [base, nix]
