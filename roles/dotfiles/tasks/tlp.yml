@@ -1,0 +1,15 @@
+---
+- name: Install TLP
+  community.general.xbps:
+    name: tlp
+    state: present
+  become: true
+  tags: [tlp]
+
+- name: Enable TLP service
+  ansible.builtin.file:
+    src: /etc/sv/tlp
+    dest: /var/service/tlp
+    state: link
+  become: true
+  tags: [tlp]

@@ -1,0 +1,26 @@
+---
+# Fonts configuration
+
+- name: Install fonts from xbps
+  community.general.xbps:
+    name:
+      - font-inter
+      - nerd-fonts
+    state: present
+  become: true
+  tags: [fonts]
+
+- name: Install Intel One Mono from nix
+  ansible.builtin.shell: |
+    . ~/.nix-profile/etc/profile.d/nix.sh
+    nix-env -iA nixpkgs.intel-one-mono
+  args:
+    executable: /bin/bash
+  register: dotfiles_fonts_nix
+  changed_when: "'installing' in dotfiles_fonts_nix.stdout"
+  tags: [fonts]
+
+- name: Refresh font cache
+  ansible.builtin.command: fc-cache -fv
+  changed_when: false
+  tags: [fonts]

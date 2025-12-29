@@ -41,5 +41,19 @@
   ansible.builtin.import_tasks: pcmanfm.yml
 - name: Import firefox tasks
   ansible.builtin.import_tasks: firefox.yml
+- name: Import fonts tasks
+  ansible.builtin.import_tasks: fonts.yml
+- name: Import kanshi tasks
+  ansible.builtin.import_tasks: kanshi.yml
+- name: Import bemenu tasks
+  ansible.builtin.import_tasks: bemenu.yml
+- name: Import tlp tasks
+  ansible.builtin.import_tasks: tlp.yml
+- name: Import virtualization tasks
+  ansible.builtin.import_tasks: virtualization.yml
+- name: Import intel-graphics tasks
+  ansible.builtin.import_tasks: intel-graphics.yml
+- name: Import dev tasks
+  ansible.builtin.import_tasks: dev.yml
 - name: Import apps tasks
   ansible.builtin.import_tasks: apps.yml

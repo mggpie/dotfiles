@@ -1,0 +1,47 @@
+---
+# QEMU/KVM virtualization
+
+- name: Install QEMU and KVM packages
+  community.general.xbps:
+    name:
+      - qemu
+      - libvirt
+      - virt-manager
+      - dnsmasq
+      - bridge-utils
+      - iptables
+    state: present
+  become: true
+  tags: [virtualization, qemu, kvm]
+
+- name: Add user to libvirt group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: libvirt
+    append: true
+  become: true
+  tags: [virtualization, qemu, kvm]
+
+- name: Enable libvirtd service
+  ansible.builtin.file:
+    src: /etc/sv/libvirtd
+    dest: /var/service/libvirtd
+    state: link
+  become: true
+  tags: [virtualization, qemu, kvm]
+
+- name: Enable virtlockd service
+  ansible.builtin.file:
+    src: /etc/sv/virtlockd
+    dest: /var/service/virtlockd
+    state: link
+  become: true
+  tags: [virtualization, qemu, kvm]
+
+- name: Enable virtlogd service
+  ansible.builtin.file:
+    src: /etc/sv/virtlogd
+    dest: /var/service/virtlogd
+    state: link
+  become: true
+  tags: [virtualization, qemu, kvm]
