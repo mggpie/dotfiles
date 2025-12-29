@@ -7,3 +7,17 @@
     executable: /bin/bash
   changed_when: false
   tags: [vscode]
+
+- name: Create VSCode config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/Code/User"
+    state: directory
+    mode: "0755"
+  tags: [vscode]
+
+- name: Deploy VSCode settings
+  ansible.builtin.copy:
+    src: vscode/settings.json
+    dest: "{{ user_home }}/.config/Code/User/settings.json"
+    mode: "0644"
+  tags: [vscode]
