@@ -3,10 +3,17 @@ all:
     localhost:
       ansible_connection: local
   vars:
+    # User configuration
     username: me
     user_home: "/home/{{ username }}"
+    
+    # System localization
     timezone: Europe/Warsaw
     locale: en_US.UTF-8
     keymap: pl
+    
+    # User groups for hardware access
     user_groups: wheel,audio,video,storage,network,input,optical,kvm,lp
+    
+    # CPU vendor for microcode (intel or amd)
     cpu_vendor: intel
