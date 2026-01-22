@@ -14,6 +14,9 @@ set -gx XDG_DATA_HOME $HOME/.local/share
 set -gx XDG_CACHE_HOME $HOME/.cache
 set -gx XDG_STATE_HOME $HOME/.local/state
 
+# Wayland
+set -gx MOZ_ENABLE_WAYLAND 1
+
 # Path
 fish_add_path $HOME/.local/bin
 
