@@ -21,6 +21,7 @@
       - fd
       - eza
       - curl
+      - github-cli
     state: present
   become: true
   tags: [dev]
