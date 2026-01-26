@@ -6,10 +6,17 @@
   become: true
   tags: [firefox]
 
+- name: Run firefox once to create profile
+  ansible.builtin.shell: |
+    timeout 5 firefox --headless || true
+  args:
+    creates: "{{ user_home }}/.mozilla/firefox/profiles.ini"
+  tags: [firefox]
+
 - name: Get firefox profile directory
   ansible.builtin.find:
     paths: "{{ user_home }}/.mozilla/firefox"
-    patterns: "*.default-release"
+    patterns: "*.default*"
     file_type: directory
   register: dotfiles_firefox_profile
   tags: [firefox]
@@ -18,6 +25,55 @@
   ansible.builtin.copy:
     src: firefox/user.js
     dest: "{{ dotfiles_firefox_profile.files[0].path }}/user.js"
+    mode: "0644"
+  when: dotfiles_firefox_profile.files | length > 0
+  tags: [firefox]
+
+- name: Create extensions directory
+  ansible.builtin.file:
+    path: "{{ dotfiles_firefox_profile.files[0].path }}/extensions"
+    state: directory
+    mode: "0755"
+  when: dotfiles_firefox_profile.files | length > 0
+  tags: [firefox]
+
+# Extensions - downloaded from addons.mozilla.org
+- name: Install uBlock Origin
+  ansible.builtin.get_url:
+    url: "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/uBlock0@raymondhill.net.xpi"
+    mode: "0644"
+  when: dotfiles_firefox_profile.files | length > 0
+  tags: [firefox]
+
+- name: Install Bitwarden
+  ansible.builtin.get_url:
+    url: "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi"
+    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi"
+    mode: "0644"
+  when: dotfiles_firefox_profile.files | length > 0
+  tags: [firefox]
+
+- name: Install Simple Translate
+  ansible.builtin.get_url:
+    url: "https://addons.mozilla.org/firefox/downloads/latest/simple-translate/latest.xpi"
+    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/simple-translate@sienori.xpi"
+    mode: "0644"
+  when: dotfiles_firefox_profile.files | length > 0
+  tags: [firefox]
+
+- name: Install Gesturefy
+  ansible.builtin.get_url:
+    url: "https://addons.mozilla.org/firefox/downloads/latest/gesturefy/latest.xpi"
+    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/{506e023c-7f2b-40a3-8066-bc5deb40aebe}.xpi"
+    mode: "0644"
+  when: dotfiles_firefox_profile.files | length > 0
+  tags: [firefox]
+
+- name: Install Block Site
+  ansible.builtin.get_url:
+    url: "https://addons.mozilla.org/firefox/downloads/latest/block-website/latest.xpi"
+    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/{54e2eb33-18eb-46ad-a4e4-1329c29f6e17}.xpi"
     mode: "0644"
   when: dotfiles_firefox_profile.files | length > 0
   tags: [firefox]

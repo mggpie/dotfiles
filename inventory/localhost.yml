@@ -17,3 +17,4 @@ all:
     
     # CPU vendor for microcode (intel or amd)
     cpu_vendor: intel
+ 
