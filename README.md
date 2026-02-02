@@ -125,10 +125,27 @@ Features:
 
 ## Secrets
 
+Vault is **only required** for these tags:
+- `ssh` - SSH keys
+- `gh` - GitHub CLI authentication
+- `bluetooth` - Bose QC45 MAC address
+- `pipewire` - Bluetooth device configuration
+
+All other tags work without vault:
+
+```sh
+# Without vault (most tasks)
+ansible-playbook playbook.yml --tags sway,fish,foot
+
+# With vault (ssh, gh, bluetooth, pipewire)
+ansible-playbook playbook.yml --ask-vault-pass
+```
+
+Setup:
+
 ```sh
 cp secrets.yml.example secrets.yml
 ansible-vault encrypt secrets.yml
-ansible-playbook playbook.yml --ask-vault-pass
 ```
 
 ## License
