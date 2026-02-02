@@ -22,6 +22,13 @@
     mode: "0644"
   tags: [qbittorrent]
 
+- name: Deploy qbittorrent dark theme
+  ansible.builtin.copy:
+    src: qbittorrent/mumble-dark.qbtheme
+    dest: "{{ user_home }}/.config/qBittorrent/mumble-dark.qbtheme"
+    mode: "0644"
+  tags: [qbittorrent]
+
 - name: Create qbittorrent search plugins directory
   ansible.builtin.file:
     path: "{{ user_home }}/.local/share/qBittorrent/nova3/engines"

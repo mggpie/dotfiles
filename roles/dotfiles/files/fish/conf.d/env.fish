@@ -23,7 +23,7 @@ set -gx XDG_STATE_HOME $HOME/.local/state
 set -gx MOZ_ENABLE_WAYLAND 1                   # Firefox/Mozilla native Wayland
 set -gx ELECTRON_OZONE_PLATFORM_HINT auto      # Electron Wayland auto-detect
 set -gx QT_QPA_PLATFORM wayland                # Qt Wayland (breaks old Qt)
-set -gx QT_QPA_PLATFORMTHEME qt6ct             # Qt6 theme config tool
+set -gx QT_QPA_PLATFORMTHEME gtk3              # Qt uses GTK3 theme
 set -gx QT_WAYLAND_DISABLE_WINDOWDECORATION 1  # Sway handles decorations
 set -gx SDL_VIDEODRIVER wayland                # SDL2 Wayland (fallback X11)
 set -gx ECORE_EVAS_ENGINE wayland-egl          # Enlightenment Wayland
