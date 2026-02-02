@@ -26,6 +26,8 @@
   ansible.builtin.import_tasks: vscode.yml
 
 # === Desktop Environment ===
+- name: Import theme tasks
+  ansible.builtin.import_tasks: theme.yml
 - name: Import sway tasks
   ansible.builtin.import_tasks: sway.yml
 - name: Import waybar tasks

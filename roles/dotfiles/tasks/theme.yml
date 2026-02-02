@@ -1,0 +1,176 @@
+---
+# System theming - GTK, Qt, cursors, icons
+
+- name: Install theme packages
+  community.general.xbps:
+    name:
+      - adwaita-qt        # Qt5 theme matching Adwaita
+      - adwaita-qt6       # Qt6 theme matching Adwaita
+      - qt5ct             # Qt5 configuration tool
+      - qt6ct             # Qt6 configuration tool
+      - papirus-icon-theme # Icon theme
+    state: present
+  become: true
+  tags: [theme]
+
+- name: Install capitaine-cursors via Nix
+  ansible.builtin.command:
+    cmd: nix --extra-experimental-features 'nix-command flakes' profile install nixpkgs#capitaine-cursors
+  register: nix_install_result
+  changed_when: "'already installed' not in nix_install_result.stderr"
+  failed_when: nix_install_result.rc != 0 and 'already installed' not in nix_install_result.stderr
+  tags: [theme]
+
+# GTK 3 configuration
+- name: Create GTK-3.0 config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/gtk-3.0"
+    state: directory
+    mode: "0755"
+  tags: [theme]
+
+- name: Configure GTK-3.0 dark theme
+  ansible.builtin.copy:
+    content: |
+      [Settings]
+      gtk-application-prefer-dark-theme=1
+      gtk-theme-name=Adwaita-dark
+      gtk-icon-theme-name=Papirus-Dark
+      gtk-font-name=Inter 10
+      gtk-cursor-theme-name=capitaine-cursors
+      gtk-cursor-theme-size=24
+      gtk-enable-animations=1
+      gtk-decoration-layout=close,minimize,maximize:menu
+    dest: "{{ user_home }}/.config/gtk-3.0/settings.ini"
+    mode: "0644"
+  tags: [theme]
+
+# GTK 4 configuration
+- name: Create GTK-4.0 config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/gtk-4.0"
+    state: directory
+    mode: "0755"
+  tags: [theme]
+
+- name: Configure GTK-4.0 dark theme
+  ansible.builtin.copy:
+    content: |
+      [Settings]
+      gtk-application-prefer-dark-theme=1
+      gtk-theme-name=Adwaita-dark
+      gtk-icon-theme-name=Papirus-Dark
+      gtk-font-name=Inter 10
+      gtk-cursor-theme-name=capitaine-cursors
+      gtk-cursor-theme-size=24
+    dest: "{{ user_home }}/.config/gtk-4.0/settings.ini"
+    mode: "0644"
+  tags: [theme]
+
+# Qt5 configuration
+- name: Create qt5ct config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/qt5ct"
+    state: directory
+    mode: "0755"
+  tags: [theme]
+
+- name: Configure qt5ct
+  ansible.builtin.copy:
+    content: |
+      [Appearance]
+      color_scheme_path=/usr/share/qt5ct/colors/darker.conf
+      custom_palette=false
+      icon_theme=Papirus-Dark
+      standard_dialogs=default
+      style=Adwaita-Dark
+
+      [Fonts]
+      fixed=@Variant(\0\0\0@\0\0\0\x1a\0I\0n\0t\0\x65\0l\0 \0O\0n\0\x65\0 \0M\0o\0n\0o@\"\0\0\0\0\0\0\xff\xff\xff\xff\x5\x1\0\x32\x10)
+      general=@Variant(\0\0\0@\0\0\0\f\0I\0n\0t\0\x65\0r@\"\0\0\0\0\0\0\xff\xff\xff\xff\x5\x1\0\x32\x10)
+
+      [Interface]
+      activate_item_on_single_click=1
+      buttonbox_layout=0
+      cursor_flash_time=1000
+      dialog_buttons_have_icons=1
+      double_click_interval=400
+      gui_effects=@Invalid()
+      keyboard_scheme=2
+      menus_have_icons=true
+      show_shortcuts_in_context_menus=true
+      stylesheets=@Invalid()
+      toolbutton_style=4
+      underline_shortcut=1
+      wheel_scroll_lines=3
+
+      [SettingsWindow]
+      geometry=@ByteArray()
+    dest: "{{ user_home }}/.config/qt5ct/qt5ct.conf"
+    mode: "0644"
+  tags: [theme]
+
+# Qt6 configuration
+- name: Create qt6ct config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/qt6ct"
+    state: directory
+    mode: "0755"
+  tags: [theme]
+
+- name: Configure qt6ct
+  ansible.builtin.copy:
+    content: |
+      [Appearance]
+      color_scheme_path=/usr/share/qt6ct/colors/darker.conf
+      custom_palette=false
+      icon_theme=Papirus-Dark
+      standard_dialogs=default
+      style=Adwaita-Dark
+
+      [Fonts]
+      fixed=@Variant(\0\0\0@\0\0\0\x1a\0I\0n\0t\0\x65\0l\0 \0O\0n\0\x65\0 \0M\0o\0n\0o@\"\0\0\0\0\0\0\xff\xff\xff\xff\x5\x1\0\x32\x10)
+      general=@Variant(\0\0\0@\0\0\0\f\0I\0n\0t\0\x65\0r@\"\0\0\0\0\0\0\xff\xff\xff\xff\x5\x1\0\x32\x10)
+
+      [Interface]
+      activate_item_on_single_click=1
+      buttonbox_layout=0
+      cursor_flash_time=1000
+      dialog_buttons_have_icons=1
+      double_click_interval=400
+      gui_effects=@Invalid()
+      keyboard_scheme=2
+      menus_have_icons=true
+      show_shortcuts_in_context_menus=true
+      stylesheets=@Invalid()
+      toolbutton_style=4
+      underline_shortcut=1
+      wheel_scroll_lines=3
+
+      [SettingsWindow]
+      geometry=@ByteArray()
+    dest: "{{ user_home }}/.config/qt6ct/qt6ct.conf"
+    mode: "0644"
+  tags: [theme]
+
+# Set default cursor globally
+- name: Set default X11 cursor
+  ansible.builtin.copy:
+    content: |
+      Xcursor.theme: capitaine-cursors
+      Xcursor.size: 24
+    dest: "{{ user_home }}/.Xresources"
+    mode: "0644"
+  tags: [theme]
+
+- name: Configure GTK 2.0 dark theme
+  ansible.builtin.copy:
+    content: |
+      gtk-theme-name="Adwaita-dark"
+      gtk-icon-theme-name="Papirus-Dark"
+      gtk-font-name="Inter 10"
+      gtk-cursor-theme-name="capitaine-cursors"
+      gtk-cursor-theme-size=24
+    dest: "{{ user_home }}/.gtkrc-2.0"
+    mode: "0644"
+  tags: [theme]
