@@ -23,7 +23,7 @@ set -gx XDG_STATE_HOME $HOME/.local/state
 set -gx MOZ_ENABLE_WAYLAND 1                   # Firefox/Mozilla native Wayland
 set -gx ELECTRON_OZONE_PLATFORM_HINT auto      # Electron Wayland auto-detect
 set -gx QT_QPA_PLATFORM wayland                # Qt Wayland (breaks old Qt)
-set -gx QT_QPA_PLATFORMTHEME qt5ct             # Qt theme config tool
+set -gx QT_QPA_PLATFORMTHEME qt6ct             # Qt6 theme config tool
 set -gx QT_WAYLAND_DISABLE_WINDOWDECORATION 1  # Sway handles decorations
 set -gx SDL_VIDEODRIVER wayland                # SDL2 Wayland (fallback X11)
 set -gx ECORE_EVAS_ENGINE wayland-egl          # Enlightenment Wayland
@@ -31,6 +31,7 @@ set -gx ELM_ENGINE wayland-egl                 # Elementary Wayland
 set -gx _JAVA_AWT_WM_NONREPARENTING 1          # Fix Java tiling WM blanks
 set -gx XCURSOR_THEME capitaine-cursors
 set -gx XCURSOR_SIZE 24
+set -gx XCURSOR_PATH $HOME/.nix-profile/share/icons:$HOME/.local/share/icons:/usr/share/icons
 #set -gx QT_WAYLAND_FORCE_DPI physical          # Physical DPI (breaks scaling)
 #set -gx JAVA_HOME /usr/lib/jvm/default         # Java path (if installed)
 #set -gx GTK_USE_PORTAL 1                       # xdg-portal (0=breaks Flatpak)

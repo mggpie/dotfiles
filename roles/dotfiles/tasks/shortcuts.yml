@@ -149,3 +149,12 @@
     dest: "{{ user_home }}/.local/bin/screenshot"
     mode: "0755"
   tags: [shortcuts]
+
+- name: Create fixaudio shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec fish -c fixaudio
+    dest: "{{ user_home }}/.local/bin/fixaudio"
+    mode: "0755"
+  tags: [shortcuts]
