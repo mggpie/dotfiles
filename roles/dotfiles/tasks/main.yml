@@ -18,6 +18,8 @@
   ansible.builtin.import_tasks: git.yml
 - name: Import gh tasks
   ansible.builtin.import_tasks: gh.yml
+- name: Import ssh tasks
+  ansible.builtin.import_tasks: ssh.yml
 - name: Import vscode tasks
   ansible.builtin.import_tasks: vscode.yml
 

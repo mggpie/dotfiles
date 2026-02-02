@@ -1,0 +1,17 @@
+Host *
+    # Security
+    IdentitiesOnly yes
+    
+    # Performance
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h-%p
+    ControlPersist 600
+    
+    # Key settings
+    AddKeysToAgent yes
+    
+    # GitHub
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519

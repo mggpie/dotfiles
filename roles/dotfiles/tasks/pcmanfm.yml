@@ -20,6 +20,22 @@
     mode: "0644"
   tags: [pcmanfm]
 
+- name: Create libfm config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/libfm"
+    state: directory
+    mode: "0755"
+  tags: [pcmanfm]
+
+- name: Deploy libfm config
+  ansible.builtin.copy:
+    content: |
+      [config]
+      terminal=foot
+    dest: "{{ user_home }}/.config/libfm/libfm.conf"
+    mode: "0644"
+  tags: [pcmanfm]
+
 - name: Create file-manager actions directory
   ansible.builtin.file:
     path: "{{ user_home }}/.local/share/file-manager/actions"

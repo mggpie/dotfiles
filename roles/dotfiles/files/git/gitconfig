@@ -1,12 +1,12 @@
 [user]
     name = mggpie
-    email = 
+    email = mggpie@users.noreply.github.com
 
 [init]
     defaultBranch = main
 
 [core]
-    editor = nvim
+    editor = micro
     pager = bat --style=plain
 
 [pull]

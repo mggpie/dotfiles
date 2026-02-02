@@ -72,6 +72,7 @@ dotfiles/
 | `dev` | Python, Lua, Go, Docker, Terraform, Ansible |
 | `git` | Git configuration |
 | `gh` | GitHub CLI |
+| `ssh` | SSH configuration |
 | `vscode` | Visual Studio Code |
 
 ### Desktop Environment

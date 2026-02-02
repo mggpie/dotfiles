@@ -7,6 +7,7 @@ set -g fish_greeting
 set -gx EDITOR micro
 set -gx VISUAL micro
 set -gx PAGER less
+set -gx TERMINAL foot
 
 # XDG
 set -gx XDG_CONFIG_HOME $HOME/.config
