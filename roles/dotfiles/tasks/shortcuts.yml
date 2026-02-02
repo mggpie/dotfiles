@@ -118,7 +118,7 @@
   ansible.builtin.copy:
     content: |
       #!/bin/sh
-      exec telegram-desktop "$@"
+      exec Telegram "$@"
     dest: "{{ user_home }}/.local/bin/telegram"
     mode: "0755"
   tags: [shortcuts]
@@ -127,7 +127,7 @@
   ansible.builtin.copy:
     content: |
       #!/bin/sh
-      exec telegram-desktop "$@"
+      exec Telegram "$@"
     dest: "{{ user_home }}/.local/bin/tg"
     mode: "0755"
   tags: [shortcuts]
