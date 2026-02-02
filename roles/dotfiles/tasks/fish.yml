@@ -26,3 +26,17 @@
     dest: "{{ user_home }}/.config/fish/config.fish"
     mode: "0644"
   tags: [fish]
+
+- name: Deploy fish functions
+  ansible.builtin.copy:
+    src: fish/functions/
+    dest: "{{ user_home }}/.config/fish/functions/"
+    mode: "0644"
+  tags: [fish]
+
+- name: Deploy fish conf.d
+  ansible.builtin.copy:
+    src: fish/conf.d/
+    dest: "{{ user_home }}/.config/fish/conf.d/"
+    mode: "0644"
+  tags: [fish]
