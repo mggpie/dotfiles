@@ -35,7 +35,7 @@
     content: |
       # Bluetooth configuration for WirePlumber 0.5+
       # AAC codec preference and Bose QC45 settings
-      
+
       monitor.bluez.properties = {
         bluez5.enable-sbc-xq = true
         bluez5.enable-msbc = true
@@ -44,7 +44,7 @@
         bluez5.codecs = [ aac sbc_xq sbc ldac aptx aptx_hd ]
         bluez5.auto-connect = [ hfp_hf hsp_hs a2dp_sink ]
       }
-      
+
       # Bose QC45 specific rule - force A2DP sink profile
       monitor.bluez.rules = [
         {
@@ -69,7 +69,7 @@
     content: |
       # Stream switching policy for WirePlumber 0.5+
       # Move existing streams when default sink changes
-      
+
       wireplumber.settings = {
         linking.allow-moving-streams = true
         linking.follow-default-target = true

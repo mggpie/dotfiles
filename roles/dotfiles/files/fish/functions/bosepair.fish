@@ -2,12 +2,12 @@
 # NOTE: Bose QC45 require that THEY initiate the connection
 function bosepair
     set -l BOSE_MAC "$BOSE_QC45_MAC"
-    
+
     if test -z "$BOSE_MAC"
         echo "Error: BOSE_QC45_MAC not set in environment"
         return 1
     end
-    
+
     echo "🎧 Bose QC45 Pairing"
     echo ""
     echo "1. Put headphones in pairing mode (hold Bluetooth button ~3s)"
@@ -16,26 +16,26 @@ function bosepair
     echo "   (the headphones must initiate the connection)"
     echo ""
     read -P "Press Enter when ready..."
-    
+
     # Power on Bluetooth and make discoverable
     echo ""
     echo "Making computer discoverable..."
     bluetoothctl power on
     bluetoothctl discoverable on
     bluetoothctl pairable on
-    
+
     # Remove old pairing if exists
     bluetoothctl remove $BOSE_MAC 2>/dev/null
-    
+
     echo ""
     echo "⏳ Waiting for headphones to connect (press BT button on headphones now)..."
     echo "   Timeout: 30 seconds"
     echo ""
-    
+
     # Wait for connection from headphones
     set -l timeout 30
     set -l connected false
-    
+
     for i in (seq $timeout)
         if bluetoothctl info $BOSE_MAC 2>/dev/null | grep -q "Connected: yes"
             set connected true
@@ -43,9 +43,9 @@ function bosepair
         end
         sleep 1
     end
-    
+
     bluetoothctl discoverable off
-    
+
     if test "$connected" = "true"
         # Trust for future connections
         bluetoothctl trust $BOSE_MAC

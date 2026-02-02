@@ -31,27 +31,27 @@
       #!/bin/sh
       # Bose QC45 auto-connect script
       # Runs periodically to check if headphones are available
-      
+
       BOSE_MAC="{{ bose_mac }}"
       LOG_FILE="$HOME/.local/share/bose-autoconnect.log"
-      
+
       # Check if bluetoothctl is available
       command -v bluetoothctl >/dev/null 2>&1 || exit 1
-      
+
       # Check if Bluetooth is powered on
       if ! bluetoothctl show | grep -q "Powered: yes"; then
           exit 0
       fi
-      
+
       # Check if already connected
       if bluetoothctl info "$BOSE_MAC" 2>/dev/null | grep -q "Connected: yes"; then
           exit 0
       fi
-      
+
       # Check if device is available (scan for a short time)
       bluetoothctl --timeout 3 scan on >/dev/null 2>&1 &
       sleep 3
-      
+
       # Try to connect if device is found
       if bluetoothctl devices | grep -q "$BOSE_MAC"; then
           echo "$(date): Attempting to connect to Bose QC45" >> "$LOG_FILE"

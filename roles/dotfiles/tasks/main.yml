@@ -64,10 +64,14 @@
 # === CLI Tools ===
 - name: Import fastfetch tasks
   ansible.builtin.import_tasks: fastfetch.yml
+- name: Import htop tasks
+  ansible.builtin.import_tasks: htop.yml
 - name: Import micro tasks
   ansible.builtin.import_tasks: micro.yml
 - name: Import lf tasks
   ansible.builtin.import_tasks: lf.yml
+- name: Import newsboat tasks
+  ansible.builtin.import_tasks: newsboat.yml
 
 # === Applications ===
 - name: Import firefox tasks
@@ -82,8 +86,6 @@
   ansible.builtin.import_tasks: imv.yml
 - name: Import zathura tasks
   ansible.builtin.import_tasks: zathura.yml
-- name: Import newsboat tasks
-  ansible.builtin.import_tasks: newsboat.yml
 - name: Import telegram tasks
   ansible.builtin.import_tasks: telegram.yml
 - name: Import qbittorrent tasks

@@ -2,12 +2,12 @@
 function bosedisconnect
     set -l BOSE_MAC "$BOSE_QC45_MAC"
     set -l BUILTIN_SINK "alsa_output.pci-0000_00_1f.3.hdmi-stereo"
-    
+
     if test -z "$BOSE_MAC"
         echo "Error: BOSE_QC45_MAC not set in environment"
         return 1
     end
-    
+
     # Switch audio to built-in first (before disconnect)
     echo "🔊 Switching audio to built-in..."
     if pactl set-default-sink $BUILTIN_SINK 2>/dev/null
@@ -20,15 +20,15 @@ function bosedisconnect
             echo "✅ Audio output: $fallback_sink"
         end
     end
-    
+
     # Check if connected
     if not bluetoothctl info $BOSE_MAC 2>/dev/null | grep -q "Connected: yes"
         echo "ℹ️  Bose QC45 is not connected"
         return 0
     end
-    
+
     echo "🎧 Disconnecting Bose QC45..."
-    
+
     if bluetoothctl disconnect $BOSE_MAC
         echo "✅ Disconnected"
         notify-send -i audio-speakers "Bose QC45" "Disconnected - using built-in audio"

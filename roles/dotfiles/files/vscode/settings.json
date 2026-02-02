@@ -11,14 +11,14 @@
     "editor.smoothScrolling": true,
     "editor.bracketPairColorization.enabled": true,
 
-    "workbench.colorTheme": "Default Dark+",
+    "workbench.colorTheme": "Monokai Pro Light",
     "workbench.startupEditor": "none",
     "workbench.activityBar.location": "top",
 
     "window.titleBarStyle": "custom",
     "window.zoomLevel": 0,
 
-    "terminal.integrated.fontFamily": "'Intel One Mono', monospace",
+    "terminal.integrated.fontFamily": "'IntoneMono Nerd Font Mono', 'Intel One Mono', monospace",
     "terminal.integrated.fontSize": 13,
 
     "files.autoSave": "afterDelay",
