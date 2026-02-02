@@ -1,4 +1,5 @@
 ---
+
 # Base system configuration
 
 - name: Bootstrap - install doas
