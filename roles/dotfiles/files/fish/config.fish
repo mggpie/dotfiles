@@ -16,6 +16,7 @@ set -gx XDG_STATE_HOME $HOME/.local/state
 
 # Wayland
 set -gx MOZ_ENABLE_WAYLAND 1
+set -gx ELECTRON_OZONE_PLATFORM_HINT auto
 
 # Path
 fish_add_path $HOME/.local/bin

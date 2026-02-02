@@ -13,14 +13,13 @@ xbps-install -Syu xbps curl && curl -sL https://mggpie.github.io/void-installer/
 # After reboot, clone and run
 git clone https://github.com/mggpie/dotfiles.git
 cd dotfiles
-doas xbps-install -S ansible
-ansible-playbook playbook.yml --ask-become-pass
+./bootstrap.sh
 ```
 
 ## Usage
 
 ```sh
-# Full setup (first run requires root password)
+# Re-run playbook
 ansible-playbook playbook.yml --ask-become-pass
 
 # Only specific tags

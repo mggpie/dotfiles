@@ -80,9 +80,9 @@
 - name: SSH only on VMs
   ansible.builtin.file:
     path: /var/service/sshd
-    state: "{{ 'link' if ansible_virtualization_role == 'guest' else 'absent' }}"
-    src: "{{ '/etc/sv/sshd' if ansible_virtualization_role == 'guest' else omit }}"
-    mode: "{{ '0777' if ansible_virtualization_role == 'guest' else omit }}"
+    state: "{{ 'link' if ansible_facts.virtualization_role == 'guest' else 'absent' }}"
+    src: "{{ '/etc/sv/sshd' if ansible_facts.virtualization_role == 'guest' else omit }}"
+    mode: "{{ '0777' if ansible_facts.virtualization_role == 'guest' else omit }}"
   become: true
   tags: [base]
 

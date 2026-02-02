@@ -7,6 +7,7 @@ set $menu fuzzel
 
 ### Output
 output * bg #1e1e2e solid_color
+output DP-1 scale 0.9
 
 ### Input
 input type:keyboard {
@@ -81,6 +82,10 @@ bindsym Print exec grim -g "$(slurp)" - | wl-copy
 default_border pixel 2
 gaps inner 5
 font pango:monospace 10
+
+# Fix VS Code with fractional scaling
+for_window [class="Code"] inhibit_idle fullscreen
+for_window [app_id="code"] inhibit_idle fullscreen
 
 client.focused          #89b4fa #89b4fa #1e1e2e #89b4fa
 client.unfocused        #313244 #313244 #cdd6f4 #313244
