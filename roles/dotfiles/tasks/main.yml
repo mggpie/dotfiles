@@ -10,6 +10,8 @@
   ansible.builtin.import_tasks: virtualization.yml
 - name: Import fonts tasks
   ansible.builtin.import_tasks: fonts.yml
+- name: Import maza tasks
+  ansible.builtin.import_tasks: maza.yml
 
 # === Development ===
 - name: Import dev tasks
@@ -40,6 +42,8 @@
 # === Terminal ===
 - name: Import fish tasks
   ansible.builtin.import_tasks: fish.yml
+- name: Import tide tasks
+  ansible.builtin.import_tasks: tide.yml
 - name: Import foot tasks
   ansible.builtin.import_tasks: foot.yml
 - name: Import wezterm tasks

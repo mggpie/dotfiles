@@ -97,6 +97,22 @@ dotfiles/
 |-----|-------------|
 | `micro` | Terminal text editor |
 
+## System Maintenance
+
+Automated weekly maintenance with `upall` function (runs automatically via cron on boot if ≥7 days passed):
+
+```sh
+upall           # Manual run: SSD trim, package updates, cache cleanup
+upall status    # Check last run status
+upall logs      # View full log
+```
+
+Features:
+- 9-step maintenance: fstrim, xbps updates, kernel cleanup, maza ad-blocking, Nix updates, trash cleanup
+- Automatic weekly execution via `@reboot` cron job
+- Error tracking with file report in `~/Downloads/upall-error.txt`
+- Log saved to `~/.local/state/upall.log`
+
 ### Applications
 | Tag | Description |
 |-----|-------------|

@@ -40,3 +40,11 @@
     dest: "{{ user_home }}/.config/fish/conf.d/"
     mode: "0644"
   tags: [fish]
+
+- name: Add upall-check to user crontab
+  ansible.builtin.cron:
+    name: "Auto-run upall weekly"
+    special_time: reboot
+    job: "/bin/fish -c upall-check"
+    user: "{{ username }}"
+  tags: [fish]
