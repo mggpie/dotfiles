@@ -1,5 +1,6 @@
 {
     "autosu": true,
+    "clipboard": "external",
     "colorscheme": "gotham",
     "eofnewline": false,
     "hlsearch": true,

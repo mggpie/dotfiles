@@ -7,7 +7,7 @@
       - alsa-pipewire
       - libspa-bluetooth
       - fdk-aac  # AAC codec for Bluetooth
-      - pavucontrol-qt  # Qt GUI for audio control
+      - pavucontrol  # GTK GUI for audio control (works via pipewire-pulse)
     state: present
   become: true
   tags: [pipewire]
@@ -54,7 +54,7 @@
           ["device.intended-roles"] = "Multimedia",
         },
       }
-      
+
       table.insert(alsa_monitor.rules, rule)
     dest: "{{ user_home }}/.config/wireplumber/main.lua.d/50-alsa-config.lua"
     mode: "0644"

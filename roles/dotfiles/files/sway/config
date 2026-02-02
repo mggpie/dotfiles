@@ -28,6 +28,9 @@ bindsym $mod+q kill
 bindsym $mod+Shift+r reload
 bindsym $mod+Shift+e exec swaymsg exit
 
+# Screenshot - select area, save to Pictures and copy to clipboard
+bindsym Print exec fish -c screenshot
+
 # Focus
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -98,4 +101,6 @@ client.focused_inactive #313244 #313244 #cdd6f4 #313244
 exec waybar
 exec mako
 exec pipewire
+exec wireplumber
+exec pipewire-pulse
 exec wlsunset -l 52.2 -L 21.0
