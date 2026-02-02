@@ -46,3 +46,11 @@ user_pref("browser.urlbar.suggest.trending", false);
 user_pref("browser.tabs.warnOnOpen", false);
 user_pref("browser.warnOnQuitShortcut", false);
 user_pref("browser.bookmarks.defaultLocation", "toolbar_____");
+
+// Mouse
+user_pref("general.autoScroll", true);
+
+// Extensions - allow sideloaded but keep user control
+user_pref("extensions.autoDisableScopes", 14);
+user_pref("extensions.enabledScopes", 15);
+user_pref("xpinstall.signatures.required", false);

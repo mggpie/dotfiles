@@ -6,74 +6,196 @@
   become: true
   tags: [firefox]
 
-- name: Run firefox once to create profile
-  ansible.builtin.shell: |
-    timeout 5 firefox --headless || true
-  args:
-    creates: "{{ user_home }}/.mozilla/firefox/profiles.ini"
+- name: Create firefox profile directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.mozilla/firefox"
+    state: directory
+    mode: "0755"
   tags: [firefox]
 
-- name: Get firefox profile directory
-  ansible.builtin.find:
-    paths: "{{ user_home }}/.mozilla/firefox"
-    patterns: "*.default*"
-    file_type: directory
-  register: dotfiles_firefox_profile
+- name: Run firefox once to create default profile
+  ansible.builtin.shell: |
+    timeout 10 firefox --headless 2>&1 || true
+  args:
+    creates: "{{ user_home }}/.mozilla/firefox/installs.ini"
+  tags: [firefox]
+
+- name: Get default firefox profile from installs.ini
+  ansible.builtin.shell: |
+    grep "^Default=" "{{ user_home }}/.mozilla/firefox/installs.ini" | cut -d'=' -f2
+  register: dotfiles_firefox_profile_name
+  changed_when: false
+  failed_when: false
+  tags: [firefox]
+
+- name: Set firefox profile path
+  ansible.builtin.set_fact:
+    dotfiles_firefox_profile_path: "{{ user_home }}/.mozilla/firefox/{{ dotfiles_firefox_profile_name.stdout }}"
+  when: dotfiles_firefox_profile_name.stdout != ""
   tags: [firefox]
 
 - name: Deploy firefox user.js
   ansible.builtin.copy:
     src: firefox/user.js
-    dest: "{{ dotfiles_firefox_profile.files[0].path }}/user.js"
+    dest: "{{ dotfiles_firefox_profile_path }}/user.js"
     mode: "0644"
-  when: dotfiles_firefox_profile.files | length > 0
+  when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
 - name: Create extensions directory
   ansible.builtin.file:
-    path: "{{ dotfiles_firefox_profile.files[0].path }}/extensions"
+    path: "{{ dotfiles_firefox_profile_path }}/extensions"
     state: directory
     mode: "0755"
-  when: dotfiles_firefox_profile.files | length > 0
+  when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
 # Extensions - downloaded from addons.mozilla.org
 - name: Install uBlock Origin
   ansible.builtin.get_url:
     url: "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
-    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/uBlock0@raymondhill.net.xpi"
+    dest: "{{ dotfiles_firefox_profile_path }}/extensions/uBlock0@raymondhill.net.xpi"
     mode: "0644"
-  when: dotfiles_firefox_profile.files | length > 0
+  when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
 - name: Install Bitwarden
   ansible.builtin.get_url:
     url: "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi"
-    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi"
+    dest: "{{ dotfiles_firefox_profile_path }}/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi"
     mode: "0644"
-  when: dotfiles_firefox_profile.files | length > 0
+  when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
 - name: Install Simple Translate
   ansible.builtin.get_url:
     url: "https://addons.mozilla.org/firefox/downloads/latest/simple-translate/latest.xpi"
-    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/simple-translate@sienori.xpi"
+    dest: "{{ dotfiles_firefox_profile_path }}/extensions/simple-translate@sienori.xpi"
     mode: "0644"
-  when: dotfiles_firefox_profile.files | length > 0
+  when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
 - name: Install Gesturefy
   ansible.builtin.get_url:
     url: "https://addons.mozilla.org/firefox/downloads/latest/gesturefy/latest.xpi"
-    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/{506e023c-7f2b-40a3-8066-bc5deb40aebe}.xpi"
+    dest: "{{ dotfiles_firefox_profile_path }}/extensions/{506e023c-7f2b-40a3-8066-bc5deb40aebe}.xpi"
     mode: "0644"
-  when: dotfiles_firefox_profile.files | length > 0
+  when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
 - name: Install Block Site
   ansible.builtin.get_url:
     url: "https://addons.mozilla.org/firefox/downloads/latest/block-website/latest.xpi"
-    dest: "{{ dotfiles_firefox_profile.files[0].path }}/extensions/{54e2eb33-18eb-46ad-a4e4-1329c29f6e17}.xpi"
+    dest: "{{ dotfiles_firefox_profile_path }}/extensions/{54e2eb33-18eb-46ad-a4e4-1329c29f6e17}.xpi"
     mode: "0644"
-  when: dotfiles_firefox_profile.files | length > 0
+  when: dotfiles_firefox_profile_path is defined
+  tags: [firefox]
+
+- name: Set Firefox as default browser
+  ansible.builtin.shell: |
+    xdg-settings set default-web-browser firefox.desktop
+  changed_when: false
+  tags: [firefox]
+
+# Custom alternative to profile-sync-daemon for Void Linux with runit
+# profile-sync-daemon depends on systemd and is not available in Void repos
+# This implementation uses tmpfs + runit service for the same functionality:
+# - Firefox profile stored in RAM (tmpfs) for better performance and SSD longevity
+# - Automatic sync to disk backup every 30 minutes
+# - Restore from backup on boot
+# - Final sync on shutdown via finish script
+
+- name: Create Firefox profile backup directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.mozilla/firefox-backup"
+    state: directory
+    mode: "0755"
+  tags: [firefox]
+
+- name: Create tmpfs mount point for Firefox profile  
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: '\.mozilla/firefox\s'
+    line: "tmpfs {{ user_home }}/.mozilla/firefox tmpfs noatime,nodev,nosuid,size=512M 0 0"
+    state: present
+  become: true
+  tags: [firefox]
+
+- name: Create Firefox sync script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # Sync Firefox profile from tmpfs to disk
+      
+      PROFILE_DIR="{{ user_home }}/.mozilla/firefox"
+      BACKUP_DIR="{{ user_home }}/.mozilla/firefox-backup"
+      
+      if mountpoint -q "$PROFILE_DIR"; then
+          rsync -a --delete "$PROFILE_DIR/" "$BACKUP_DIR/"
+      fi
+    dest: /usr/local/bin/firefox-sync
+    mode: "0755"
+  become: true
+  tags: [firefox]
+
+- name: Create Firefox restore service directory
+  ansible.builtin.file:
+    path: /etc/sv/firefox-sync
+    state: directory
+    mode: "0755"
+  become: true
+  tags: [firefox]
+
+- name: Create Firefox restore service run script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec 2>&1
+      
+      PROFILE_DIR="{{ user_home }}/.mozilla/firefox"
+      BACKUP_DIR="{{ user_home }}/.mozilla/firefox-backup"
+      
+      # Wait for tmpfs to be mounted
+      while ! mountpoint -q "$PROFILE_DIR"; do
+          sleep 1
+      done
+      
+      # Restore from backup if backup exists
+      if [ -d "$BACKUP_DIR" ]; then
+          rsync -a "$BACKUP_DIR/" "$PROFILE_DIR/"
+          chown -R {{ username }}:{{ username }} "$PROFILE_DIR"
+      fi
+      
+      # Sync every 30 minutes (balance between safety and disk wear)
+      while true; do
+          sleep 1800
+          rsync -a --delete "$PROFILE_DIR/" "$BACKUP_DIR/"
+      done
+    dest: /etc/sv/firefox-sync/run
+    mode: "0755"
+  become: true
+  tags: [firefox]
+
+- name: Create Firefox sync service finish script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # Save profile one last time before shutdown
+      PROFILE_DIR="{{ user_home }}/.mozilla/firefox"
+      BACKUP_DIR="{{ user_home }}/.mozilla/firefox-backup"
+      
+      if mountpoint -q "$PROFILE_DIR"; then
+          rsync -a --delete "$PROFILE_DIR/" "$BACKUP_DIR/"
+      fi
+    dest: /etc/sv/firefox-sync/finish
+    mode: "0755"
+  become: true
+  tags: [firefox]
+
+- name: Enable Firefox sync service
+  ansible.builtin.file:
+    src: /etc/sv/firefox-sync
+    dest: /var/service/firefox-sync
+    state: link
+  become: true
   tags: [firefox]

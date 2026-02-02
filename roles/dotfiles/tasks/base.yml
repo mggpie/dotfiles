@@ -7,7 +7,7 @@
     state: present
   become: true
   become_method: su
-  tags: [base, bootstrap]
+  tags: [bootstrap]
 
 - name: Bootstrap - configure doas
   ansible.builtin.copy:
@@ -17,7 +17,7 @@
     mode: "0400"
   become: true
   become_method: su
-  tags: [base, bootstrap]
+  tags: [bootstrap]
 
 - name: Install base packages
   community.general.xbps:
@@ -29,6 +29,9 @@
       - dbus
       - xdg-user-dirs
       - xdg-utils
+      - udisks2
+      - zip
+      - unzip
     state: present
   become: true
   tags: [base]
