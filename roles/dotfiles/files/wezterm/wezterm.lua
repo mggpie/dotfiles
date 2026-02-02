@@ -36,6 +36,30 @@ config.colors = {
     '#34E2E2', -- bright cyan
     '#EEEEEC', -- bright white
   },
+  -- Tab bar colors (Adwaita Dark)
+  tab_bar = {
+    background = '#282828',
+    active_tab = {
+      bg_color = '#3d3d3d',
+      fg_color = '#ffffff',
+    },
+    inactive_tab = {
+      bg_color = '#282828',
+      fg_color = '#909090',
+    },
+    inactive_tab_hover = {
+      bg_color = '#353535',
+      fg_color = '#c0c0c0',
+    },
+    new_tab = {
+      bg_color = '#282828',
+      fg_color = '#909090',
+    },
+    new_tab_hover = {
+      bg_color = '#353535',
+      fg_color = '#c0c0c0',
+    },
+  },
 }
 
 -- Cursor

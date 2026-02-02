@@ -1,4 +1,12 @@
 ---
+# Load secrets if vault is available
+- name: Include secrets
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/secrets.yml"
+  ignore_errors: true
+  no_log: true
+  tags: [always]
+
 # === System ===
 - name: Import base tasks
   ansible.builtin.import_tasks: base.yml
@@ -12,6 +20,8 @@
   ansible.builtin.import_tasks: fonts.yml
 - name: Import maza tasks
   ansible.builtin.import_tasks: maza.yml
+- name: Import bluetooth tasks
+  ansible.builtin.import_tasks: bluetooth.yml
 
 # === Development ===
 - name: Import dev tasks

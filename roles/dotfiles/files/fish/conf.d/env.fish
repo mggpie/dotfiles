@@ -35,3 +35,6 @@ set -gx XCURSOR_PATH $HOME/.nix-profile/share/icons:$HOME/.local/share/icons:/us
 #set -gx QT_WAYLAND_FORCE_DPI physical          # Physical DPI (breaks scaling)
 #set -gx JAVA_HOME /usr/lib/jvm/default         # Java path (if installed)
 #set -gx GTK_USE_PORTAL 1                       # xdg-portal (0=breaks Flatpak)
+
+# Bluetooth devices
+set -gx BOSE_QC45_MAC "***REMOVED***"      # Bose QC45 "Niecierpek"

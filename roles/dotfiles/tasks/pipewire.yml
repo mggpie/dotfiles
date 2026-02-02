@@ -12,62 +12,68 @@
   become: true
   tags: [pipewire]
 
-- name: Create pipewire config directories
+- name: Create WirePlumber 0.5 config directory
   ansible.builtin.file:
-    path: "{{ user_home }}/.config/{{ item }}"
+    path: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d"
     state: directory
     mode: "0755"
+  tags: [pipewire]
+
+- name: Remove old deprecated Lua config directories
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/wireplumber/{{ item }}"
+    state: absent
   loop:
-    - pipewire
-    - wireplumber
-    - wireplumber/bluetooth.lua.d
-    - wireplumber/main.lua.d
-    - wireplumber/policy.lua.d
+    - bluetooth.lua.d
+    - main.lua.d
+    - policy.lua.d
   tags: [pipewire]
 
-- name: Enable AAC codec for Bluetooth
+# WirePlumber 0.5+ uses SPA-JSON config format instead of Lua
+- name: Configure Bluetooth AAC codec and Bose QC45
   ansible.builtin.copy:
     content: |
-      -- Enable AAC codec for Bluetooth headphones
-      bluez_monitor.properties = {
-        ["bluez5.enable-sbc-xq"] = true,
-        ["bluez5.enable-msbc"] = true,
-        ["bluez5.enable-hw-volume"] = true,
-        ["bluez5.headset-roles"] = "[ hsp_hs hsp_ag hfp_hf hfp_ag ]",
-        ["bluez5.codecs"] = "[ sbc sbc_xq aac ldac aptx aptx_hd ]",
+      # Bluetooth configuration for WirePlumber 0.5+
+      # AAC codec preference and Bose QC45 settings
+      
+      monitor.bluez.properties = {
+        bluez5.enable-sbc-xq = true
+        bluez5.enable-msbc = true
+        bluez5.enable-hw-volume = true
+        bluez5.headset-roles = [ hsp_hs hsp_ag hfp_hf hfp_ag ]
+        bluez5.codecs = [ aac sbc_xq sbc ldac aptx aptx_hd ]
+        bluez5.auto-connect = [ hfp_hf hsp_hs a2dp_sink ]
       }
-    dest: "{{ user_home }}/.config/wireplumber/bluetooth.lua.d/50-bluez-config.lua"
+      
+      # Bose QC45 specific rule - force A2DP sink profile
+      monitor.bluez.rules = [
+        {
+          matches = [
+            {
+              device.name = "bluez_card.{{ bose_mac | replace(':', '_') }}"
+            }
+          ]
+          actions = {
+            update-props = {
+              device.profile = "a2dp-sink"
+            }
+          }
+        }
+      ]
+    dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-bluez-config.conf"
     mode: "0644"
   tags: [pipewire]
 
-- name: Configure automatic output switching
+- name: Configure stream switching policy
   ansible.builtin.copy:
     content: |
-      -- Automatically switch to newly connected outputs (HDMI/DP)
-      rule = {
-        matches = {
-          {
-            { "node.name", "matches", "alsa_output.*" },
-          },
-        },
-        apply_properties = {
-          ["device.intended-roles"] = "Multimedia",
-        },
+      # Stream switching policy for WirePlumber 0.5+
+      # Move existing streams when default sink changes
+      
+      wireplumber.settings = {
+        linking.allow-moving-streams = true
+        linking.follow-default-target = true
       }
-
-      table.insert(alsa_monitor.rules, rule)
-    dest: "{{ user_home }}/.config/wireplumber/main.lua.d/50-alsa-config.lua"
-    mode: "0644"
-  tags: [pipewire]
-
-- name: Enable switch-on-connect policy
-  ansible.builtin.copy:
-    content: |
-      -- Automatically switch to new sinks when they appear
-      default_policy.policy = {
-        ["move"] = true,  -- move existing streams to new default
-        ["follow"] = true,  -- new streams follow the default
-      }
-    dest: "{{ user_home }}/.config/wireplumber/policy.lua.d/50-endpoints-config.lua"
+    dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-policy.conf"
     mode: "0644"
   tags: [pipewire]
