@@ -56,6 +56,8 @@
   ansible.builtin.import_tasks: fastfetch.yml
 - name: Import micro tasks
   ansible.builtin.import_tasks: micro.yml
+- name: Import lf tasks
+  ansible.builtin.import_tasks: lf.yml
 
 # === Applications ===
 - name: Import firefox tasks
