@@ -14,18 +14,18 @@ xbps-install -Syu xbps curl && curl -sL https://mggpie.github.io/void-installer/
 git clone https://github.com/mggpie/dotfiles.git
 cd dotfiles
 doas xbps-install -S ansible
-ansible-playbook playbook.yml
+ansible-playbook playbook.yml --ask-become-pass
 ```
 
 ## Usage
 
 ```sh
-# Full setup
-ansible-playbook playbook.yml
+# Full setup (first run requires root password)
+ansible-playbook playbook.yml --ask-become-pass
 
 # Only specific tags
-ansible-playbook playbook.yml --tags sway
-ansible-playbook playbook.yml --tags fish,foot
+ansible-playbook playbook.yml --tags sway --ask-become-pass
+ansible-playbook playbook.yml --tags fish,foot --ask-become-pass
 
 # List available tags
 ansible-playbook playbook.yml --list-tags

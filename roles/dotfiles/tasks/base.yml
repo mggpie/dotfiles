@@ -1,20 +1,41 @@
 ---
 # Base system configuration
 
+- name: Bootstrap - install doas
+  community.general.xbps:
+    name: opendoas
+    state: present
+  become: true
+  become_method: su
+  tags: [base, bootstrap]
+
+- name: Bootstrap - configure doas
+  ansible.builtin.copy:
+    content: |
+      permit nopass :wheel
+    dest: /etc/doas.conf
+    mode: "0400"
+  become: true
+  become_method: su
+  tags: [base, bootstrap]
+
 - name: Install base packages
   community.general.xbps:
     name:
       - chrony
-      - opendoas
       - fontconfig
       - cronie
-      - util-linux
       - elogind
-      - dbus-elogind
-      - polkit-elogind
+      - dbus
       - xdg-user-dirs
       - xdg-utils
-      - seatd
+    state: present
+  become: true
+  tags: [base]
+
+- name: Enable nonfree repository
+  community.general.xbps:
+    name: void-repo-nonfree
     state: present
   become: true
   tags: [base]
@@ -23,54 +44,6 @@
   community.general.xbps:
     name: "{{ 'intel-ucode' if cpu_vendor == 'intel' else 'linux-firmware-amd' }}"
     state: present
-  become: true
-  tags: [base]
-
-- name: Configure doas
-  ansible.builtin.copy:
-    content: |
-      permit nopass :wheel
-    dest: /etc/doas.conf
-    mode: "0400"
-  become: true
-  tags: [base]
-
-- name: Set timezone
-  ansible.builtin.file:
-    src: "/usr/share/zoneinfo/{{ timezone }}"
-    dest: /etc/localtime
-    state: link
-    force: true
-  become: true
-  tags: [base]
-
-- name: Configure locale
-  ansible.builtin.copy:
-    content: "LANG={{ locale }}"
-    dest: /etc/locale.conf
-    mode: "0644"
-  become: true
-  tags: [base]
-
-- name: Enable locale
-  ansible.builtin.lineinfile:
-    path: /etc/default/libc-locales
-    regexp: "^#?{{ locale }}"
-    line: "{{ locale }} UTF-8"
-  become: true
-  tags: [base]
-
-- name: Regenerate locales
-  ansible.builtin.command: xbps-reconfigure -f glibc-locales
-  become: true
-  changed_when: false
-  tags: [base]
-
-- name: Set keyboard layout
-  ansible.builtin.copy:
-    content: "KEYMAP={{ keymap }}"
-    dest: /etc/vconsole.conf
-    mode: "0644"
   become: true
   tags: [base]
 
@@ -100,8 +73,6 @@
   loop:
     - chronyd
     - dbus
-    - elogind
-    - seatd
     - cronie
   become: true
   tags: [base]
