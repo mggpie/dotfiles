@@ -1,0 +1,37 @@
+---
+- name: Install qbittorrent
+  community.general.xbps:
+    name:
+      - qbittorrent
+      - qt6-plugin-tls-openssl
+    state: present
+  become: true
+  tags: [qbittorrent]
+
+- name: Create qbittorrent config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/qBittorrent"
+    state: directory
+    mode: "0755"
+  tags: [qbittorrent]
+
+- name: Deploy qbittorrent config
+  ansible.builtin.copy:
+    src: qbittorrent/qBittorrent.conf
+    dest: "{{ user_home }}/.config/qBittorrent/qBittorrent.conf"
+    mode: "0644"
+  tags: [qbittorrent]
+
+- name: Create qbittorrent search plugins directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/share/qBittorrent/nova3/engines"
+    state: directory
+    mode: "0755"
+  tags: [qbittorrent]
+
+- name: Deploy qbittorrent search plugins
+  ansible.builtin.copy:
+    src: qbittorrent/nova3/
+    dest: "{{ user_home }}/.local/share/qBittorrent/nova3/"
+    mode: "0644"
+  tags: [qbittorrent]

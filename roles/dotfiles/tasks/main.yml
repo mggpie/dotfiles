@@ -62,3 +62,9 @@
   ansible.builtin.import_tasks: zathura.yml
 - name: Import newsboat tasks
   ansible.builtin.import_tasks: newsboat.yml
+- name: Import telegram tasks
+  ansible.builtin.import_tasks: telegram.yml
+- name: Import qbittorrent tasks
+  ansible.builtin.import_tasks: qbittorrent.yml
+- name: Import obsidian tasks
+  ansible.builtin.import_tasks: obsidian.yml
