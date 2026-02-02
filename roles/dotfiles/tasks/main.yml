@@ -64,6 +64,8 @@
   ansible.builtin.import_tasks: pcmanfm.yml
 - name: Import mpv tasks
   ansible.builtin.import_tasks: mpv.yml
+- name: Import vlc tasks
+  ansible.builtin.import_tasks: vlc.yml
 - name: Import imv tasks
   ansible.builtin.import_tasks: imv.yml
 - name: Import zathura tasks

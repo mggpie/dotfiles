@@ -1,0 +1,124 @@
+# VLC configuration
+
+[qt]
+# Interface
+qt-minimal-view=0
+qt-system-tray=1
+qt-start-minimized=0
+qt-pause-minimized=1
+qt-video-autoresize=1
+qt-name-in-title=1
+qt-fs-controller=1
+qt-recentplay=1
+qt-continue=1
+qt-updates-notif=0
+qt-privacy-ask=0
+
+# Dark theme colors (Adwaita-dark matching)
+qt-bgcone-color=16777215
+qt-bgtree-color=2105376
+
+[core]
+# Disable confirmation dialogs
+one-instance-when-started-from-file=1
+playlist-enqueue=1
+play-and-exit=0
+video-on-top=0
+snapshot-path=/home/me/Pictures
+snapshot-format=png
+
+# Recent files
+metadata-network-access=0
+
+[avcodec]
+# Hardware acceleration
+avcodec-hw=vaapi
+avcodec-fast=1
+avcodec-threads=0
+
+[sout]
+sout-avcodec-strict=-2
+
+[freetype]
+# Subtitles
+freetype-font=Inter
+freetype-fontsize=18
+freetype-color=16777215
+freetype-rel-fontsize=16
+freetype-shadow-opacity=128
+freetype-shadow-color=0
+freetype-outline-thickness=2
+freetype-outline-color=0
+freetype-background-opacity=0
+
+[subsdec]
+subsdec-encoding=UTF-8
+
+[main]
+# Video output
+vout=gpu
+deinterlace=0
+deinterlace-mode=blend
+video-filter=
+
+# Audio
+audio-language=pl,en,eng,original
+audio-replay-gain-mode=track
+audio-time-stretch=1
+audio-desync=0
+alsa-audio-device=default
+gain=1.000000
+volume-save=1
+
+# Subtitles
+sub-language=pl,en,eng
+sub-auto-detect-path=./Subs,./subs,./Subtitles,./subtitles
+
+# OSD
+osd=1
+video-title-show=1
+video-title-timeout=2000
+
+# Performance
+file-caching=1000
+network-caching=1000
+disc-caching=300
+
+# Hotkeys (standard)
+global-key-play-pause=
+global-key-stop=
+global-key-next=
+global-key-prev=
+global-key-faster=
+global-key-slower=
+global-key-vol-up=
+global-key-vol-down=
+global-key-vol-mute=
+global-key-toggle-fullscreen=
+
+key-play-pause=Space
+key-stop=s
+key-next=n
+key-prev=p
+key-faster=]
+key-slower=[
+key-rate-normal=Backspace
+key-rate-faster-fine==
+key-rate-slower-fine=-
+key-vol-up=Up
+key-vol-down=Down
+key-vol-mute=m
+key-jump-short=Shift+Left
+key-jump+short=Shift+Right
+key-jump-medium=Alt+Left
+key-jump+medium=Alt+Right
+key-jump-long=Ctrl+Left
+key-jump+long=Ctrl+Right
+key-frame-next=e
+key-toggle-fullscreen=f
+key-subtitle-track=v
+key-audio-track=b
+key-aspect-ratio=a
+key-crop=c
+key-snapshot=Shift+s
+key-quit=q
