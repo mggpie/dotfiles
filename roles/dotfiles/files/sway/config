@@ -87,6 +87,9 @@ font pango:monospace 10
 for_window [class="Code"] inhibit_idle fullscreen
 for_window [app_id="code"] inhibit_idle fullscreen
 
+# PCManFM always floating
+for_window [app_id="pcmanfm"] floating enable
+
 client.focused          #89b4fa #89b4fa #1e1e2e #89b4fa
 client.unfocused        #313244 #313244 #cdd6f4 #313244
 client.focused_inactive #313244 #313244 #cdd6f4 #313244

@@ -1,0 +1,13 @@
+{
+    "autosu": true,
+    "colorscheme": "gotham",
+    "eofnewline": false,
+    "hlsearch": true,
+    "hltaberrors": true,
+    "hltrailingws": true,
+    "keepautoindent": true,
+    "savecursor": true,
+    "saveundo": true,
+    "softwrap": true,
+    "wordwrap": true
+}

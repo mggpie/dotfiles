@@ -34,12 +34,55 @@
   when: dotfiles_firefox_profile_name.stdout != ""
   tags: [firefox]
 
+- name: Check if Firefox is running
+  ansible.builtin.shell: pgrep firefox
+  register: firefox_running
+  changed_when: false
+  failed_when: false
+  tags: [firefox]
+
+- name: Warn if Firefox is running
+  ansible.builtin.debug:
+    msg: "WARNING: Firefox is currently running. Please close it for changes to take effect."
+  when: firefox_running.rc == 0
+  tags: [firefox]
+
 - name: Deploy firefox user.js
   ansible.builtin.copy:
     src: firefox/user.js
     dest: "{{ dotfiles_firefox_profile_path }}/user.js"
     mode: "0644"
   when: dotfiles_firefox_profile_path is defined
+  tags: [firefox]
+
+- name: Remove prefs.js to force Firefox to re-read user.js
+  ansible.builtin.file:
+    path: "{{ dotfiles_firefox_profile_path }}/prefs.js"
+    state: absent
+  when:
+    - dotfiles_firefox_profile_path is defined
+    - firefox_running.rc != 0
+  tags: [firefox]
+
+- name: Remove Firefox startup cache to force userChrome.css reload
+  ansible.builtin.file:
+    path: "{{ dotfiles_firefox_profile_path }}/startupCache"
+    state: absent
+  when:
+    - dotfiles_firefox_profile_path is defined
+    - firefox_running.rc != 0
+  tags: [firefox]
+
+- name: Remove Firefox chrome cache to force userChrome.css reload
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ dotfiles_firefox_profile_path }}/chrome_debugger_profile"
+    - "{{ dotfiles_firefox_profile_path }}/xulstore.json"
+  when:
+    - dotfiles_firefox_profile_path is defined
+    - firefox_running.rc != 0
   tags: [firefox]
 
 - name: Create chrome directory for userChrome.css

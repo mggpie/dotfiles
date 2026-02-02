@@ -6,6 +6,7 @@
     name:
       - font-inter
       - nerd-fonts
+      - noto-fonts-emoji
     state: present
   become: true
   tags: [fonts]
@@ -18,6 +19,20 @@
     executable: /bin/bash
   register: dotfiles_fonts_nix
   changed_when: "'installing' in dotfiles_fonts_nix.stdout"
+  tags: [fonts]
+
+- name: Create fontconfig directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/fontconfig"
+    state: directory
+    mode: "0755"
+  tags: [fonts]
+
+- name: Deploy fontconfig for emoji
+  ansible.builtin.copy:
+    src: fontconfig/fonts.conf
+    dest: "{{ user_home }}/.config/fontconfig/fonts.conf"
+    mode: "0644"
   tags: [fonts]
 
 - name: Refresh font cache

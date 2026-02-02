@@ -20,7 +20,7 @@ cd dotfiles
 
 ```sh
 # Re-run playbook
-ansible-playbook playbook.yml --ask-become-pass
+ansible-playbook playbook.yml --ask-become-pass --ask-vault-pass
 
 # Only specific tags
 ansible-playbook playbook.yml --tags sway --ask-become-pass
@@ -71,6 +71,7 @@ dotfiles/
 |-----|-------------|
 | `dev` | Python, Lua, Go, Docker, Terraform, Ansible |
 | `git` | Git configuration |
+| `gh` | GitHub CLI |
 | `vscode` | Visual Studio Code |
 
 ### Desktop Environment
@@ -98,6 +99,7 @@ dotfiles/
 | `ripgrep` | Fast grep |
 | `fastfetch` | System info |
 | `htop` | Process monitor |
+| `micro` | Terminal text editor |
 
 ### Applications
 | Tag | Description |

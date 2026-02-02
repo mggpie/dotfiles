@@ -16,6 +16,8 @@
   ansible.builtin.import_tasks: dev.yml
 - name: Import git tasks
   ansible.builtin.import_tasks: git.yml
+- name: Import gh tasks
+  ansible.builtin.import_tasks: gh.yml
 - name: Import vscode tasks
   ansible.builtin.import_tasks: vscode.yml
 
@@ -52,6 +54,8 @@
   ansible.builtin.import_tasks: fastfetch.yml
 - name: Import htop tasks
   ansible.builtin.import_tasks: htop.yml
+- name: Import micro tasks
+  ansible.builtin.import_tasks: micro.yml
 
 # === Applications ===
 - name: Import firefox tasks

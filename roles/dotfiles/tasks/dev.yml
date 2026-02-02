@@ -12,16 +12,17 @@
       - docker
       - docker-compose
       - terraform
+      - tflint
       - ansible
+      - python3-ansible-lint
       - shellcheck
       - bash
-      - micro
       - zoxide
       - fzf
       - fd
       - eza
       - curl
-      - github-cli
+      - wget
     state: present
   become: true
   tags: [dev]

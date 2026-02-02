@@ -1,0 +1,34 @@
+---
+- name: Load secrets
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/secrets.yml"
+  tags: [gh]
+
+- name: Install github-cli
+  community.general.xbps:
+    name: github-cli
+    state: present
+  become: true
+  tags: [gh]
+
+- name: Create gh config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/gh"
+    state: directory
+    mode: "0700"
+  tags: [gh]
+
+- name: Deploy gh config.yml
+  ansible.builtin.copy:
+    src: gh/config.yml
+    dest: "{{ user_home }}/.config/gh/config.yml"
+    mode: "0600"
+  tags: [gh]
+
+- name: Deploy gh hosts.yml from secrets
+  ansible.builtin.copy:
+    content: "{{ gh_hosts_yml }}"
+    dest: "{{ user_home }}/.config/gh/hosts.yml"
+    mode: "0600"
+  when: gh_hosts_yml is defined
+  tags: [gh]
