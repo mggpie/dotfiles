@@ -20,19 +20,12 @@ set $right l
 # Your preferred terminal emulator
 set $term wezterm
 # Your preferred application launcher
-set $menu PATH="$nix_path:$PATH" bemenu-run \
-    --fn "IntoneMono Nerd Font 10" \
-    --tb "#000000" --tf "#D0CFCC" \
-    --fb "#000000" --ff "#D0CFCC" \
-    --nb "#000000" --nf "#D0CFCC" \
-    --hb "#3465A4" --hf "#EEEEEC" \
-    --sb "#3465A4" --sf "#EEEEEC" \
-    -p "❯"
+set $menu PATH="$nix_path:$PATH" bemenu-run
 
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg #000000 solid_color
+output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Example configuration:
 #
@@ -226,8 +219,6 @@ bindsym $mod+r mode "resize"
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
-bar {
-    position top
     status_command while date +'%Y-%m-%d %X'; do sleep 1; done
 
     colors {
@@ -258,12 +249,6 @@ default_floating_border pixel 2
 # Ukryj title bar dla istniejących okien
 for_window [class=".*"] border pixel 2
 for_window [title=".*"] border pixel 2
-
-# Kolory okien (border focused = #000000)
-# class                 border  backgr. text    indicator child_border
-client.focused          #000000 #000000 #ffffff #000000   #000000
-client.focused_inactive #333333 #222222 #888888 #333333   #333333
-client.unfocused        #333333 #222222 #888888 #333333   #333333
 
 output DP-1 scale 1.0
 

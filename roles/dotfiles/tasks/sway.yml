@@ -5,12 +5,9 @@
       - sway
       - swaylock
       - swayidle
-      - swaybg
       - wl-clipboard
       - grim
       - slurp
-      - wlsunset
-      - fuzzel
     state: present
   become: true
   tags: [sway]
