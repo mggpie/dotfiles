@@ -76,7 +76,7 @@ bind-key h quit
 
 # Bookmarks
 
-bookmark-cmd ~/.newsboat/bookmark.sh
+bookmark-cmd ~/.config/newsboat/bookmark.sh
 bookmark-interactive no
 bookmark-autopilot yes
 

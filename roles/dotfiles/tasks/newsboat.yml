@@ -13,13 +13,6 @@
     mode: "0755"
   tags: [newsboat]
 
-- name: Create newsboat home directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.newsboat"
-    state: directory
-    mode: "0755"
-  tags: [newsboat]
-
 - name: Deploy newsboat config
   ansible.builtin.copy:
     src: newsboat/config
@@ -37,6 +30,6 @@
 - name: Deploy newsboat bookmark script
   ansible.builtin.copy:
     src: newsboat/bookmark.sh
-    dest: "{{ user_home }}/.newsboat/bookmark.sh"
+    dest: "{{ user_home }}/.config/newsboat/bookmark.sh"
     mode: "0755"
   tags: [newsboat]
