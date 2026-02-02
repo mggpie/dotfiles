@@ -46,16 +46,6 @@
   ansible.builtin.import_tasks: wezterm.yml
 
 # === CLI Tools ===
-- name: Import lf tasks
-  ansible.builtin.import_tasks: lf.yml
-- name: Import bat tasks
-  ansible.builtin.import_tasks: bat.yml
-- name: Import ripgrep tasks
-  ansible.builtin.import_tasks: ripgrep.yml
-- name: Import fastfetch tasks
-  ansible.builtin.import_tasks: fastfetch.yml
-- name: Import htop tasks
-  ansible.builtin.import_tasks: htop.yml
 - name: Import micro tasks
   ansible.builtin.import_tasks: micro.yml
 

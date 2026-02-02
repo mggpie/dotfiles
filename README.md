@@ -95,11 +95,6 @@ dotfiles/
 ### CLI Tools
 | Tag | Description |
 |-----|-------------|
-| `lf` | File manager |
-| `bat` | Cat with syntax highlighting |
-| `ripgrep` | Fast grep |
-| `fastfetch` | System info |
-| `htop` | Process monitor |
 | `micro` | Terminal text editor |
 
 ### Applications

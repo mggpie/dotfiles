@@ -6,6 +6,10 @@ set ignorecase true
 set previewer ~/.config/lf/preview
 set cleaner ~/.config/lf/clean
 
+# Icons
+set icons true
+set drawbox true
+
 # Key bindings
 map <enter> open
 map D delete
