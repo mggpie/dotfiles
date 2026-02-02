@@ -128,8 +128,7 @@ Features:
 Vault is **only required** for these tags:
 - `ssh` - SSH keys
 - `gh` - GitHub CLI authentication
-- `bluetooth` - Bose QC45 MAC address
-- `pipewire` - Bluetooth device configuration
+- `bluetooth` / `pipewire` - Bose QC45 Bluetooth configuration
 
 All other tags work without vault:
 
@@ -137,7 +136,7 @@ All other tags work without vault:
 # Without vault (most tasks)
 ansible-playbook playbook.yml --tags sway,fish,foot
 
-# With vault (ssh, gh, bluetooth, pipewire)
+# With vault (ssh, gh, bluetooth)
 ansible-playbook playbook.yml --ask-vault-pass
 ```
 
