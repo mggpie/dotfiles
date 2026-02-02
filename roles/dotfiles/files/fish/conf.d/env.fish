@@ -5,7 +5,7 @@ set -gx EDITOR micro
 set -gx VISUAL micro
 set -gx PAGER "less -R"
 set -gx MANPAGER "less -R --use-color -Dd+r -Du+b"
-set -gx TERMINAL foot
+set -gx TERMINAL wezterm
 set -gx BROWSER firefox-wayland
 set -gx FILE_MANAGER pcmanfm
 set -gx IMAGE_VIEWER imv

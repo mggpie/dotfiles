@@ -31,7 +31,7 @@
   ansible.builtin.copy:
     content: |
       [config]
-      terminal=foot
+      terminal=wezterm
     dest: "{{ user_home }}/.config/libfm/libfm.conf"
     mode: "0644"
   tags: [pcmanfm]
@@ -54,7 +54,7 @@
 
       [X-Action-Profile profile-zero]
       MimeTypes=application/zip;application/x-tar;application/x-compressed-tar;application/x-bzip-compressed-tar;application/x-xz-compressed-tar;
-      Exec=foot sh -c 'case "%f" in *.zip) unzip "%f" -d "${PWD}";; *.tar.gz|*.tgz) tar -xzf "%f" -C "${PWD}";; *.tar.bz2|*.tbz2) tar -xjf "%f" -C "${PWD}";; *.tar.xz) tar -xJf "%f" -C "${PWD}";; *.tar) tar -xf "%f" -C "${PWD}";; esac && echo "\nFinished! Press Enter to close" && read'
+      Exec=wezterm start sh -c 'case "%f" in *.zip) unzip "%f" -d "${PWD}";; *.tar.gz|*.tgz) tar -xzf "%f" -C "${PWD}";; *.tar.bz2|*.tbz2) tar -xjf "%f" -C "${PWD}";; *.tar.xz) tar -xJf "%f" -C "${PWD}";; *.tar) tar -xf "%f" -C "${PWD}";; esac && echo "\nFinished! Press Enter to close" && read'
       Name=Extract archive
     dest: "{{ user_home }}/.local/share/file-manager/actions/extract.desktop"
     mode: "0644"
@@ -71,7 +71,7 @@
 
       [X-Action-Profile profile-zero]
       MimeTypes=all/allfiles;inode/directory;
-      Exec=foot sh -c 'filename=$(basename "%f"); zip -r "${filename}.zip" "%f" && echo "\nFinished! Press Enter to close" && read'
+      Exec=wezterm start sh -c 'filename=$(basename "%f"); zip -r "${filename}.zip" "%f" && echo "\nFinished! Press Enter to close" && read'
       Name=Compress to ZIP
     dest: "{{ user_home }}/.local/share/file-manager/actions/compress-zip.desktop"
     mode: "0644"

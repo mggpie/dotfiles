@@ -27,7 +27,7 @@
       - bat
       - ripgrep
       - htop
-      - fastfetch
+      - calc
     state: present
   become: true
   tags: [dev]

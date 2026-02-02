@@ -1,0 +1,151 @@
+---
+- name: Create shortcuts directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/bin"
+    state: directory
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create browser shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${BROWSER:-firefox-wayland} "$@"
+    dest: "{{ user_home }}/.local/bin/browser"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create edit shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${EDITOR:-micro} "$@"
+    dest: "{{ user_home }}/.local/bin/edit"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create file shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${FILE_MANAGER:-pcmanfm} "$@"
+    dest: "{{ user_home }}/.local/bin/file"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create files shortcut (alias)
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${FILE_MANAGER:-pcmanfm} "$@"
+    dest: "{{ user_home }}/.local/bin/files"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create image shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${IMAGE_VIEWER:-imv} "$@"
+    dest: "{{ user_home }}/.local/bin/image"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create terminal shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${TERMINAL:-wezterm} "$@"
+    dest: "{{ user_home }}/.local/bin/terminal"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create term shortcut (alias)
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${TERMINAL:-wezterm} "$@"
+    dest: "{{ user_home }}/.local/bin/term"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create video shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec mpv "$@"
+    dest: "{{ user_home }}/.local/bin/video"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create pdf shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec zathura "$@"
+    dest: "{{ user_home }}/.local/bin/pdf"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create reader shortcut (alias)
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec zathura "$@"
+    dest: "{{ user_home }}/.local/bin/reader"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create news shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${TERMINAL:-wezterm} start newsboat
+    dest: "{{ user_home }}/.local/bin/news"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create torrent shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec qbittorrent "$@"
+    dest: "{{ user_home }}/.local/bin/torrent"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create telegram shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec telegram-desktop "$@"
+    dest: "{{ user_home }}/.local/bin/telegram"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create tg shortcut (alias)
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec telegram-desktop "$@"
+    dest: "{{ user_home }}/.local/bin/tg"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create notes shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec obsidian "$@"
+    dest: "{{ user_home }}/.local/bin/notes"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create screenshot shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec fish -c screenshot
+    dest: "{{ user_home }}/.local/bin/screenshot"
+    mode: "0755"
+  tags: [shortcuts]

@@ -34,6 +34,8 @@
   ansible.builtin.import_tasks: kanshi.yml
 - name: Import bemenu tasks
   ansible.builtin.import_tasks: bemenu.yml
+- name: Import shortcuts tasks
+  ansible.builtin.import_tasks: shortcuts.yml
 - name: Import mako tasks
   ansible.builtin.import_tasks: mako.yml
 - name: Import pipewire tasks
@@ -48,6 +50,8 @@
   ansible.builtin.import_tasks: wezterm.yml
 
 # === CLI Tools ===
+- name: Import fastfetch tasks
+  ansible.builtin.import_tasks: fastfetch.yml
 - name: Import micro tasks
   ansible.builtin.import_tasks: micro.yml
 
