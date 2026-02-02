@@ -3,7 +3,7 @@ function trash
         $FILE_MANAGER ~/.local/share/Trash/files &
         return
     end
-    
+
     switch $argv[1]
         case list
             ls -lh ~/.local/share/Trash/files/

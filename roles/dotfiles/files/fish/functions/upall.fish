@@ -1,7 +1,7 @@
 function upall
     set -l log_file ~/.local/state/upall.log
     set -l error_file ~/Downloads/upall-error.txt
-    
+
     # Handle 'logs' argument
     if test "$argv[1]" = "logs"
         echo "Log file location: $log_file"
@@ -13,7 +13,7 @@ function upall
         end
         return
     end
-    
+
     # Handle 'status' argument
     if test "$argv[1]" = "status"
         if test -f $log_file
@@ -29,55 +29,55 @@ function upall
         end
         return
     end
-    
+
     set -l timestamp (date '+%Y-%m-%d %H:%M:%S')
     set -l has_errors 0
-    
+
     # Create log directory if it doesn't exist
     mkdir -p (dirname $log_file)
-    
+
     echo "=== System Maintenance Started: $timestamp ===" | tee -a $log_file
-    
+
     # Get initial disk usage
     set -l disk_before (df -h / | tail -1 | awk '{print $4}')
     echo "Free space before: $disk_before" | tee -a $log_file
-    
+
     # 1. Trim SSD
     echo -e "\n[1/9] Trimming SSD..." | tee -a $log_file
     if not doas fstrim -av 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 2. Remove orphaned packages
     echo -e "\n[2/9] Removing orphaned packages..." | tee -a $log_file
     if not doas xbps-remove -yO 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 3. Remove old kernels
     echo -e "\n[3/9] Removing old kernels..." | tee -a $log_file
     if not doas vkpurge rm all 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 4. Update system packages
     echo -e "\n[4/9] Updating system packages..." | tee -a $log_file
     if not doas xbps-install -Syu 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 5. Clean package cache
     echo -e "\n[5/9] Cleaning package cache..." | tee -a $log_file
     if not doas xbps-remove -O 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 6. Update maza ad blocking
     echo -e "\n[6/9] Updating maza ad blocking..." | tee -a $log_file
     if not doas maza update 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 7. Update Nix packages
     echo -e "\n[7/9] Updating Nix packages..." | tee -a $log_file
     if not nix-channel --update 2>&1 | tee -a $log_file
@@ -86,13 +86,13 @@ function upall
     if not nix profile upgrade '.*' 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 8. Clean Nix garbage
     echo -e "\n[8/9] Cleaning Nix garbage..." | tee -a $log_file
     if not nix-collect-garbage -d 2>&1 | tee -a $log_file
         set has_errors 1
     end
-    
+
     # 9. Empty trash
     echo -e "\n[9/9] Emptying trash..." | tee -a $log_file
     if test -d ~/.local/share/Trash/files
@@ -103,11 +103,11 @@ function upall
     else
         echo "Trash is already empty" | tee -a $log_file
     end
-    
+
     # Get final disk usage
     set -l disk_after (df -h / | tail -1 | awk '{print $4}')
     echo -e "\nFree space after: $disk_after" | tee -a $log_file
-    
+
     # Determine status and handle errors
     if test $has_errors -eq 0
         echo "Status: SUCCESS" | tee -a $log_file
@@ -130,7 +130,7 @@ function upall
         echo "" | tee -a $log_file
         echo "⚠️  Errors occurred! Error report saved to: $error_file" | tee -a $log_file
     end
-    
+
     echo -e "\n=== System Maintenance Completed: "(date '+%Y-%m-%d %H:%M:%S')" ===" | tee -a $log_file
     echo -e "\nLog saved to: $log_file"
 end
