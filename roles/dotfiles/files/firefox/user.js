@@ -23,6 +23,18 @@ user_pref("browser.compactmode.show", true);
 user_pref("browser.theme.toolbar-theme", 0);
 user_pref("browser.toolbars.bookmarks.visibility", "always");
 
+// Enable userChrome.css support
+user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+
+// Hide Firefox View button (recent browsing)
+user_pref("browser.tabs.firefox-view", false);
+user_pref("browser.tabs.firefox-view-next.enabled", false);
+user_pref("browser.tabs.firefox-view.feature-tour", "{\"screen\":\"\",\"complete\":true}");
+user_pref("browser.firefox-view.feature-tour", "{\"screen\":\"\",\"complete\":true}");
+user_pref("browser.firefox-view.view-count", 0);
+user_pref("services.sync.engine.tabs", false);
+user_pref("identity.fxaccounts.toolbar.enabled", false);
+
 // Performance
 user_pref("gfx.webrender.all", true);
 user_pref("layers.acceleration.force-enabled", true);

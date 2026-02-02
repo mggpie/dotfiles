@@ -1,0 +1,14 @@
+/* Hide Firefox View button */
+#firefox-view-button {
+  display: none !important;
+}
+
+/* Hide window control buttons (minimize, maximize, close) */
+.titlebar-buttonbox-container {
+  display: none !important;
+}
+
+/* Hide list all tabs button */
+#alltabs-button {
+  display: none !important;
+}
