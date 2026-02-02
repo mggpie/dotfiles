@@ -16,20 +16,20 @@
         "tooltip-format": "{:%Y-%m-%d}"
     },
     "battery": {
-        "format": "{icon}  {capacity}%",
-        "format-charging": "󰂄  {capacity}%",
-        "format-plugged": "  {capacity}%",
+        "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{capacity}%</span>",
+        "format-charging": "<span size='x-large'>󰂄</span>  <span rise='2000'>{capacity}%</span>",
+        "format-plugged": "<span size='x-large'></span>  <span rise='2000'>{capacity}%</span>",
         "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
     },
     "network": {
-        "format-wifi": "󰤨  {signalStrength}%",
-        "format-ethernet": "󰈀",
-        "format-disconnected": "󰤭",
+        "format-wifi": "<span size='x-large'>󰤨</span>  <span rise='2000'>{signalStrength}%</span>",
+        "format-ethernet": "<span size='x-large'>󰈀</span>",
+        "format-disconnected": "<span size='x-large'>󰤭</span>",
         "tooltip-format-wifi": "{essid}"
     },
     "pulseaudio": {
-        "format": "{icon}  {volume}%",
-        "format-muted": "󰝟",
+        "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume}%</span>",
+        "format-muted": "<span size='x-large'>󰝟</span>",
         "format-icons": {
             "default": ["󰕿", "󰖀", "󰕾"]
         },

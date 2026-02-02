@@ -12,19 +12,20 @@ window#waybar {
 
 #workspaces button {
     padding: 0 6px;
-    color: #D0CFCC;
+    color: #888888;
     background: transparent;
     border: none;
     border-radius: 0;
 }
 
 #workspaces button:hover {
-    background: #333333;
+    color: #D0CFCC;
+    background: transparent;
 }
 
 #workspaces button.focused {
-    background: #3465A4;
-    color: #EEEEEC;
+    color: #FFFFFF;
+    background: transparent;
 }
 
 #clock, #battery, #network, #pulseaudio {
