@@ -112,7 +112,7 @@
     mode: "0755"
   tags: [firefox]
 
-- name: Create tmpfs mount point for Firefox profile  
+- name: Create tmpfs mount point for Firefox profile
   ansible.builtin.lineinfile:
     path: /etc/fstab
     regexp: '\.mozilla/firefox\s'
@@ -126,10 +126,10 @@
     content: |
       #!/bin/sh
       # Sync Firefox profile from tmpfs to disk
-      
+
       PROFILE_DIR="{{ user_home }}/.mozilla/firefox"
       BACKUP_DIR="{{ user_home }}/.mozilla/firefox-backup"
-      
+
       if mountpoint -q "$PROFILE_DIR"; then
           rsync -a --delete "$PROFILE_DIR/" "$BACKUP_DIR/"
       fi
@@ -151,21 +151,21 @@
     content: |
       #!/bin/sh
       exec 2>&1
-      
+
       PROFILE_DIR="{{ user_home }}/.mozilla/firefox"
       BACKUP_DIR="{{ user_home }}/.mozilla/firefox-backup"
-      
+
       # Wait for tmpfs to be mounted
       while ! mountpoint -q "$PROFILE_DIR"; do
           sleep 1
       done
-      
+
       # Restore from backup if backup exists
       if [ -d "$BACKUP_DIR" ]; then
           rsync -a "$BACKUP_DIR/" "$PROFILE_DIR/"
           chown -R {{ username }}:{{ username }} "$PROFILE_DIR"
       fi
-      
+
       # Sync every 30 minutes (balance between safety and disk wear)
       while true; do
           sleep 1800
@@ -183,7 +183,7 @@
       # Save profile one last time before shutdown
       PROFILE_DIR="{{ user_home }}/.mozilla/firefox"
       BACKUP_DIR="{{ user_home }}/.mozilla/firefox-backup"
-      
+
       if mountpoint -q "$PROFILE_DIR"; then
           rsync -a --delete "$PROFILE_DIR/" "$BACKUP_DIR/"
       fi
