@@ -1,7 +1,8 @@
 # Fish configuration
 
 # Path
-fish_add_path $HOME/.local/bin
+set -e fish_user_paths  # Without this line fish will start to slow down
+set -U fish_user_paths $HOME/.local/bin $HOME/.nix-profile/bin $fish_user_paths
 
 # Disable greeting
 set -g fish_greeting
@@ -10,7 +11,14 @@ set -g fish_greeting
 set -gx EDITOR micro
 set -gx VISUAL micro
 set -gx PAGER less
+set -gx MANPAGER "less -R --use-color -Dd+r -Du+b"
 set -gx TERMINAL foot
+set -gx BROWSER firefox-wayland
+set -gx FILE_MANAGER pcmanfm
+set -gx IMAGE_VIEWER imv
+set -gx MICRO_TRUECOLOR 1
+set -gx fish_term24bit 1
+set -gx RIPGREP_CONFIG_PATH $HOME/.config/ripgrep/ripgreprc
 
 # XDG
 set -gx XDG_CONFIG_HOME $HOME/.config
@@ -32,6 +40,25 @@ set -gx _JAVA_AWT_WM_NONREPARENTING 1          # Fix Java tiling WM blanks
 #set -gx GTK_USE_PORTAL 1                       # xdg-portal (0=breaks Flatpak)
 
 # Aliases
+alias notepad "micro ~/me.md"
+alias grep "grep --color=auto"
+alias egrep "egrep --color=auto"
+alias fgrep "fgrep --color=auto"
+alias diff "diff --color=auto"
+alias ip "ip -color=auto"
+alias dmesg "dmesg --color=always"
+alias watch "watch --color"
+alias logout "swaymsg exit"
+alias suspend "loginctl suspend"
+alias hibernate "loginctl hibernate"
+alias reboot "loginctl reboot"
+alias poweroff "loginctl poweroff"
+alias .. "cd .."
+alias ... "cd ../.."
+alias vim "nvim"
+alias fontsearch "fc-list | grep -i"
+alias gpg-check "gpg --keyserver-options auto-key-retrieve --verify"
+alias gpg-retrieve "gpg --keyserver-options auto-key-retrieve --receive-keys"
 #alias ls='eza --icons'
 #alias ll='eza -l --icons'
 #alias la='eza -la --icons'
