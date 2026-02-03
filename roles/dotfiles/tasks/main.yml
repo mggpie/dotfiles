@@ -86,6 +86,8 @@
   ansible.builtin.import_tasks: vlc.yml
 - name: Import imv tasks
   ansible.builtin.import_tasks: imv.yml
+- name: Import krita tasks
+  ansible.builtin.import_tasks: krita.yml
 - name: Import zathura tasks
   ansible.builtin.import_tasks: zathura.yml
 - name: Import telegram tasks

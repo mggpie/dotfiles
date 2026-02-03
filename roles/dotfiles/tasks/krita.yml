@@ -1,0 +1,10 @@
+---
+- name: Install Krita and Qt dependencies
+  community.general.xbps:
+    name:
+      - krita
+      - qt5-wayland
+      - breeze-qt5
+    state: present
+  become: true
+  tags: [krita]
