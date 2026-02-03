@@ -38,3 +38,11 @@ set -gx XCURSOR_PATH $HOME/.nix-profile/share/icons:$HOME/.local/share/icons:/us
 
 # Bluetooth devices (from secrets.yml)
 set -gx BOSE_QC45_MAC "{{ bose_mac }}"
+
+# D-Bus session (fix "disabled:" issue)
+if test "$DBUS_SESSION_BUS_ADDRESS" = "disabled:"
+    set -e DBUS_SESSION_BUS_ADDRESS
+end
+
+# GIO/GVFS for trash support in file managers
+set -gx GIO_USE_VFS gvfs

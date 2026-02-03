@@ -1,7 +1,9 @@
 ---
 - name: Install git
   community.general.xbps:
-    name: git
+    name:
+      - git
+      - git-filter-repo
     state: present
   become: true
   tags: [git]
