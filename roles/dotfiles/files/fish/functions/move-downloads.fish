@@ -1,6 +1,6 @@
-function move-downloads --description "Move files from Downloads to Documents/0-Inbox"
+function move-downloads --description "Move files from Downloads to Desktop/0-Inbox"
     set downloads ~/Downloads
-    set inbox ~/Documents/0-Inbox
+    set inbox ~/Desktop/0-Inbox
 
     # Check if Downloads directory exists and is not empty
     if test -d $downloads; and test (count $downloads/*) -gt 0 2>/dev/null

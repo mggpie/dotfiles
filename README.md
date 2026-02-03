@@ -155,7 +155,7 @@ Features:
 Automatic file organization with `move-downloads` function:
 
 ```sh
-move-downloads  # Move files older than 30 min from ~/Downloads to ~/Documents/0-Inbox
+move-downloads  # Move files older than 30 min from ~/Downloads to ~/Desktop/0-Inbox
 ```
 
 Features:

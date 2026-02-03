@@ -5,11 +5,11 @@
     state: directory
     mode: '0755'
   loop:
-    - ~/Documents/0-Inbox
-    - ~/Documents/1-Projects
-    - ~/Documents/2-Areas
-    - ~/Documents/3-Resources
-    - ~/Documents/4-Archives
+    - ~/Desktop/0-Inbox
+    - ~/Desktop/1-Projects
+    - ~/Desktop/2-Areas
+    - ~/Desktop/3-Resources
+    - ~/Desktop/4-Archives
   tags: para
 
 - name: Create notepad.md file
@@ -18,7 +18,7 @@
       
       Notepad
       =======
-    dest: ~/Documents/0-Inbox/notepad.md
+    dest: ~/Desktop/0-Inbox/notepad.md
     force: no
     mode: '0644'
   tags: para
