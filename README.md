@@ -150,6 +150,19 @@ Features:
 - Error tracking with file report in `~/Downloads/upall-error.txt`
 - Log saved to `~/.local/state/upall.log`
 
+## Downloads Automation
+
+Automatic file organization with `move-downloads` function:
+
+```sh
+move-downloads  # Move files older than 30 min from ~/Downloads to ~/Documents/0-Inbox
+```
+
+Features:
+- Moves files and folders from Downloads to PARA inbox after 30 minutes
+- Skips recently modified files (useful for active downloads)
+- Safe operation - only touches files/folders in Downloads root (not subdirectories)
+
 ## Secrets
 
 Vault is **only required** for these tags:
