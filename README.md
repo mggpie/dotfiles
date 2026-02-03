@@ -14,9 +14,9 @@ xbps-install -Syu xbps curl && curl -sL https://mggpie.github.io/void-installer/
 git clone https://github.com/mggpie/dotfiles.git
 cd dotfiles
 
-# Edit password files (placeholders included in repo)
-micro .vault_pass      # Your ansible-vault password
-micro .become_pass     # Your root/sudo password
+# Edit password files (sed/echo available before micro is installed)
+echo "your-actual-vault-password" > .vault_pass
+echo "your-actual-root-password" > .become_pass
 
 # Run bootstrap
 ./bootstrap.sh
