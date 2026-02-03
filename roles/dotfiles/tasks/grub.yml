@@ -1,0 +1,25 @@
+---
+# GRUB bootloader configuration for performance
+
+- name: Configure GRUB command line parameters
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet loglevel=0 console=tty2 udev.log_level=0 vt.global_cursor_default=0 mitigations=off nowatchdog msr.allow_writes=on pcie_aspm=force module.sig_unenforce intel_iommu=on iommu=pt no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable cryptomgr.notests i915.enable_guc=3 i915.fastboot=1"'
+    backup: yes
+  become: true
+  tags: [grub]
+
+- name: Update GRUB configuration
+  ansible.builtin.command:
+    cmd: grub-mkconfig -o /boot/grub/grub.cfg
+  become: true
+  tags: [grub]
+  register: grub_update
+  changed_when: true
+
+- name: Display GRUB update result
+  ansible.builtin.debug:
+    msg: "GRUB configuration updated. Reboot required for changes to take effect."
+  when: grub_update.changed
+  tags: [grub]

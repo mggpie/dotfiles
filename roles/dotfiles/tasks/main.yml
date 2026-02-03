@@ -10,6 +10,8 @@
 # === System ===
 - name: Import base tasks
   ansible.builtin.import_tasks: base.yml
+- name: Import grub tasks
+  ansible.builtin.import_tasks: grub.yml
 - name: Import para tasks
   ansible.builtin.import_tasks: para.yml
 - name: Import intel-graphics tasks
