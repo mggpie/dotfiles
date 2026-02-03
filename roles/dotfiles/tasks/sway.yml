@@ -6,6 +6,7 @@
       - swaylock
       - swayidle
       - wl-clipboard
+      - wl-clip-persist
       - grim
       - slurp
     state: present

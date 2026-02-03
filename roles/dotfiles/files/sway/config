@@ -147,5 +147,6 @@ bar swaybar_command waybar
 exec pipewire
 exec wireplumber
 exec pipewire-pulse
+exec wl-clip-persist --clipboard both
 
 include /etc/sway/config.d/*
