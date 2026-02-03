@@ -39,8 +39,3 @@ alias ll "eza -l --icons --group-directories-first --git"
 alias lt "eza --tree --icons --level=2"
 alias tree "eza --tree --icons"
 alias cat "bat --paging=never --plain"
-
-# Start in Desktop if interactive and in home
-if status is-interactive; and test "$PWD" = "$HOME"
-    cd ~/Desktop
-end
