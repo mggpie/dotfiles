@@ -167,3 +167,48 @@
     dest: "{{ user_home }}/.local/bin/paint"
     mode: "0755"
   tags: [shortcuts]
+
+- name: Create logout shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec swaymsg exit
+    dest: "{{ user_home }}/.local/bin/logout"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create suspend shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec loginctl suspend
+    dest: "{{ user_home }}/.local/bin/suspend"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create hibernate shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec loginctl hibernate
+    dest: "{{ user_home }}/.local/bin/hibernate"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create reboot shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec loginctl reboot
+    dest: "{{ user_home }}/.local/bin/reboot"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create poweroff shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec loginctl poweroff
+    dest: "{{ user_home }}/.local/bin/poweroff"
+    mode: "0755"
+  tags: [shortcuts]
