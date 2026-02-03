@@ -1,0 +1,8 @@
+#!/bin/sh
+# Wrapper for pcmanfm to default to ~/Documents
+
+if [ $# -eq 0 ]; then
+    exec /usr/bin/pcmanfm ~/Documents
+else
+    exec /usr/bin/pcmanfm "$@"
+fi
