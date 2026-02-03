@@ -144,8 +144,9 @@
 - name: Create screenshot shortcut
   ansible.builtin.copy:
     content: |
-      #!/bin/sh
-      exec fish -c screenshot
+      #!/usr/bin/env fish
+      mkdir -p $HOME/Pictures/Screenshots
+      grim -g "(slurp)" - | tee $HOME/Pictures/Screenshots/(date +%Y%m%d-%H%M%S).png | wl-copy
     dest: "{{ user_home }}/.local/bin/screenshot"
     mode: "0755"
   tags: [shortcuts]
@@ -154,7 +155,7 @@
   ansible.builtin.copy:
     content: |
       #!/bin/sh
-      exec fish -c fixaudio
+      (systemctl --user restart pipewire pipewire-pulse wireplumber &) >/dev/null 2>&1
     dest: "{{ user_home }}/.local/bin/fixaudio"
     mode: "0755"
   tags: [shortcuts]
