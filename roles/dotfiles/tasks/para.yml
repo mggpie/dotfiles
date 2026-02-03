@@ -12,6 +12,17 @@
     - ~/Documents/4-Archives
   tags: para
 
+- name: Create notepad.md file
+  ansible.builtin.copy:
+    content: |
+      
+      Notepad
+      =======
+    dest: ~/Documents/0-Inbox/notepad.md
+    force: no
+    mode: '0644'
+  tags: para
+
 - name: Add move-downloads to user crontab
   ansible.builtin.cron:
     name: "Move Downloads to Inbox"

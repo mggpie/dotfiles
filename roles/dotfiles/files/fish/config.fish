@@ -23,7 +23,7 @@ alias vim "nvim"
 alias fontsearch "fc-list | grep -i"
 alias gpg-check "gpg --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve "gpg --keyserver-options auto-key-retrieve --receive-keys"
-alias notepad "micro ~/me.md"
+alias notepad "micro ~/Documents/0-Inbox/notepad.md"
 
 alias grep "grep --color=auto"
 alias egrep "egrep --color=auto"
