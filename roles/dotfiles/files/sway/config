@@ -144,9 +144,9 @@ floating_modifier $mod normal
 bar swaybar_command waybar
 
 ### Autostart
-exec pipewire
-exec wireplumber
-exec pipewire-pulse
-exec wl-clip-persist --clipboard both
+exec_always sh -c 'pkill -x pipewire || true; sleep 0.1; pipewire'
+exec_always sh -c 'pkill -x wireplumber || true; sleep 0.1; wireplumber'
+exec_always sh -c 'pkill -x pipewire-pulse || true; sleep 0.1; pipewire-pulse'
+exec_always sh -c 'pkill -x wl-clip-persist || true; sleep 0.1; wl-clip-persist --clipboard both'
 
 include /etc/sway/config.d/*
