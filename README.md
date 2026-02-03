@@ -10,25 +10,37 @@ Ansible-managed configuration for Void Linux with Sway.
 # Install Void Linux first
 xbps-install -Syu xbps curl && curl -sL https://mggpie.github.io/void-installer/bootstrap.sh | sh
 
-# After reboot, clone and run
+# After reboot, clone and configure
 git clone https://github.com/mggpie/dotfiles.git
 cd dotfiles
+
+# Edit password files (placeholders included in repo)
+micro .vault_pass      # Your ansible-vault password
+micro .become_pass     # Your root/sudo password
+
+# Run bootstrap
 ./bootstrap.sh
 ```
 
 ## Usage
 
 ```sh
-# Re-run playbook
-ansible-playbook playbook.yml --ask-become-pass --ask-vault-pass
+# Re-run playbook (passwords auto-loaded from files)
+ansible-playbook playbook.yml
 
 # Only specific tags
-ansible-playbook playbook.yml --tags sway --ask-become-pass
-ansible-playbook playbook.yml --tags fish,foot --ask-become-pass
+ansible-playbook playbook.yml --tags sway
+ansible-playbook playbook.yml --tags fish,foot
 
 # List available tags
 ansible-playbook playbook.yml --list-tags
 ```
+
+## Password Files
+
+- `.vault_pass` - Ansible vault password (gitignored after first edit)
+- `.become_pass` - Root/sudo/doas password (gitignored after first edit)
+- Both files are tracked with placeholder values but changes are ignored by git
 
 ## Structure
 
