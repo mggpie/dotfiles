@@ -1,6 +1,15 @@
 ---
 # GRUB bootloader configuration for performance
 
+- name: Configure GRUB timeout
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_TIMEOUT='
+    line: 'GRUB_TIMEOUT=0'
+    backup: yes
+  become: true
+  tags: [grub]
+
 - name: Configure GRUB command line parameters
   ansible.builtin.lineinfile:
     path: /etc/default/grub
