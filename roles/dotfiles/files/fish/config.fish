@@ -2,11 +2,6 @@
 
 set -g fish_greeting
 
-# Start in Documents if interactive and in home
-if status is-interactive; and test "$PWD" = "$HOME"
-    cd ~/Documents
-end
-
 alias sudo "doas"
 
 alias pkgs "xbps-query -v -Rs"          # search packages
@@ -43,3 +38,8 @@ alias la "eza -la --icons --group-directories-first --git"
 alias lt "eza --tree --icons --level=2"
 alias tree "eza --tree --icons"
 alias cat "bat --paging=never --plain"
+
+# Start in Documents if interactive and in home
+if status is-interactive; and test "$PWD" = "$HOME"
+    cd ~/Documents
+end
