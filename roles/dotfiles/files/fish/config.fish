@@ -23,7 +23,7 @@ alias vim "nvim"
 alias fontsearch "fc-list | grep -i"
 alias gpg-check "gpg --keyserver-options auto-key-retrieve --verify"
 alias gpg-retrieve "gpg --keyserver-options auto-key-retrieve --receive-keys"
-alias notepad "micro ~/Documents/0-Inbox/notepad.md"
+alias notepad "micro ~/Desktop/0-Inbox/notepad.md"
 
 alias grep "grep --color=auto"
 alias egrep "egrep --color=auto"
@@ -40,7 +40,7 @@ alias lt "eza --tree --icons --level=2"
 alias tree "eza --tree --icons"
 alias cat "bat --paging=never --plain"
 
-# Start in Documents if interactive and in home
+# Start in Desktop if interactive and in home
 if status is-interactive; and test "$PWD" = "$HOME"
-    cd ~/Documents
+    cd ~/Desktop
 end
