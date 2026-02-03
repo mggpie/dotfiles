@@ -158,3 +158,12 @@
     dest: "{{ user_home }}/.local/bin/fixaudio"
     mode: "0755"
   tags: [shortcuts]
+
+- name: Create paint shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec fish -c krita "$@"
+    dest: "{{ user_home }}/.local/bin/paint"
+    mode: "0755"
+  tags: [shortcuts]

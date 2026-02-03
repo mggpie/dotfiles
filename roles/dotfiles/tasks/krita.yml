@@ -8,3 +8,17 @@
     state: present
   become: true
   tags: [krita]
+
+- name: Create Krita wrapper for bemenu/launchers
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      export QT_QPA_PLATFORM=wayland
+      export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+      export QT_STYLE_OVERRIDE=Fusion
+      export GTK_THEME=Adwaita:light
+      export QT_QPA_PLATFORMTHEME=gtk3
+      exec /usr/bin/krita "$@"
+    dest: "{{ user_home }}/.local/bin/krita"
+    mode: "0755"
+  tags: [krita]
