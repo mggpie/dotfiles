@@ -7,7 +7,7 @@ set -gx PAGER "less -R"
 set -gx MANPAGER "less -R --use-color -Dd+r -Du+b"
 set -gx TERMINAL wezterm
 set -gx BROWSER firefox-wayland
-set -gx FILE_MANAGER pcmanfm
+set -gx FILE_MANAGER thunar
 set -gx IMAGE_VIEWER imv
 set -gx MICRO_TRUECOLOR 1
 set -gx fish_term24bit 1
