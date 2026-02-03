@@ -2,6 +2,11 @@
 
 set -g fish_greeting
 
+# Start in Documents if interactive and in home
+if status is-interactive; and test "$PWD" = "$HOME"
+    cd ~/Documents
+end
+
 alias sudo "doas"
 
 alias pkgs "xbps-query -v -Rs"          # search packages
