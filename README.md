@@ -73,16 +73,19 @@ dotfiles/
 | Tag | Description |
 |-----|-------------|
 | `base` | Locale, doas, services, Nix |
+| `grub` | GRUB bootloader configuration |
 | `intel-graphics` | Mesa, Vulkan, VA-API drivers |
 | `tlp` | Power management |
 | `virtualization` | QEMU/KVM/libvirt |
 | `fonts` | Inter, Intel One Mono, Nerd Fonts |
+| `theme` | GTK/Qt theming |
+| `bluetooth` | Bluetooth configuration |
 
 ### Development
 | Tag | Description |
 |-----|-------------|
 | `dev` | Python, Lua, Go, Docker, Terraform, Ansible |
-| `git` | Git configuration |
+| `git` | Git configuration + git-filter-repo |
 | `gh` | GitHub CLI |
 | `ssh` | SSH configuration |
 | `vscode` | Visual Studio Code |
@@ -95,7 +98,8 @@ dotfiles/
 | `kanshi` | Dynamic output configuration |
 | `bemenu` | Application launcher |
 | `mako` | Notifications |
-| `pipewire` | Audio |
+| `pipewire` | Audio (PipeWire/WirePlumber) |
+| `shortcuts` | System shortcuts in ~/.local/bin |
 
 ### Terminal
 | Tag | Description |
@@ -103,11 +107,32 @@ dotfiles/
 | `fish` | Fish shell |
 | `foot` | Foot terminal |
 | `wezterm` | WezTerm terminal |
+| `fastfetch` | System info tool |
 
 ### CLI Tools
 | Tag | Description |
 |-----|-------------|
 | `micro` | Terminal text editor |
+| `lf` | Terminal file manager |
+| `htop` | Process viewer |
+| `maza` | Ad-blocking hosts file |
+
+### Applications
+| Tag | Description |
+|-----|-------------|
+| `firefox` | Web browser |
+| `pcmanfm` | GUI file manager (PCManFM) |
+| `thunar` | GUI file manager (Thunar) |
+| `mpv` | Media player |
+| `imv` | Image viewer |
+| `zathura` | PDF viewer |
+| `newsboat` | RSS reader |
+| `qbittorrent` | Torrent client |
+| `telegram` | Telegram messenger |
+| `obsidian` | Note-taking app |
+| `krita` | Digital painting |
+| `vlc` | Media player |
+| `para` | PARA workspace setup |
 
 ## System Maintenance
 
@@ -125,32 +150,14 @@ Features:
 - Error tracking with file report in `~/Downloads/upall-error.txt`
 - Log saved to `~/.local/state/upall.log`
 
-### Applications
-| Tag | Description |
-|-----|-------------|
-| `firefox` | Web browser |
-| `pcmanfm` | GUI file manager |
-| `mpv` | Media player |
-| `imv` | Image viewer |
-| `zathura` | PDF viewer |
-| `newsboat` | RSS reader |
-
 ## Secrets
 
 Vault is **only required** for these tags:
 - `ssh` - SSH keys
 - `gh` - GitHub CLI authentication
-- `bluetooth` / `pipewire` - Bose QC45 Bluetooth configuration
+- `bluetooth` / `fish` - Bose QC45 Bluetooth MAC address
 
-All other tags work without vault:
-
-```sh
-# Without vault (most tasks)
-ansible-playbook playbook.yml --tags sway,fish,foot
-
-# With vault (ssh, gh, bluetooth)
-ansible-playbook playbook.yml --ask-vault-pass
-```
+All other tags work without vault. Passwords are auto-loaded from `.vault_pass` and `.become_pass` files.
 
 Setup:
 
