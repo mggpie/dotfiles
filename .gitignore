@@ -1,6 +1,9 @@
 # Ansible vault password
 .vault_pass
 
+# Ansible become (sudo/doas) password
+.become_pass
+
 # Backup files
 *.bak
 *~
