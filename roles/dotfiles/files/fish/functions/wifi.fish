@@ -15,7 +15,7 @@ function wifi --description "Manage WiFi connection (backup for cable)"
             sleep 3
             doas dhcpcd $wifi_iface
             
-            # Wait for connection and IP
+            # Wait for connection
             echo "Waiting for connection..."
             sleep 3
             
@@ -23,16 +23,6 @@ function wifi --description "Manage WiFi connection (backup for cable)"
             if doas wpa_cli -i $wifi_iface status 2>/dev/null | grep -q "wpa_state=COMPLETED"
                 set -l ssid (doas wpa_cli -i $wifi_iface status | grep "^ssid=" | cut -d= -f2)
                 echo "✅ Connected to: $ssid"
-                
-                # Wait for IP address (up to 5 seconds)
-                for i in (seq 5)
-                    set -l ip (ip addr show $wifi_iface | grep "inet " | awk '{print $2}' | cut -d/ -f1)
-                    if test -n "$ip"
-                        echo "📶 IP address: $ip"
-                        break
-                    end
-                    sleep 1
-                end
             else
                 echo "⚠️  WiFi service started but not connected yet"
                 echo "   Check status with: wifi status"
