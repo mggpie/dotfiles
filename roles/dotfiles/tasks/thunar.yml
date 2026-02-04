@@ -61,10 +61,6 @@
     mode: "0644"
   tags: [thunar]
 
-- name: Configure Thunar to disable delete confirmation
-  ansible.builtin.shell: xfconf-query -c thunar -p /misc-confirm-move-to-trash -n -t bool -s false
-  tags: [thunar]
-
 - name: Create Thunar custom actions directory
   ansible.builtin.file:
     path: "{{ user_home }}/.config/Thunar"
