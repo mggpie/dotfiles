@@ -30,7 +30,7 @@ function deploy
     if git status --porcelain | grep -q .
         echo "📝 Committing changes..."
         git add .
-        git commit -m "Update $tags_readable configuration"
+        git commit -m "Auto-update $tags_readable configuration"
         
         echo "⬆️  Pushing to GitHub..."
         git push
