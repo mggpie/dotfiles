@@ -145,7 +145,7 @@
   ansible.builtin.copy:
     content: |
       #!/bin/sh
-      exec ${FILE_MANAGER:-thunar} trash:///
+      exec ${FILE_MANAGER:-thunar} ${HOME}/.local/share/Trash/files
     dest: "{{ user_home }}/.local/bin/trash"
     mode: "0755"
   tags: [shortcuts]
