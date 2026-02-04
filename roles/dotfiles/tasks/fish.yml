@@ -48,3 +48,8 @@
     job: "/bin/fish -c upall-check"
     user: "{{ username }}"
   tags: [fish]
+
+- name: Reload fish configuration
+  ansible.builtin.shell: |
+    pkill -USR1 fish || true
+  tags: [fish]
