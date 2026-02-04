@@ -14,15 +14,24 @@ function wifi --description "Manage WiFi connection (backup for cable)"
             doas ln -sf /etc/sv/wpa_supplicant /var/service/
             sleep 3
             doas dhcpcd $wifi_iface
-            sleep 2
+            
+            # Wait for connection and IP
+            echo "Waiting for connection..."
+            sleep 3
             
             # Check connection status
             if doas wpa_cli -i $wifi_iface status 2>/dev/null | grep -q "wpa_state=COMPLETED"
                 set -l ssid (doas wpa_cli -i $wifi_iface status | grep "^ssid=" | cut -d= -f2)
-                set -l ip (ip addr show $wifi_iface | grep "inet " | awk '{print $2}' | cut -d/ -f1)
                 echo "✅ Connected to: $ssid"
-                if test -n "$ip"
-                    echo "📶 IP address: $ip"
+                
+                # Wait for IP address (up to 5 seconds)
+                for i in (seq 5)
+                    set -l ip (ip addr show $wifi_iface | grep "inet " | awk '{print $2}' | cut -d/ -f1)
+                    if test -n "$ip"
+                        echo "📶 IP address: $ip"
+                        break
+                    end
+                    sleep 1
                 end
             else
                 echo "⚠️  WiFi service started but not connected yet"
