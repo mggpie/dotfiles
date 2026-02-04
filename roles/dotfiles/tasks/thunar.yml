@@ -152,6 +152,9 @@
   ansible.builtin.copy:
     content: |
       [Default Applications]
+      # File Manager
+      inode/directory=thunar.desktop
+      
       # Web
       text/html=firefox.desktop
       x-scheme-handler/http=firefox.desktop
