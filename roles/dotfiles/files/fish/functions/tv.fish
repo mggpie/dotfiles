@@ -25,11 +25,12 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         swaymsg output $monitor_output mode 3440x1440@75.050Hz
         swaymsg output $monitor_output scale 1.0
         
+        # Switch audio to monitor BEFORE disabling TV to avoid dummy output
+        pactl set-card-profile $audio_card $monitor_audio_profile
+        sleep 0.1
+        
         # Now disable TV
         swaymsg output $tv_output disable
-        
-        # Switch audio to monitor HDMI
-        pactl set-card-profile $audio_card $monitor_audio_profile
         
         echo "✓ Switched to Monitor with audio"
     else
