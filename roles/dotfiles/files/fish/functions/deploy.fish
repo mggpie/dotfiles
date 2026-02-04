@@ -1,23 +1,36 @@
 function deploy
-    if test (count $argv) -ne 1
-        echo "Usage: deploy <tag>"
+    if test (count $argv) -lt 1
+        echo "Usage: deploy <tag> [tag2 tag3 ...]"
         echo "Example: deploy sway"
+        echo "Example: deploy sway fish mpv"
         return 1
     end
     
-    set tag $argv[1]
+    set tags (string join "," $argv)
+    set tags_readable (string join ", " $argv)
     
     # Save current directory
     set original_dir (pwd)
     
+    # Find dotfiles directory
+    set dotfiles_dir ""
+    if test -d ~/Desktop/1-Projects/dotfiles
+        set dotfiles_dir ~/Desktop/1-Projects/dotfiles
+    else if test -d ~/Desktop/2-Areas/dotfiles
+        set dotfiles_dir ~/Desktop/2-Areas/dotfiles
+    else
+        echo "❌ Error: dotfiles repository not found in 1-Projects or 2-Areas"
+        return 1
+    end
+    
     # Go to dotfiles directory
-    cd ~/Desktop/1-Projects/dotfiles
+    cd $dotfiles_dir
     
     # Check if there are changes to commit
     if git status --porcelain | grep -q .
         echo "📝 Committing changes..."
         git add .
-        git commit -m "Auto-deploy: $tag config - $(date '+%Y-%m-%d %H:%M:%S')"
+        git commit -m "Update $tags_readable configuration"
         
         echo "⬆️  Pushing to GitHub..."
         git push
@@ -26,8 +39,8 @@ function deploy
     end
     
     # Deploy with ansible
-    echo "🚀 Deploying $tag tag..."
-    ansible-playbook playbook.yml --tags $tag
+    echo "🚀 Deploying tags: $tags_readable"
+    ansible-playbook playbook.yml --tags $tags
     
     # Return to original directory
     cd $original_dir
