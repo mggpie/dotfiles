@@ -141,6 +141,15 @@
     mode: "0755"
   tags: [shortcuts]
 
+- name: Create trash shortcut
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec ${FILE_MANAGER:-thunar} trash:///
+    dest: "{{ user_home }}/.local/bin/trash"
+    mode: "0755"
+  tags: [shortcuts]
+
 - name: Create screenshot shortcut
   ansible.builtin.copy:
     content: |
