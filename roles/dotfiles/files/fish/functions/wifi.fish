@@ -4,7 +4,7 @@ function wifi --description "Manage WiFi connection (backup for cable)"
     set -l wifi_iface (iw dev 2>/dev/null | grep Interface | awk '{print $2}' | head -n1)
     
     if test -z "$wifi_iface"
-        echo "Error: No WiFi interface found"
+        echo "❌ Error: No WiFi interface found"
         return 1
     end
     
@@ -12,16 +12,44 @@ function wifi --description "Manage WiFi connection (backup for cable)"
         case start
             echo "Starting WiFi on $wifi_iface..."
             doas ln -sf /etc/sv/wpa_supplicant /var/service/
-            sleep 2
+            sleep 3
             doas dhcpcd $wifi_iface
+            sleep 2
+            
+            # Check connection status
+            if doas wpa_cli -i $wifi_iface status 2>/dev/null | grep -q "wpa_state=COMPLETED"
+                set -l ssid (doas wpa_cli -i $wifi_iface status | grep "^ssid=" | cut -d= -f2)
+                set -l ip (ip addr show $wifi_iface | grep "inet " | awk '{print $2}' | cut -d/ -f1)
+                echo "✅ Connected to: $ssid"
+                if test -n "$ip"
+                    echo "📶 IP address: $ip"
+                end
+            else
+                echo "⚠️  WiFi service started but not connected yet"
+                echo "   Check status with: wifi status"
+            end
             
         case stop
             echo "Stopping WiFi on $wifi_iface..."
-            doas rm -f /var/service/wpa_supplicant
             doas dhcpcd -k $wifi_iface
+            doas rm -f /var/service/wpa_supplicant
+            sleep 1
+            
+            # Verify stopped
+            if not test -e /var/service/wpa_supplicant
+                echo "✅ WiFi stopped"
+            else
+                echo "⚠️  Failed to stop WiFi service"
+                return 1
+            end
             
         case status
-            doas wpa_cli status
+            if test -e /var/service/wpa_supplicant
+                echo "WiFi service: running"
+                doas wpa_cli -i $wifi_iface status 2>/dev/null
+            else
+                echo "WiFi service: stopped"
+            end
             
         case '*'
             echo "Usage: wifi {start|stop|status}"
