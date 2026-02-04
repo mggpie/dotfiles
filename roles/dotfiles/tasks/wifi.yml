@@ -42,35 +42,9 @@
   become: true
   tags: [wifi]
 
-- name: Create WiFi helper script
+- name: Deploy WiFi Fish function
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      # WiFi management script (use when cable fails)
-      
-      case "$1" in
-          start)
-              echo "Starting WiFi..."
-              doas sv up wpa_supplicant
-              sleep 2
-              doas dhcpcd wlan0
-              ;;
-          stop)
-              echo "Stopping WiFi..."
-              doas sv down wpa_supplicant
-              doas dhcpcd -k wlan0
-              ;;
-          status)
-              doas wpa_cli status
-              ;;
-          *)
-              echo "Usage: wifi {start|stop|status}"
-              echo ""
-              echo "WiFi is disabled by default (cable preferred)."
-              echo "Use 'wifi start' when cable connection fails."
-              exit 1
-              ;;
-      esac
-    dest: "{{ user_home }}/.local/bin/wifi"
-    mode: "0755"
+    src: fish/functions/wifi.fish
+    dest: "{{ user_home }}/.config/fish/functions/wifi.fish"
+    mode: "0644"
   tags: [wifi]
