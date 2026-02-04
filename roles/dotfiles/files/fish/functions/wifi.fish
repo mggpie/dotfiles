@@ -1,16 +1,24 @@
 # WiFi management function (use when cable fails)
 function wifi --description "Manage WiFi connection (backup for cable)"
+    # Auto-detect WiFi interface
+    set -l wifi_iface (iw dev 2>/dev/null | grep Interface | awk '{print $2}' | head -n1)
+    
+    if test -z "$wifi_iface"
+        echo "Error: No WiFi interface found"
+        return 1
+    end
+    
     switch $argv[1]
         case start
-            echo "Starting WiFi..."
+            echo "Starting WiFi on $wifi_iface..."
             doas ln -sf /etc/sv/wpa_supplicant /var/service/
             sleep 2
-            doas dhcpcd wlo1
+            doas dhcpcd $wifi_iface
             
         case stop
-            echo "Stopping WiFi..."
+            echo "Stopping WiFi on $wifi_iface..."
             doas rm -f /var/service/wpa_supplicant
-            doas dhcpcd -k wlo1
+            doas dhcpcd -k $wifi_iface
             
         case status
             doas wpa_cli status
