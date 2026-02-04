@@ -35,6 +35,16 @@
   become: true
   tags: [wifi]
 
+- name: Configure wpa_supplicant service
+  ansible.builtin.copy:
+    content: |
+      WPA_INTERFACE=wlo1
+      CONF_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
+    dest: /etc/sv/wpa_supplicant/conf
+    mode: "0644"
+  become: true
+  tags: [wifi]
+
 - name: WiFi service disabled by default (manual start only)
   ansible.builtin.file:
     path: /var/service/wpa_supplicant

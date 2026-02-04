@@ -3,14 +3,14 @@ function wifi --description "Manage WiFi connection (backup for cable)"
     switch $argv[1]
         case start
             echo "Starting WiFi..."
-            doas sv up wpa_supplicant
+            doas ln -sf /etc/sv/wpa_supplicant /var/service/
             sleep 2
-            doas dhcpcd wlan0
+            doas dhcpcd wlo1
             
         case stop
             echo "Stopping WiFi..."
-            doas sv down wpa_supplicant
-            doas dhcpcd -k wlan0
+            doas rm -f /var/service/wpa_supplicant
+            doas dhcpcd -k wlo1
             
         case status
             doas wpa_cli status
