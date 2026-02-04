@@ -41,10 +41,3 @@
     state: absent
   become: true
   tags: [wifi]
-
-- name: Deploy WiFi Fish function
-  ansible.builtin.copy:
-    src: fish/functions/wifi.fish
-    dest: "{{ user_home }}/.config/fish/functions/wifi.fish"
-    mode: "0644"
-  tags: [wifi]
