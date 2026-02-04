@@ -80,8 +80,8 @@
 # === Applications ===
 - name: Import firefox tasks
   ansible.builtin.import_tasks: firefox.yml
-- name: Import pcmanfm tasks
-  ansible.builtin.import_tasks: pcmanfm.yml
+- name: Import thunar tasks
+  ansible.builtin.import_tasks: thunar.yml
 - name: Import mpv tasks
   ansible.builtin.import_tasks: mpv.yml
 - name: Import vlc tasks
