@@ -6,6 +6,7 @@
 
 # Backup files
 *.bak
+*.old
 *~
 
 # Python
