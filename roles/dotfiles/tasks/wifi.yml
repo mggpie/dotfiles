@@ -1,0 +1,76 @@
+---
+# WiFi configuration (backup only, not auto-connect)
+
+- name: Install wpa_supplicant
+  community.general.xbps:
+    name:
+      - wpa_supplicant
+      - iw
+    state: present
+  become: true
+  tags: [wifi]
+
+- name: Create wpa_supplicant configuration directory
+  ansible.builtin.file:
+    path: /etc/wpa_supplicant
+    state: directory
+    mode: "0755"
+  become: true
+  tags: [wifi]
+
+- name: Configure WiFi network (manual connection only)
+  ansible.builtin.copy:
+    content: |
+      ctrl_interface=/run/wpa_supplicant
+      ctrl_interface_group=wheel
+      update_config=1
+      
+      network={
+          ssid="{{ wifi_ssid }}"
+          psk="{{ wifi_password }}"
+          priority=1
+      }
+    dest: /etc/wpa_supplicant/wpa_supplicant.conf
+    mode: "0600"
+  become: true
+  tags: [wifi]
+
+- name: WiFi service disabled by default (manual start only)
+  ansible.builtin.file:
+    path: /var/service/wpa_supplicant
+    state: absent
+  become: true
+  tags: [wifi]
+
+- name: Create WiFi helper script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      # WiFi management script (use when cable fails)
+      
+      case "$1" in
+          start)
+              echo "Starting WiFi..."
+              doas sv up wpa_supplicant
+              sleep 2
+              doas dhcpcd wlan0
+              ;;
+          stop)
+              echo "Stopping WiFi..."
+              doas sv down wpa_supplicant
+              doas dhcpcd -k wlan0
+              ;;
+          status)
+              doas wpa_cli status
+              ;;
+          *)
+              echo "Usage: wifi {start|stop|status}"
+              echo ""
+              echo "WiFi is disabled by default (cable preferred)."
+              echo "Use 'wifi start' when cable connection fails."
+              exit 1
+              ;;
+      esac
+    dest: "{{ user_home }}/.local/bin/wifi"
+    mode: "0755"
+  tags: [wifi]
