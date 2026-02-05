@@ -2,10 +2,11 @@
 - name: Install VSCode via Nix
   ansible.builtin.shell: |
     . ~/.nix-profile/etc/profile.d/nix.sh
-    nix-env -iA nixpkgs.vscode
+    nix profile list | grep -q vscode || nix profile install nixpkgs#vscode
   args:
     executable: /bin/bash
   changed_when: false
+  ignore_errors: true
   tags: [vscode]
 
 - name: Create VSCode config directory
