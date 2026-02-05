@@ -1,8 +1,11 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
--- Font
-config.font = wezterm.font 'IntoneMono NF'
+-- Font (Intel One Mono with Nerd Font fallback for icons)
+config.font = wezterm.font_with_fallback({
+  'Intel One Mono',
+  'IntoneMono NF',
+})
 config.font_size = 9.0
 
 -- Font rendering
