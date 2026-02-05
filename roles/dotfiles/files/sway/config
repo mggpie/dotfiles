@@ -19,6 +19,8 @@ set $menu bemenu-run \
 ### Appearance
 output * bg #000000 solid_color
 output DP-1 scale 1.0
+# Disable TV by default, enable only Monitor
+output HDMI-A-2 disable
 default_border pixel 2
 default_floating_border pixel 2
 for_window [class=".*"] border pixel 2

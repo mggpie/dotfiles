@@ -38,3 +38,20 @@
   ansible.builtin.command: fc-cache -fv
   changed_when: false
   tags: [fonts]
+
+- name: Install terminus-font for TTY
+  community.general.xbps:
+    name:
+      - terminus-font
+    state: present
+  become: true
+  tags: [fonts]
+
+- name: Set console (TTY) font to Terminus
+  ansible.builtin.lineinfile:
+    path: /etc/rc.conf
+    regexp: '^FONT='
+    line: 'FONT=ter-v16b'
+    create: true
+  become: true
+  tags: [fonts]

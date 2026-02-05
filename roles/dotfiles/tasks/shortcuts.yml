@@ -104,6 +104,13 @@
     mode: "0755"
   tags: [shortcuts]
 
+- name: Create tv shortcut
+  ansible.builtin.copy:
+    src: shortcuts/tv
+    dest: "{{ user_home }}/.local/bin/tv"
+    mode: "0755"
+  tags: [shortcuts]
+
 - name: Create notes shortcut
   ansible.builtin.copy:
     src: shortcuts/notes
