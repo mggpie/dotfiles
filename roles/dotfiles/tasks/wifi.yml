@@ -21,6 +21,7 @@
 - name: Configure WiFi network (manual connection only)
   ansible.builtin.template:
     src: wifi/wpa_supplicant.conf
+    dest: /etc/wpa_supplicant/wpa_supplicant.conf
     mode: "0600"
   become: true
   tags: [wifi]
