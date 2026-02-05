@@ -1,0 +1,37 @@
+---
+- name: Install qutebrowser
+  community.general.xbps:
+    name: qutebrowser
+    state: present
+  become: true
+  tags: [qutebrowser]
+
+- name: Install qutebrowser dependencies
+  community.general.xbps:
+    name:
+      - python3-PyQt5
+      - python3-adblock
+    state: present
+  become: true
+  tags: [qutebrowser]
+
+- name: Create qutebrowser config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/qutebrowser"
+    state: directory
+    mode: "0755"
+  tags: [qutebrowser]
+
+- name: Install qutebrowser configuration
+  ansible.builtin.copy:
+    src: qutebrowser/config.py
+    dest: "{{ user_home }}/.config/qutebrowser/config.py"
+    mode: "0644"
+  tags: [qutebrowser]
+
+- name: Install gesture handler script
+  ansible.builtin.copy:
+    src: qutebrowser/gestures.py
+    dest: "{{ user_home }}/.config/qutebrowser/gestures.py"
+    mode: "0755"
+  tags: [qutebrowser]

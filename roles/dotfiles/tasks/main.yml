@@ -86,6 +86,8 @@
 # === Applications ===
 - name: Import firefox tasks
   ansible.builtin.import_tasks: firefox.yml
+- name: Import qutebrowser tasks
+  ansible.builtin.import_tasks: qutebrowser.yml
 - name: Import pcmanfm tasks
   ansible.builtin.import_tasks: pcmanfm.yml
 - name: Import thunar tasks

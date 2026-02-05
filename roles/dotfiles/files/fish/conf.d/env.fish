@@ -52,3 +52,6 @@ end
 
 # GIO/GVFS for trash support in file managers
 set -gx GIO_USE_VFS gvfs
+
+# Increase file descriptor limit (WezTerm needs >4096)
+ulimit -n 65536 2>/dev/null

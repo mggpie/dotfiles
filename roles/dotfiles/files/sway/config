@@ -6,7 +6,7 @@ set $left h
 set $down j
 set $up k
 set $right l
-set $term wezterm
+set $term sh -c 'ulimit -n 65536; exec wezterm'
 set $menu bemenu-run \
     --fn "IntoneMono Nerd Font 10" \
     --tb "#000000" --tf "#D0CFCC" \
@@ -144,6 +144,7 @@ floating_modifier $mod normal
 bar swaybar_command waybar
 
 ### Autostart
+exec dbus-daemon --session --address=unix:path=$XDG_RUNTIME_DIR/bus
 exec_always sh -c 'pkill -x pipewire || true; sleep 0.1; pipewire'
 exec_always sh -c 'pkill -x wireplumber || true; sleep 0.1; wireplumber'
 exec_always sh -c 'pkill -x pipewire-pulse || true; sleep 0.1; pipewire-pulse'
