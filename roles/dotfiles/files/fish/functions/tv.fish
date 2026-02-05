@@ -7,9 +7,9 @@ function tv --description "Toggle between TV and Monitor with audio switching"
     set -l audio_card "alsa_card.pci-0000_00_1f.3"
 
     # Check current state by checking if TV is enabled
-    set -l tv_status (swaymsg -t get_outputs -r | string match -r "\"name\"\\s*:\\s*\"$tv_output\".*?\"power\"\\s*:\\s*true" )
+    set -l tv_power (swaymsg -t get_outputs -r | jq -r ".[] | select(.name == \"$tv_output\") | .power // false")
 
-    if test -n "$tv_status"
+    if test "$tv_power" = "true"
         # TV is currently on, switch to Monitor
         echo "Switching to Monitor..."
         
@@ -17,7 +17,8 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         swaymsg output $monitor_output enable
         sleep 0.2
         for workspace in (seq 1 10)
-            swaymsg "[workspace=$workspace]" move workspace to output $monitor_output 2>/dev/null
+            swaymsg workspace $workspace
+            swaymsg move workspace to output $monitor_output 2>/dev/null
         end
         
         # Configure monitor
@@ -43,7 +44,8 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         
         # Move all workspaces to TV while both are active
         for workspace in (seq 1 10)
-            swaymsg "[workspace=$workspace]" move workspace to output $tv_output 2>/dev/null
+            swaymsg workspace $workspace
+            swaymsg move workspace to output $tv_output 2>/dev/null
         end
         
         # Now disable monitor
