@@ -1,0 +1,2 @@
+#!/bin/sh
+exec ${BROWSER:-firefox-wayland} "$@"

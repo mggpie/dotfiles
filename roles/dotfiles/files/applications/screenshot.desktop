@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Screenshot
+Exec=sh -c 'mkdir -p "$HOME/Pictures/Screenshots" && grim -g "$(slurp)" - | tee "$HOME/Pictures/Screenshots/$(date +%%Y%%m%%d-%%H%%M%%S).png" | wl-copy'
+NoDisplay=true
+Terminal=false

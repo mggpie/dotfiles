@@ -8,220 +8,168 @@
 
 - name: Create browser shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${BROWSER:-firefox-wayland} "$@"
+    src: shortcuts/browser
     dest: "{{ user_home }}/.local/bin/browser"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create edit shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${EDITOR:-micro} "$@"
+    src: shortcuts/edit
     dest: "{{ user_home }}/.local/bin/edit"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create file shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${FILE_MANAGER:-pcmanfm} "$@"
+    src: shortcuts/file
     dest: "{{ user_home }}/.local/bin/file"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create files shortcut (alias)
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${FILE_MANAGER:-pcmanfm} "$@"
+    src: shortcuts/files
     dest: "{{ user_home }}/.local/bin/files"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create image shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${IMAGE_VIEWER:-imv} "$@"
+    src: shortcuts/image
     dest: "{{ user_home }}/.local/bin/image"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create terminal shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${TERMINAL:-wezterm} "$@"
+    src: shortcuts/terminal
     dest: "{{ user_home }}/.local/bin/terminal"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create term shortcut (alias)
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${TERMINAL:-wezterm} "$@"
+    src: shortcuts/term
     dest: "{{ user_home }}/.local/bin/term"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create video shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec mpv "$@"
+    src: shortcuts/video
     dest: "{{ user_home }}/.local/bin/video"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create pdf shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec zathura "$@"
+    src: shortcuts/pdf
     dest: "{{ user_home }}/.local/bin/pdf"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create reader shortcut (alias)
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec zathura "$@"
+    src: shortcuts/reader
     dest: "{{ user_home }}/.local/bin/reader"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create news shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${TERMINAL:-wezterm} start newsboat
+    src: shortcuts/news
     dest: "{{ user_home }}/.local/bin/news"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create torrent shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec qbittorrent "$@"
+    src: shortcuts/torrent
     dest: "{{ user_home }}/.local/bin/torrent"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create telegram shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec Telegram "$@"
+    src: shortcuts/telegram
     dest: "{{ user_home }}/.local/bin/telegram"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create tg shortcut (alias)
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec Telegram "$@"
+    src: shortcuts/tg
     dest: "{{ user_home }}/.local/bin/tg"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create notes shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec obsidian "$@"
+    src: shortcuts/notes
     dest: "{{ user_home }}/.local/bin/notes"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create trash shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec ${FILE_MANAGER:-thunar} ${HOME}/.local/share/Trash/files
+    src: shortcuts/trash
     dest: "{{ user_home }}/.local/bin/trash"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create screenshot .desktop file
   ansible.builtin.copy:
-    content: |
-      [Desktop Entry]
-      Type=Application
-      Name=Screenshot
-      Exec=sh -c 'mkdir -p "$HOME/Pictures/Screenshots" && grim -g "$(slurp)" - | tee "$HOME/Pictures/Screenshots/$(date +%%Y%%m%%d-%%H%%M%%S).png" | wl-copy'
-      NoDisplay=true
-      Terminal=false
+    src: applications/screenshot.desktop
     dest: "{{ user_home }}/.local/share/applications/screenshot.desktop"
     mode: "0644"
   tags: [shortcuts]
 
 - name: Create fixaudio shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      (systemctl --user restart pipewire pipewire-pulse wireplumber &) >/dev/null 2>&1
+    src: shortcuts/fixaudio
     dest: "{{ user_home }}/.local/bin/fixaudio"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create paint shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec fish -c krita "$@"
+    src: shortcuts/paint
     dest: "{{ user_home }}/.local/bin/paint"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create logout shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec swaymsg exit
+    src: shortcuts/logout
     dest: "{{ user_home }}/.local/bin/logout"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create suspend shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec loginctl suspend
+    src: shortcuts/suspend
     dest: "{{ user_home }}/.local/bin/suspend"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create hibernate shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec loginctl hibernate
+    src: shortcuts/hibernate
     dest: "{{ user_home }}/.local/bin/hibernate"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create reboot shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec loginctl reboot
+    src: shortcuts/reboot
     dest: "{{ user_home }}/.local/bin/reboot"
     mode: "0755"
   tags: [shortcuts]
 
 - name: Create poweroff shortcut
   ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      exec loginctl poweroff
+    src: shortcuts/poweroff
     dest: "{{ user_home }}/.local/bin/poweroff"
     mode: "0755"
   tags: [shortcuts]

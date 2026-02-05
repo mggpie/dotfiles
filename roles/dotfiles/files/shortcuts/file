@@ -1,0 +1,2 @@
+#!/bin/sh
+exec ${FILE_MANAGER:-pcmanfm} "$@"

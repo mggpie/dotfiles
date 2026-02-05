@@ -1,0 +1,2 @@
+#!/bin/sh
+exec ${TERMINAL:-wezterm} start newsboat
