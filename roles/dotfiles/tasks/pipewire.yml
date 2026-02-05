@@ -30,8 +30,35 @@
   tags: [pipewire]
 
 - name: Configure Bluetooth AAC codec and Bose QC45
-  ansible.builtin.template:
-    src: pipewire/50-bluez-config.conf
+  ansible.builtin.copy:
+    content: |
+      # Bluetooth configuration for WirePlumber 0.5+
+      # AAC codec preference and Bose QC45 settings
+
+      monitor.bluez.properties = {
+        bluez5.enable-sbc-xq = true
+        bluez5.enable-msbc = true
+        bluez5.enable-hw-volume = true
+        bluez5.headset-roles = [ hsp_hs hsp_ag hfp_hf hfp_ag ]
+        bluez5.codecs = [ aac sbc_xq sbc ldac aptx aptx_hd ]
+        bluez5.auto-connect = [ hfp_hf hsp_hs a2dp_sink ]
+      }
+
+      # Bose QC45 specific rule - force A2DP sink profile
+      monitor.bluez.rules = [
+        {
+          matches = [
+            {
+              device.name = "bluez_card.{{ bose_mac | replace(':', '_') }}"
+            }
+          ]
+          actions = {
+            update-props = {
+              device.profile = "a2dp-sink"
+            }
+          }
+        }
+      ]
     dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-bluez-config.conf"
     mode: "0644"
   tags: [pipewire]

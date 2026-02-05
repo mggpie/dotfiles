@@ -1,2 +1,0 @@
-WPA_INTERFACE={{ wifi_interface.stdout }}
-CONF_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
