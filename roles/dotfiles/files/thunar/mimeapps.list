@@ -1,0 +1,46 @@
+[Default Applications]
+# File Manager
+inode/directory=thunar.desktop
+
+# Web
+text/html=firefox.desktop
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+
+# Video
+video/mp4=mpv.desktop
+video/x-matroska=mpv.desktop
+video/webm=mpv.desktop
+video/mpeg=mpv.desktop
+video/x-msvideo=mpv.desktop
+video/quicktime=mpv.desktop
+video/x-flv=mpv.desktop
+
+# Audio
+audio/mpeg=mpv.desktop
+audio/mp4=mpv.desktop
+audio/x-wav=mpv.desktop
+audio/flac=mpv.desktop
+audio/ogg=mpv.desktop
+audio/x-vorbis+ogg=mpv.desktop
+
+# Images
+image/jpeg=imv.desktop
+image/png=imv.desktop
+image/gif=imv.desktop
+image/webp=imv.desktop
+image/bmp=imv.desktop
+image/svg+xml=imv.desktop
+
+# PDF
+application/pdf=org.pwmt.zathura.desktop
+
+# Text
+text/plain=micro.desktop
+
+# Torrents
+application/x-bittorrent=org.qbittorrent.qBittorrent.desktop
+x-scheme-handler/magnet=org.qbittorrent.qBittorrent.desktop
+
+# Notes
+x-scheme-handler/obsidian=obsidian.desktop

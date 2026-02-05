@@ -19,18 +19,8 @@
   tags: [wifi]
 
 - name: Configure WiFi network (manual connection only)
-  ansible.builtin.copy:
-    content: |
-      ctrl_interface=/run/wpa_supplicant
-      ctrl_interface_group=wheel
-      update_config=1
-      
-      network={
-          ssid="{{ wifi_ssid }}"
-          psk="{{ wifi_password }}"
-          priority=1
-      }
-    dest: /etc/wpa_supplicant/wpa_supplicant.conf
+  ansible.builtin.template:
+    src: wifi/wpa_supplicant.conf
     mode: "0600"
   become: true
   tags: [wifi]
@@ -43,10 +33,8 @@
   tags: [wifi]
 
 - name: Configure wpa_supplicant service
-  ansible.builtin.copy:
-    content: |
-      WPA_INTERFACE={{ wifi_interface.stdout }}
-      CONF_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
+  ansible.builtin.template:
+    src: wifi/conf
     dest: /etc/sv/wpa_supplicant/conf
     mode: "0644"
   become: true

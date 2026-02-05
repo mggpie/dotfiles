@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Action
+Name=Extract here
+Icon=package-x-generic
+Profiles=profile-zero;
+
+[X-Action-Profile profile-zero]
+MimeTypes=application/zip;application/x-tar;application/x-compressed-tar;application/x-bzip-compressed-tar;application/x-xz-compressed-tar;
+Exec=wezterm start sh -c 'case "%f" in *.zip) unzip "%f" -d "${PWD}";; *.tar.gz|*.tgz) tar -xzf "%f" -C "${PWD}";; *.tar.bz2|*.tbz2) tar -xjf "%f" -C "${PWD}";; *.tar.xz) tar -xJf "%f" -C "${PWD}";; *.tar) tar -xf "%f" -C "${PWD}";; esac && echo "\nFinished! Press Enter to close" && read'
+Name=Extract archive

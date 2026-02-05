@@ -29,21 +29,7 @@
 
 - name: Deploy libfm config
   ansible.builtin.copy:
-    content: |
-      [config]
-      terminal=wezterm
-      use_trash=1
-      confirm_del=0
-      confirm_trash=0
-      no_usb_trash=1
-      quick_exec=0
-
-      [ui]
-      big_icon_size=48
-      small_icon_size=24
-      pane_icon_size=24
-      thumbnail_size=128
-      show_thumbnail=1
+    src: pcmanfm/libfm.conf
     dest: "{{ user_home }}/.config/libfm/libfm.conf"
     mode: "0644"
   tags: [pcmanfm]
@@ -57,34 +43,14 @@
 
 - name: Add extract archive action
   ansible.builtin.copy:
-    content: |
-      [Desktop Entry]
-      Type=Action
-      Name=Extract here
-      Icon=package-x-generic
-      Profiles=profile-zero;
-
-      [X-Action-Profile profile-zero]
-      MimeTypes=application/zip;application/x-tar;application/x-compressed-tar;application/x-bzip-compressed-tar;application/x-xz-compressed-tar;
-      Exec=wezterm start sh -c 'case "%f" in *.zip) unzip "%f" -d "${PWD}";; *.tar.gz|*.tgz) tar -xzf "%f" -C "${PWD}";; *.tar.bz2|*.tbz2) tar -xjf "%f" -C "${PWD}";; *.tar.xz) tar -xJf "%f" -C "${PWD}";; *.tar) tar -xf "%f" -C "${PWD}";; esac && echo "\nFinished! Press Enter to close" && read'
-      Name=Extract archive
+    src: pcmanfm/extract.desktop
     dest: "{{ user_home }}/.local/share/file-manager/actions/extract.desktop"
     mode: "0644"
   tags: [pcmanfm]
 
 - name: Add compress to zip action
   ansible.builtin.copy:
-    content: |
-      [Desktop Entry]
-      Type=Action
-      Name=Compress to ZIP
-      Icon=package-x-generic
-      Profiles=profile-zero;
-
-      [X-Action-Profile profile-zero]
-      MimeTypes=all/allfiles;inode/directory;
-      Exec=wezterm start sh -c 'filename=$(basename "%f"); zip -r "${filename}.zip" "%f" && echo "\nFinished! Press Enter to close" && read'
-      Name=Compress to ZIP
+    src: pcmanfm/compress-zip.desktop
     dest: "{{ user_home }}/.local/share/file-manager/actions/compress-zip.desktop"
     mode: "0644"
   tags: [pcmanfm]

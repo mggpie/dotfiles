@@ -27,36 +27,7 @@
 
 - name: Deploy Thunar configuration
   ansible.builtin.copy:
-    content: |
-      [Configuration]
-      LastView=ThunarIconView
-      LastIconView=ThunarIconView
-      LastShowHidden=FALSE
-      LastSortColumn=THUNAR_COLUMN_NAME
-      LastSortOrder=GTK_SORT_ASCENDING
-      LastSeparatorPosition=170
-      LastDetailsViewColumnOrder=THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED
-      LastDetailsViewColumnWidths=50,50,50,50
-      MiscVolumeManagement=TRUE
-      MiscCaseSensitive=FALSE
-      MiscDateStyle=THUNAR_DATE_STYLE_SIMPLE
-      MiscFoldersFirst=TRUE
-      MiscHorizontalWheelNavigates=FALSE
-      MiscRecursivePermissions=THUNAR_RECURSIVE_PERMISSIONS_ASK
-      MiscRememberGeometry=TRUE
-      MiscShowAboutTemplates=TRUE
-      MiscShowThumbnails=TRUE
-      MiscSingleClick=FALSE
-      MiscSingleClickTimeout=500
-      MiscTextBesideIcons=FALSE
-      MiscConfirmMoveToTrash=FALSE
-      ShortcutsIconEmblems=TRUE
-      ShortcutsIconSize=THUNAR_ICON_SIZE_SMALLER
-      TreeIconEmblems=TRUE
-      TreeIconSize=THUNAR_ICON_SIZE_SMALLEST
-      LastWindowWidth=640
-      LastWindowHeight=480
-      LastWindowMaximized=FALSE
+    src: thunar/thunarrc
     dest: "{{ user_home }}/.config/Thunar/thunarrc"
     mode: "0644"
   tags: [thunar]
@@ -70,47 +41,7 @@
 
 - name: Deploy Thunar custom actions (extract & compress)
   ansible.builtin.copy:
-    content: |
-      <?xml version="1.0" encoding="UTF-8"?>
-      <actions>
-      <action>
-        <icon>package-x-generic</icon>
-        <name>Extract here</name>
-        <command>wezterm start sh -c &apos;case &quot;%f&quot; in *.zip) unzip &quot;%f&quot; -d &quot;${PWD}&quot;;; *.tar.gz|*.tgz) tar -xzf &quot;%f&quot; -C &quot;${PWD}&quot;;; *.tar.bz2|*.tbz2) tar -xjf &quot;%f&quot; -C &quot;${PWD}&quot;;; *.tar.xz) tar -xJf &quot;%f&quot; -C &quot;${PWD}&quot;;; *.tar) tar -xf &quot;%f&quot; -C &quot;${PWD}&quot;;; esac &amp;&amp; echo &quot;\nFinished! Press Enter to close&quot; &amp;&amp; read&apos;</command>
-        <description>Extract archive to current directory</description>
-        <patterns>*.zip;*.tar;*.tar.gz;*.tgz;*.tar.bz2;*.tbz2;*.tar.xz</patterns>
-        <startup-notify/>
-        <directories/>
-        <audio-files/>
-        <image-files/>
-        <other-files/>
-        <text-files/>
-        <video-files/>
-      </action>
-      <action>
-        <icon>package-x-generic</icon>
-        <name>Compress to ZIP</name>
-        <command>wezterm start sh -c &apos;filename=$(basename &quot;%f&quot;); zip -r &quot;${filename}.zip&quot; &quot;%f&quot; &amp;&amp; echo &quot;\nFinished! Press Enter to close&quot; &amp;&amp; read&apos;</command>
-        <description>Compress file or folder to ZIP</description>
-        <patterns>*</patterns>
-        <startup-notify/>
-        <directories/>
-        <audio-files/>
-        <image-files/>
-        <other-files/>
-        <text-files/>
-        <video-files/>
-      </action>
-      <action>
-        <icon>utilities-terminal</icon>
-        <name>Open Terminal Here</name>
-        <command>wezterm start --cwd %f</command>
-        <description>Open terminal in current directory</description>
-        <patterns>*</patterns>
-        <startup-notify/>
-        <directories/>
-      </action>
-      </actions>
+    src: thunar/uca.xml
     dest: "{{ user_home }}/.config/Thunar/uca.xml"
     mode: "0644"
   tags: [thunar]
@@ -123,76 +54,20 @@
   tags: [thunar]
 
 - name: Configure GTK bookmarks for PARA
-  ansible.builtin.copy:
-    content: |
-      file://{{ user_home }}/Desktop/0-Inbox 0-Inbox
-      file://{{ user_home }}/Desktop/1-Projects 1-Projects
-      file://{{ user_home }}/Desktop/2-Areas 2-Areas
-      file://{{ user_home }}/Desktop/3-Resources 3-Resources
-      file://{{ user_home }}/Desktop/4-Archives 4-Archives
+  ansible.builtin.template:
+    src: thunar/bookmarks
     dest: "{{ user_home }}/.config/gtk-3.0/bookmarks"
     mode: "0644"
   tags: [thunar]
 
 - name: Configure GTK settings for dark theme
   ansible.builtin.copy:
-    content: |
-      [Settings]
-      gtk-recent-files-enabled=false
-      gtk-application-prefer-dark-theme=true
+    src: thunar/settings.ini
     dest: "{{ user_home }}/.config/gtk-3.0/settings.ini"
     mode: "0644"
   tags: [thunar]
 
 - name: Configure default MIME applications
   ansible.builtin.copy:
-    content: |
-      [Default Applications]
-      # File Manager
-      inode/directory=thunar.desktop
-      
-      # Web
-      text/html=firefox.desktop
-      x-scheme-handler/http=firefox.desktop
-      x-scheme-handler/https=firefox.desktop
-      
-      # Video
-      video/mp4=mpv.desktop
-      video/x-matroska=mpv.desktop
-      video/webm=mpv.desktop
-      video/mpeg=mpv.desktop
-      video/x-msvideo=mpv.desktop
-      video/quicktime=mpv.desktop
-      video/x-flv=mpv.desktop
-      
-      # Audio
-      audio/mpeg=mpv.desktop
-      audio/mp4=mpv.desktop
-      audio/x-wav=mpv.desktop
-      audio/flac=mpv.desktop
-      audio/ogg=mpv.desktop
-      audio/x-vorbis+ogg=mpv.desktop
-      
-      # Images
-      image/jpeg=imv.desktop
-      image/png=imv.desktop
-      image/gif=imv.desktop
-      image/webp=imv.desktop
-      image/bmp=imv.desktop
-      image/svg+xml=imv.desktop
-      
-      # PDF
-      application/pdf=org.pwmt.zathura.desktop
-      
-      # Text
-      text/plain=micro.desktop
-      
-      # Torrents
-      application/x-bittorrent=org.qbittorrent.qBittorrent.desktop
-      x-scheme-handler/magnet=org.qbittorrent.qBittorrent.desktop
-      
-      # Notes
-      x-scheme-handler/obsidian=obsidian.desktop
-    dest: "{{ user_home }}/.config/mimeapps.list"
-    mode: "0644"
+    src: thunar/mimeapps.list
   tags: [thunar]

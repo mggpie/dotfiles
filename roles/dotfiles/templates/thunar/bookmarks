@@ -1,0 +1,5 @@
+file://{{ user_home }}/Desktop/0-Inbox 0-Inbox
+file://{{ user_home }}/Desktop/1-Projects 1-Projects
+file://{{ user_home }}/Desktop/2-Areas 2-Areas
+file://{{ user_home }}/Desktop/3-Resources 3-Resources
+file://{{ user_home }}/Desktop/4-Archives 4-Archives

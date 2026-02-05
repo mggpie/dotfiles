@@ -15,7 +15,7 @@
 - name: Create notepad.md file
   ansible.builtin.copy:
     content: |
-      
+
       Notepad
       =======
     dest: ~/Desktop/0-Inbox/notepad.md

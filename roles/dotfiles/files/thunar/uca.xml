@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+<action>
+  <icon>package-x-generic</icon>
+  <name>Extract here</name>
+  <command>wezterm start sh -c &apos;case &quot;%f&quot; in *.zip) unzip &quot;%f&quot; -d &quot;${PWD}&quot;;; *.tar.gz|*.tgz) tar -xzf &quot;%f&quot; -C &quot;${PWD}&quot;;; *.tar.bz2|*.tbz2) tar -xjf &quot;%f&quot; -C &quot;${PWD}&quot;;; *.tar.xz) tar -xJf &quot;%f&quot; -C &quot;${PWD}&quot;;; *.tar) tar -xf &quot;%f&quot; -C &quot;${PWD}&quot;;; esac &amp;&amp; echo &quot;\nFinished! Press Enter to close&quot; &amp;&amp; read&apos;</command>
+  <description>Extract archive to current directory</description>
+  <patterns>*.zip;*.tar;*.tar.gz;*.tgz;*.tar.bz2;*.tbz2;*.tar.xz</patterns>
+  <startup-notify/>
+  <directories/>
+  <audio-files/>
+  <image-files/>
+  <other-files/>
+  <text-files/>
+  <video-files/>
+</action>
+<action>
+  <icon>package-x-generic</icon>
+  <name>Compress to ZIP</name>
+  <command>wezterm start sh -c &apos;filename=$(basename &quot;%f&quot;); zip -r &quot;${filename}.zip&quot; &quot;%f&quot; &amp;&amp; echo &quot;\nFinished! Press Enter to close&quot; &amp;&amp; read&apos;</command>
+  <description>Compress file or folder to ZIP</description>
+  <patterns>*</patterns>
+  <startup-notify/>
+  <directories/>
+  <audio-files/>
+  <image-files/>
+  <other-files/>
+  <text-files/>
+  <video-files/>
+</action>
+<action>
+  <icon>utilities-terminal</icon>
+  <name>Open Terminal Here</name>
+  <command>wezterm start --cwd %f</command>
+  <description>Open terminal in current directory</description>
+  <patterns>*</patterns>
+  <startup-notify/>
+  <directories/>
+</action>
+</actions>

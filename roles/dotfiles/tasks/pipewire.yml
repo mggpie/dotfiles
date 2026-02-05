@@ -29,51 +29,16 @@
     - policy.lua.d
   tags: [pipewire]
 
-# WirePlumber 0.5+ uses SPA-JSON config format instead of Lua
 - name: Configure Bluetooth AAC codec and Bose QC45
-  ansible.builtin.copy:
-    content: |
-      # Bluetooth configuration for WirePlumber 0.5+
-      # AAC codec preference and Bose QC45 settings
-
-      monitor.bluez.properties = {
-        bluez5.enable-sbc-xq = true
-        bluez5.enable-msbc = true
-        bluez5.enable-hw-volume = true
-        bluez5.headset-roles = [ hsp_hs hsp_ag hfp_hf hfp_ag ]
-        bluez5.codecs = [ aac sbc_xq sbc ldac aptx aptx_hd ]
-        bluez5.auto-connect = [ hfp_hf hsp_hs a2dp_sink ]
-      }
-
-      # Bose QC45 specific rule - force A2DP sink profile
-      monitor.bluez.rules = [
-        {
-          matches = [
-            {
-              device.name = "bluez_card.{{ bose_mac | replace(':', '_') }}"
-            }
-          ]
-          actions = {
-            update-props = {
-              device.profile = "a2dp-sink"
-            }
-          }
-        }
-      ]
+  ansible.builtin.template:
+    src: pipewire/50-bluez-config.conf
     dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-bluez-config.conf"
     mode: "0644"
   tags: [pipewire]
 
 - name: Configure stream switching policy
   ansible.builtin.copy:
-    content: |
-      # Stream switching policy for WirePlumber 0.5+
-      # Move existing streams when default sink changes
-
-      wireplumber.settings = {
-        linking.allow-moving-streams = true
-        linking.follow-default-target = true
-      }
+    src: pipewire/50-policy.conf
     dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-policy.conf"
     mode: "0644"
   tags: [pipewire]

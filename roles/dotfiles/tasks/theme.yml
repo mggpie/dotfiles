@@ -27,16 +27,7 @@
 
 - name: Configure GTK-3.0 dark theme
   ansible.builtin.copy:
-    content: |
-      [Settings]
-      gtk-application-prefer-dark-theme=1
-      gtk-theme-name=Adwaita-dark
-      gtk-icon-theme-name=Papirus-Dark
-      gtk-font-name=Inter 10
-      gtk-cursor-theme-name=capitaine-cursors
-      gtk-cursor-theme-size=24
-      gtk-enable-animations=1
-      gtk-decoration-layout=close,minimize,maximize:menu
+    src: theme/gtk-3.0-settings.ini
     dest: "{{ user_home }}/.config/gtk-3.0/settings.ini"
     mode: "0644"
   tags: [theme]
@@ -51,14 +42,7 @@
 
 - name: Configure GTK-4.0 dark theme
   ansible.builtin.copy:
-    content: |
-      [Settings]
-      gtk-application-prefer-dark-theme=1
-      gtk-theme-name=Adwaita-dark
-      gtk-icon-theme-name=Papirus-Dark
-      gtk-font-name=Inter 10
-      gtk-cursor-theme-name=capitaine-cursors
-      gtk-cursor-theme-size=24
+    src: theme/gtk-4.0-settings.ini
     dest: "{{ user_home }}/.config/gtk-4.0/settings.ini"
     mode: "0644"
   tags: [theme]
@@ -66,21 +50,14 @@
 # Set default cursor globally
 - name: Set default X11 cursor
   ansible.builtin.copy:
-    content: |
-      Xcursor.theme: capitaine-cursors
-      Xcursor.size: 24
+    src: theme/Xresources
     dest: "{{ user_home }}/.Xresources"
     mode: "0644"
   tags: [theme]
 
 - name: Configure GTK 2.0 dark theme
   ansible.builtin.copy:
-    content: |
-      gtk-theme-name="Adwaita-dark"
-      gtk-icon-theme-name="Papirus-Dark"
-      gtk-font-name="Inter 10"
-      gtk-cursor-theme-name="capitaine-cursors"
-      gtk-cursor-theme-size=24
+    src: theme/gtkrc-2.0
     dest: "{{ user_home }}/.gtkrc-2.0"
     mode: "0644"
   tags: [theme]
