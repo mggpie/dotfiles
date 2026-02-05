@@ -40,8 +40,5 @@
     mode: "0644"
   tags: [mpd]
 
-- name: Enable and start MPD user service
-  ansible.builtin.command:
-    cmd: /usr/bin/systemctl --user enable --now mpd.service
-  changed_when: false
-  tags: [mpd]
+# Note: MPD will be started automatically on first use by socket activation
+# or can be started manually with: mpd
