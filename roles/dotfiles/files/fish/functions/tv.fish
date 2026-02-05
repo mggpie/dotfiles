@@ -49,19 +49,19 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Set resolution based on mode
         switch $tv_mode
             case "4k60"
-                swaymsg output $tv_output mode 3840x2160@60Hz
+                swaymsg output $tv_output mode 3840x2160@60.000Hz
                 swaymsg output $tv_output scale 2.0
                 echo "Mode: 4K 60Hz (may flicker on Intel integrated)"
             case "4k30"
-                swaymsg output $tv_output mode 3840x2160@30Hz
+                swaymsg output $tv_output mode 3840x2160@30.000Hz
                 swaymsg output $tv_output scale 2.0
                 echo "Mode: 4K 30Hz (recommended for Intel integrated)"
             case "fhd" "1080p"
-                swaymsg output $tv_output mode 1920x1080@60Hz
+                swaymsg output $tv_output mode 1920x1080@60.000Hz
                 swaymsg output $tv_output scale 1.0
                 echo "Mode: Full HD 60Hz"
             case "*"
-                swaymsg output $tv_output mode 3840x2160@30Hz
+                swaymsg output $tv_output mode 3840x2160@30.000Hz
                 swaymsg output $tv_output scale 2.0
                 echo "Mode: 4K 30Hz (default)"
         end
