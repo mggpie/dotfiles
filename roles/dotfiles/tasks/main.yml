@@ -76,6 +76,8 @@
   ansible.builtin.import_tasks: micro.yml
 - name: Import lf tasks
   ansible.builtin.import_tasks: lf.yml
+- name: Import mpd tasks
+  ansible.builtin.import_tasks: mpd.yml
 - name: Import newsboat tasks
   ansible.builtin.import_tasks: newsboat.yml
 
