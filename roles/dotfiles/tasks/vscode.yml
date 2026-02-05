@@ -22,3 +22,17 @@
     dest: "{{ user_home }}/.config/Code/User/settings.json"
     mode: "0644"
   tags: [vscode]
+
+- name: Create VSCode flags directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/code-flags.conf"
+    state: touch
+    mode: "0644"
+  tags: [vscode]
+
+- name: Deploy VSCode Wayland flags
+  ansible.builtin.copy:
+    src: vscode/code-flags.conf
+    dest: "{{ user_home }}/.config/code-flags.conf"
+    mode: "0644"
+  tags: [vscode]
