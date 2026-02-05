@@ -40,6 +40,8 @@
   ansible.builtin.import_tasks: ssh.yml
 - name: Import vscode tasks
   ansible.builtin.import_tasks: vscode.yml
+- name: Import zed tasks
+  ansible.builtin.import_tasks: zed.yml
 
 # === Desktop Environment ===
 - name: Import theme tasks

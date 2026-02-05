@@ -43,43 +43,43 @@ function upall
     echo "Free space before: $disk_before" | tee -a $log_file
 
     # 1. Trim SSD
-    echo -e "\n[1/9] Trimming SSD..." | tee -a $log_file
+    echo -e "\n[1/10] Trimming SSD..." | tee -a $log_file
     if not doas fstrim -av 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 2. Remove orphaned packages
-    echo -e "\n[2/9] Removing orphaned packages..." | tee -a $log_file
+    echo -e "\n[2/10] Removing orphaned packages..." | tee -a $log_file
     if not doas xbps-remove -yO 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 3. Remove old kernels
-    echo -e "\n[3/9] Removing old kernels..." | tee -a $log_file
+    echo -e "\n[3/10] Removing old kernels..." | tee -a $log_file
     if not doas vkpurge rm all 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 4. Update system packages
-    echo -e "\n[4/9] Updating system packages..." | tee -a $log_file
+    echo -e "\n[4/10] Updating system packages..." | tee -a $log_file
     if not doas xbps-install -Syu 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 5. Clean package cache
-    echo -e "\n[5/9] Cleaning package cache..." | tee -a $log_file
+    echo -e "\n[5/10] Cleaning package cache..." | tee -a $log_file
     if not doas xbps-remove -O 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 6. Update maza ad blocking
-    echo -e "\n[6/9] Updating maza ad blocking..." | tee -a $log_file
+    echo -e "\n[6/10] Updating maza ad blocking..." | tee -a $log_file
     if not doas maza update 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 7. Update Nix packages
-    echo -e "\n[7/9] Updating Nix packages..." | tee -a $log_file
+    echo -e "\n[7/10] Updating Nix packages..." | tee -a $log_file
     if not nix-channel --update 2>&1 | tee -a $log_file
         set has_errors 1
     end
@@ -88,13 +88,19 @@ function upall
     end
 
     # 8. Clean Nix garbage
-    echo -e "\n[8/9] Cleaning Nix garbage..." | tee -a $log_file
+    echo -e "\n[8/10] Cleaning Nix garbage..." | tee -a $log_file
     if not nix-collect-garbage -d 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
-    # 9. Empty trash
-    echo -e "\n[9/9] Emptying trash..." | tee -a $log_file
+    # 9. Update Flatpak packages
+    echo -e "\n[9/10] Updating Flatpak packages..." | tee -a $log_file
+    if not flatpak update -y 2>&1 | tee -a $log_file
+        set has_errors 1
+    end
+
+    # 10. Empty trash
+    echo -e "\n[10/10] Emptying trash..." | tee -a $log_file
     if test -d ~/.local/share/Trash/files
         set trash_size (du -sh ~/.local/share/Trash/ 2>/dev/null | cut -f1)
         echo "Trash size: $trash_size" | tee -a $log_file

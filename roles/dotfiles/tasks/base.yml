@@ -131,3 +131,32 @@
   when: not dotfiles_nix_installed.stat.exists
   changed_when: true
   tags: [base, nix]
+
+- name: Create Nix config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/nix"
+    state: directory
+    mode: "0755"
+  tags: [base, nix]
+
+- name: Enable Nix experimental features
+  ansible.builtin.copy:
+    content: |
+      experimental-features = nix-command flakes
+    dest: "{{ user_home }}/.config/nix/nix.conf"
+    mode: "0644"
+  tags: [base, nix]
+
+# Flatpak
+
+- name: Install flatpak
+  community.general.xbps:
+    name: flatpak
+    state: present
+  become: true
+  tags: [base, flatpak]
+
+- name: Add Flathub repository
+  ansible.builtin.command: flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+  changed_when: false
+  tags: [base, flatpak]

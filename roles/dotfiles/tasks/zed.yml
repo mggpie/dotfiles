@@ -1,0 +1,5 @@
+---
+- name: Install Zed via Flatpak
+  ansible.builtin.command: flatpak install -y --user flathub dev.zed.Zed
+  changed_when: false
+  tags: [zed]

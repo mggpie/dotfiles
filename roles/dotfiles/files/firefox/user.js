@@ -37,7 +37,7 @@ user_pref("identity.fxaccounts.toolbar.enabled", false);
 
 // Performance
 user_pref("gfx.webrender.all", true);
-user_pref("layers.acceleration.force-enabled", true);
+// Removed layers.acceleration.force-enabled - can cause font rendering issues on Wayland
 
 // New tab - blank page
 user_pref("browser.newtabpage.activity-stream.showSponsored", false);

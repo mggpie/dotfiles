@@ -36,3 +36,17 @@
     dest: "{{ user_home }}/.config/code-flags.conf"
     mode: "0644"
   tags: [vscode]
+
+- name: Create applications directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/share/applications"
+    state: directory
+    mode: "0755"
+  tags: [vscode]
+
+- name: Deploy VSCode desktop entry with scale override
+  ansible.builtin.copy:
+    src: applications/code.desktop
+    dest: "{{ user_home }}/.local/share/applications/code.desktop"
+    mode: "0644"
+  tags: [vscode]

@@ -1,3 +1,52 @@
+/* Scale down Firefox UI */
+#navigator-toolbox {
+  --uc-ui-scale: 0.85;
+  transform: scale(var(--uc-ui-scale));
+  transform-origin: top left;
+  width: calc(100% / var(--uc-ui-scale));
+}
+
+/* Compact Firefox UI */
+:root {
+  --tab-min-height: 28px !important;
+  --toolbarbutton-inner-padding: 5px !important;
+}
+
+/* Reduce toolbar height */
+#nav-bar {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+/* Reduce tab bar height */
+#TabsToolbar {
+  min-height: 28px !important;
+}
+
+.tabbrowser-tab {
+  min-height: 28px !important;
+  max-height: 28px !important;
+}
+
+/* Smaller fonts */
+.tab-text {
+  font-size: 11px !important;
+}
+
+#urlbar {
+  font-size: 12px !important;
+  min-height: 26px !important;
+}
+
+toolbar {
+  font-size: 11px !important;
+}
+
+/* Compact buttons */
+toolbar .toolbarbutton-1 {
+  padding: 3px !important;
+}
+
 /* Hide Firefox View button */
 #firefox-view-button {
   display: none !important;
