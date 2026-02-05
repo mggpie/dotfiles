@@ -75,4 +75,6 @@
 - name: Configure default MIME applications
   ansible.builtin.copy:
     src: thunar/mimeapps.list
+    dest: "{{ user_home }}/.config/mimeapps.list"
+    mode: "0644"
   tags: [thunar]
