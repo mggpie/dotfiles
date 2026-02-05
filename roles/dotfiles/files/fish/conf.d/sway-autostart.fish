@@ -1,5 +1,5 @@
-# Start sway on TTY1 (only if not already running and not in a logout loop)
-if test (tty) = /dev/tty1; and test -z "$WAYLAND_DISPLAY"; and test -z "$SWAYSOCK"
-    dbus-run-session sway
-    exit
-end
+# Autostart disabled - start sway manually with 'sway' command
+# Uncomment below to enable autostart on TTY1
+#if test (tty) = /dev/tty1; and test -z "$WAYLAND_DISPLAY"; and test -z "$SWAYSOCK"
+#    dbus-run-session sway
+#end
