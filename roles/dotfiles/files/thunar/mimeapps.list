@@ -15,6 +15,8 @@ video/mpeg=mpv.desktop
 video/x-msvideo=mpv.desktop
 video/quicktime=mpv.desktop
 video/x-flv=mpv.desktop
+video/x-ms-wmv=mpv.desktop
+video/x-ms-asf=mpv.desktop
 
 # Audio
 audio/mpeg=mpv.desktop
