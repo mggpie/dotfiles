@@ -21,3 +21,10 @@
     dest: "{{ user_home }}/.config/Code/User/settings.json"
     mode: "0644"
   tags: [vscode]
+
+- name: Deploy VSCode Wayland launcher with fractional scaling support
+  ansible.builtin.copy:
+    src: vscode/code-wayland.sh
+    dest: "{{ user_home }}/.local/bin/code"
+    mode: "0755"
+  tags: [vscode]
