@@ -5,6 +5,12 @@ function tv --description "Toggle between TV and Monitor with audio switching"
     set -l monitor_audio_profile "output:hdmi-stereo"
     set -l tv_audio_profile "output:hdmi-stereo-extra1"
     set -l audio_card "alsa_card.pci-0000_00_1f.3"
+    
+    # Parse optional mode argument (4k60, 4k30, fhd, 1080p)
+    set -l tv_mode "4k30"  # Default to 4K 30Hz (best for Intel integrated)
+    if test (count $argv) -gt 0
+        set tv_mode $argv[1]
+    end
 
     # Check current state by checking if TV is enabled
     set -l tv_power (swaymsg -t get_outputs -r | jq -r ".[] | select(.name == \"$tv_output\") | .power // false")
@@ -39,8 +45,26 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # First, enable and configure TV
         swaymsg output $tv_output enable
         sleep 0.2
-        swaymsg output $tv_output mode 3840x2160@60Hz
-        swaymsg output $tv_output scale 2.0
+        
+        # Set resolution based on mode
+        switch $tv_mode
+            case "4k60"
+                swaymsg output $tv_output mode 3840x2160@60Hz
+                swaymsg output $tv_output scale 2.0
+                echo "Mode: 4K 60Hz (may flicker on Intel integrated)"
+            case "4k30"
+                swaymsg output $tv_output mode 3840x2160@30Hz
+                swaymsg output $tv_output scale 2.0
+                echo "Mode: 4K 30Hz (recommended for Intel integrated)"
+            case "fhd" "1080p"
+                swaymsg output $tv_output mode 1920x1080@60Hz
+                swaymsg output $tv_output scale 1.0
+                echo "Mode: Full HD 60Hz"
+            case "*"
+                swaymsg output $tv_output mode 3840x2160@30Hz
+                swaymsg output $tv_output scale 2.0
+                echo "Mode: 4K 30Hz (default)"
+        end
         
         # Move all workspaces to TV while both are active
         for workspace in (seq 1 10)
@@ -54,6 +78,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Switch audio to TV HDMI
         pactl set-card-profile $audio_card $tv_audio_profile
         
-        echo "✓ Switched to TV (4K scaled 2.0) with audio"
+        echo "✓ Switched to TV with audio"
+        echo "💡 Available modes: tv (4k30 default), tv 4k60, tv fhd"
     end
 end
