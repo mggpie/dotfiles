@@ -173,3 +173,17 @@
     dest: "{{ user_home }}/.local/bin/poweroff"
     mode: "0755"
   tags: [shortcuts]
+
+- name: Create thunar shortcut
+  ansible.builtin.copy:
+    src: shortcuts/thunar
+    dest: "{{ user_home }}/.local/bin/thunar"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create pcmanfm shortcut
+  ansible.builtin.copy:
+    src: shortcuts/pcmanfm
+    dest: "{{ user_home }}/.local/bin/pcmanfm"
+    mode: "0755"
+  tags: [shortcuts]

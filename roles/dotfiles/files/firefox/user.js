@@ -17,9 +17,9 @@ user_pref("app.shield.optoutstudies.enabled", false);
 user_pref("extensions.pocket.enabled", false);
 
 // UI
-user_pref("browser.tabs.drawInTitlebar", true);
-user_pref("browser.uidensity", 1);
-user_pref("browser.compactmode.show", true);
+user_pref("browser.tabs.drawInTitlebar", false);  // Show title bar
+user_pref("browser.uidensity", 1);  // Compact density (0=normal, 1=compact, 2=touch)
+user_pref("browser.compactmode.show", true);  // Enable compact mode option
 user_pref("browser.theme.toolbar-theme", 0);
 user_pref("browser.toolbars.bookmarks.visibility", "always");
 

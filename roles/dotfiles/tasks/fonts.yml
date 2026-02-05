@@ -14,11 +14,10 @@
 - name: Install Intel One Mono from nix
   ansible.builtin.shell: |
     . ~/.nix-profile/etc/profile.d/nix.sh
-    nix-env -iA nixpkgs.intel-one-mono
+    nix profile install nixpkgs#intel-one-mono
   args:
     executable: /bin/bash
-  register: dotfiles_fonts_nix
-  changed_when: "'installing' in dotfiles_fonts_nix.stdout"
+    creates: "{{ user_home }}/.nix-profile/share/fonts/truetype/IntelOneMono-*.ttf"
   tags: [fonts]
 
 - name: Create fontconfig directory

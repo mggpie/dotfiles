@@ -24,4 +24,3 @@
       src: zed/settings.json
       dest: "{{ user_home }}/.config/zed/settings.json"
   tags: [zed]
-  tags: [zed]

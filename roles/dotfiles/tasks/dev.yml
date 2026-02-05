@@ -14,7 +14,7 @@
       - terraform
       - tflint
       - ansible
-      - python3-ansible-lint
+      - python3-yamllint
       - shellcheck
       - bash
       - zoxide

@@ -161,4 +161,5 @@
   ansible.builtin.shell: |
     xdg-settings set default-web-browser firefox.desktop
   changed_when: false
+  failed_when: false
   tags: [firefox]
