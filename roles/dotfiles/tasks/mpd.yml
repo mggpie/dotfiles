@@ -41,9 +41,7 @@
   tags: [mpd]
 
 - name: Enable and start MPD user service
-  ansible.builtin.systemd:
-    name: mpd
-    state: started
-    enabled: true
-    scope: user
+  ansible.builtin.command:
+    cmd: /usr/bin/systemctl --user enable --now mpd.service
+  changed_when: false
   tags: [mpd]
