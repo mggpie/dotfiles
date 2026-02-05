@@ -150,14 +150,17 @@
     mode: "0755"
   tags: [shortcuts]
 
-- name: Create screenshot shortcut
+- name: Create screenshot .desktop file
   ansible.builtin.copy:
     content: |
-      #!/bin/sh
-      mkdir -p "$HOME/Pictures/Screenshots"
-      grim -g "$(slurp)" - | tee "$HOME/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png" | wl-copy
-    dest: "{{ user_home }}/.local/bin/screenshot"
-    mode: "0755"
+      [Desktop Entry]
+      Type=Application
+      Name=Screenshot
+      Exec=sh -c 'mkdir -p "$HOME/Pictures/Screenshots" && grim -g "$(slurp)" - | tee "$HOME/Pictures/Screenshots/$(date +%%Y%%m%%d-%%H%%M%%S).png" | wl-copy'
+      NoDisplay=true
+      Terminal=false
+    dest: "{{ user_home }}/.local/share/applications/screenshot.desktop"
+    mode: "0644"
   tags: [shortcuts]
 
 - name: Create fixaudio shortcut
