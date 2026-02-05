@@ -1,2 +1,3 @@
-#!/bin/sh
-exec /usr/bin/thunar "$@"
+#!/usr/bin/env fish
+/usr/bin/thunar $argv &
+disown
