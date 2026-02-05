@@ -154,8 +154,7 @@
   ansible.builtin.copy:
     content: |
       #!/bin/sh
-      mkdir -p $HOME/Pictures/Screenshots
-      grim -g "$(slurp)" - | tee $HOME/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png | wl-copy
+      exec /usr/bin/fish -l -c screenshot
     dest: "{{ user_home }}/.local/bin/screenshot"
     mode: "0755"
   tags: [shortcuts]
