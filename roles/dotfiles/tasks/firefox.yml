@@ -55,14 +55,16 @@
   when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
-- name: Remove prefs.js to force Firefox to re-read user.js
-  ansible.builtin.file:
-    path: "{{ dotfiles_firefox_profile_path }}/prefs.js"
-    state: absent
-  when:
-    - dotfiles_firefox_profile_path is defined
-    - firefox_running.rc != 0
-  tags: [firefox]
+## prefs.js removal disabled - it corrupts profile state (HTTPS, certs, extensions)
+## user.js is read on every Firefox start anyway and overrides prefs.js values
+# - name: Remove prefs.js to force Firefox to re-read user.js
+#   ansible.builtin.file:
+#     path: "{{ dotfiles_firefox_profile_path }}/prefs.js"
+#     state: absent
+#   when:
+#     - dotfiles_firefox_profile_path is defined
+#     - firefox_running.rc != 0
+#   tags: [firefox]
 
 # - name: Remove Firefox startup cache to force userChrome.css reload
 #   ansible.builtin.file:

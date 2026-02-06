@@ -2,7 +2,6 @@
 user_pref("privacy.trackingprotection.enabled", true);
 user_pref("privacy.trackingprotection.socialtracking.enabled", true);
 user_pref("privacy.donottrackheader.enabled", true);
-user_pref("dom.security.https_only_mode", true);
 
 // Disable telemetry
 user_pref("toolkit.telemetry.enabled", false);
