@@ -16,7 +16,7 @@
   tags: [qbittorrent]
 
 - name: Deploy qbittorrent config
-  ansible.builtin.template:
+  ansible.builtin.copy:
     src: qbittorrent/qBittorrent.conf
     dest: "{{ user_home }}/.config/qBittorrent/qBittorrent.conf"
     mode: "0644"
