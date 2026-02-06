@@ -14,7 +14,11 @@ function startup
 
     # Workspace 2: Firefox (restores previous session)
     swaymsg 'workspace number 2; exec firefox'
-    sleep 3
+    # Wait for Firefox window to appear
+    while not swaymsg -t get_tree | grep -q '"app_id": "Firefox"'
+        sleep 0.5
+    end
+    sleep 1
 
     # Workspace 9: Messenger (left) + Telegram (right)
     swaymsg 'workspace number 9'
