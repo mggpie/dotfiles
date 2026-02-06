@@ -22,7 +22,7 @@ function startup
     sleep 2
     swaymsg 'exec Telegram'
 
-    # Return to workspace 1
+    # Return to workspace 2
     sleep 1
-    swaymsg 'workspace number 1'
+    swaymsg 'workspace number 2'
 end
