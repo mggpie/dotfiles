@@ -60,9 +60,6 @@ user_pref("browser.bookmarks.defaultLocation", "toolbar_____");
 // Mouse
 user_pref("general.autoScroll", true);
 
-// UI scaling (0.9 to match desired desktop scale without Sway fractional scaling)
-user_pref("layout.css.devPixelsPerPx", "0.9");
-
 // Extensions - allow sideloaded but keep user control
 user_pref("extensions.autoDisableScopes", 14);
 user_pref("extensions.enabledScopes", 15);
