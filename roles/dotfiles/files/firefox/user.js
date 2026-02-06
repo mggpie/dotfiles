@@ -59,6 +59,10 @@ user_pref("browser.bookmarks.defaultLocation", "toolbar_____");
 
 // Mouse
 user_pref("general.autoScroll", true);
+user_pref("ui.context_menus.after_mouseup", true);  // Show context menu on mouseup (needed for mouse gestures)
+
+// Disable Picture-in-Picture
+user_pref("media.videocontrols.picture-in-picture.video-toggle.enabled", false);
 
 // Extensions - allow sideloaded but keep user control
 user_pref("extensions.autoDisableScopes", 14);

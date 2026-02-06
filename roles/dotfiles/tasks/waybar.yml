@@ -1,7 +1,9 @@
 ---
 - name: Install waybar
   community.general.xbps:
-    name: Waybar
+    name:
+      - Waybar
+      - adwaita-fonts
     state: present
   become: true
   tags: [waybar]
