@@ -28,8 +28,12 @@ window#waybar {
     background: transparent;
 }
 
-#clock, #battery, #network, #pulseaudio {
+#clock, #battery, #custom-weather, #pulseaudio {
     padding: 0 8px;
+}
+
+#battery {
+    margin-right: 6px;
 }
 
 #battery.charging {
