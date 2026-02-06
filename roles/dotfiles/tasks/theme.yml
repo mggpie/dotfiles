@@ -61,3 +61,11 @@
     dest: "{{ user_home }}/.gtkrc-2.0"
     mode: "0644"
   tags: [theme]
+
+# Scale UI to ~0.9 (since Sway fractional scale breaks Electron)
+- name: Set GTK text scaling factor to 0.9
+  ansible.builtin.command:
+    cmd: gsettings set org.gnome.desktop.interface text-scaling-factor 0.9
+  become: false
+  changed_when: false
+  tags: [theme]

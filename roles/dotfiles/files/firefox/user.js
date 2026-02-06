@@ -37,7 +37,6 @@ user_pref("identity.fxaccounts.toolbar.enabled", false);
 
 // Performance
 user_pref("gfx.webrender.all", true);
-// Removed layers.acceleration.force-enabled - can cause font rendering issues on Wayland
 
 // New tab - blank page
 user_pref("browser.newtabpage.activity-stream.showSponsored", false);
@@ -61,6 +60,9 @@ user_pref("browser.bookmarks.defaultLocation", "toolbar_____");
 
 // Mouse
 user_pref("general.autoScroll", true);
+
+// UI scaling (0.9 to match desired desktop scale without Sway fractional scaling)
+user_pref("layout.css.devPixelsPerPx", "0.9");
 
 // Extensions - allow sideloaded but keep user control
 user_pref("extensions.autoDisableScopes", 14);
