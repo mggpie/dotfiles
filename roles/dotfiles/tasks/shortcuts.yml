@@ -194,3 +194,5 @@
     dest: "{{ user_home }}/.local/bin/pcmanfm"
     mode: "0755"
   tags: [shortcuts]
+
+

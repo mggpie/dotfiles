@@ -4,6 +4,7 @@
     name:
       - Waybar
       - adwaita-fonts
+      - jq
     state: present
   become: true
   tags: [waybar]

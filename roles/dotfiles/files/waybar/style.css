@@ -47,3 +47,7 @@ window#waybar {
 #battery.critical:not(.charging) {
     color: #CC0000;
 }
+
+tooltip label {
+    font-family: "IntoneMono Nerd Font", monospace;
+}

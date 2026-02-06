@@ -22,10 +22,10 @@
         "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
     },
     "custom/weather": {
-        "exec": "curl -s 'wttr.in/Warsaw?format=%t' | tr -d '+'",
+        "exec": "fish -c weather",
+        "return-type": "json",
         "interval": 600,
-        "format": "<span size='x-large'>󰔏</span>  <span rise='2000'>{}</span>",
-        "tooltip": false
+        "format": "<span size='x-large'>󰔏</span>  <span rise='2000'>{}</span>"
     },
     "pulseaudio": {
         "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume}%</span>",
