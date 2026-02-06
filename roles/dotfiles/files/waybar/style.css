@@ -50,4 +50,5 @@ window#waybar {
 
 tooltip label {
     font-family: "IntoneMono Nerd Font", monospace;
+    font-size: 14px;
 }
