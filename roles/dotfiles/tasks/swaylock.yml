@@ -20,13 +20,6 @@
   become: true
   tags: [swaylock]
 
-- name: Install ImageMagick (for lock screen image generation)
-  community.general.xbps:
-    name: ImageMagick
-    state: present
-  become: true
-  tags: [swaylock]
-
 - name: Create swaylock config directory
   ansible.builtin.file:
     path: "{{ user_home }}/.config/swaylock"
@@ -41,9 +34,9 @@
     mode: "0644"
   tags: [swaylock]
 
-- name: Deploy lockscreen script
+- name: Deploy lock screen image
   ansible.builtin.copy:
-    src: swaylock/lockscreen.sh
-    dest: "{{ user_home }}/.local/bin/lockscreen"
-    mode: "0755"
+    src: swaylock/lockscreen.png
+    dest: "{{ user_home }}/.config/swaylock/lockscreen.png"
+    mode: "0644"
   tags: [swaylock]

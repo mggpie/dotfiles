@@ -1,44 +1,27 @@
 ignore-empty-password
 show-failed-attempts
 daemonize
-font=IntoneMono Nerd Font
-indicator-radius=80
-indicator-thickness=8
 
+image=~/.config/swaylock/lockscreen.png
+scaling=center
 color=000000
 
-# Idle state: subtle dark ring
+# Hide indicator completely
+indicator-radius=1
+indicator-thickness=0
 inside-color=00000000
-ring-color=3465A4
+ring-color=00000000
 line-color=00000000
 separator-color=00000000
-text-color=D0CFCC
-
-# Typing (verifying input)
+text-color=00000000
 inside-ver-color=00000000
-ring-ver-color=3465A4
-line-ver-color=00000000
-text-ver-color=D0CFCC
-
-# Backspace
-key-hl-color=3465A4
-bs-hl-color=CC0000
-
-# Cleared
-inside-clear-color=00000000
-ring-clear-color=D0CFCC
-line-clear-color=00000000
-text-clear-color=D0CFCC
-
-# Wrong password
+ring-ver-color=00000000
+text-ver-color=00000000
 inside-wrong-color=00000000
-ring-wrong-color=CC0000
-line-wrong-color=00000000
-text-wrong-color=CC0000
-
-# Caps Lock
-inside-caps-lock-color=00000000
-ring-caps-lock-color=C4A000
-caps-lock-key-hl-color=C4A000
-caps-lock-bs-hl-color=CC0000
-text-caps-lock-color=C4A000
+ring-wrong-color=CC000088
+text-wrong-color=00000000
+inside-clear-color=00000000
+ring-clear-color=00000000
+text-clear-color=00000000
+key-hl-color=00000000
+bs-hl-color=00000000
