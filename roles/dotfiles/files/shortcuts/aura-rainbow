@@ -1,0 +1,2 @@
+#!/bin/sh
+openrgb -d 0 --mode rainbow >/dev/null 2>&1
