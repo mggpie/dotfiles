@@ -1,5 +1,4 @@
 ignore-empty-password
-show-failed-attempts
 daemonize
 
 image=~/.config/swaylock/lockscreen.png
@@ -18,7 +17,7 @@ inside-ver-color=00000000
 ring-ver-color=00000000
 text-ver-color=00000000
 inside-wrong-color=00000000
-ring-wrong-color=CC000088
+ring-wrong-color=00000000
 text-wrong-color=00000000
 inside-clear-color=00000000
 ring-clear-color=00000000
