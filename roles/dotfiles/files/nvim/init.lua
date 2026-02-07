@@ -1,5 +1,29 @@
 -- Neovim configuration
--- Micro-like keybindings · Tango dark theme · No plugins needed
+-- Micro-like keybindings · Tango dark theme
+
+-- ── Plugin bootstrap (no plugin manager) ─────────────────────────
+local pack_path = vim.fn.stdpath("data") .. "/site/pack/plugins/start/"
+
+local function ensure_plugin(name, repo)
+    local dir = pack_path .. name
+    if not vim.uv.fs_stat(dir) then
+        vim.fn.system({ "git", "clone", "--depth", "1",
+            "https://github.com/" .. repo .. ".git", dir })
+    end
+end
+
+ensure_plugin("vim-visual-multi", "mg979/vim-visual-multi")
+
+-- VM settings (before plugin loads)
+vim.g.VM_theme = "neon"
+vim.g.VM_maps = {
+    ["Find Under"]         = "<C-d>",    -- select word / next match
+    ["Find Subword Under"] = "<C-d>",    -- same in visual mode
+    ["Add Cursor Up"]      = "<S-C-Up>",
+    ["Add Cursor Down"]    = "<S-C-Down>",
+    ["Select All"]         = "<S-C-a>",  -- select all matches
+    ["Skip Region"]        = "<C-x>",    -- skip current match
+}
 
 -- ── Options ──────────────────────────────────────────────────────
 vim.g.mapleader = " "
@@ -198,9 +222,9 @@ map("i", "<C-Down>", "<Esc><Cmd>move .+1<CR>==gi", { desc = "Move line down" })
 map("v", "<C-Up>",   ":move '<-2<CR>gv=gv",        { desc = "Move selection up" })
 map("v", "<C-Down>", ":move '>+1<CR>gv=gv",        { desc = "Move selection down" })
 
--- Duplicate line (Ctrl+D)
-map("n", "<C-d>", "<Cmd>t.<CR>",          { desc = "Duplicate line" })
-map("i", "<C-d>", "<Esc><Cmd>t.<CR>gi",   { desc = "Duplicate line" })
+-- Duplicate line (Ctrl+Shift+D)
+map("n", "<S-C-d>", "<Cmd>t.<CR>",          { desc = "Duplicate line" })
+map("i", "<S-C-d>", "<Esc><Cmd>t.<CR>gi",   { desc = "Duplicate line" })
 
 -- Delete word backward (Ctrl+Backspace)
 map("i", "<C-BS>", "<C-w>",  { desc = "Delete word left" })
