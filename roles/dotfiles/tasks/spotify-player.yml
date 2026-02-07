@@ -5,3 +5,17 @@
     state: present
   become: true
   tags: [spotify-player]
+
+- name: Create spotify-player config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/spotify-player"
+    state: directory
+    mode: "0755"
+  tags: [spotify-player]
+
+- name: Deploy spotify-player config
+  ansible.builtin.copy:
+    src: spotify-player/app.toml
+    dest: "{{ user_home }}/.config/spotify-player/app.toml"
+    mode: "0644"
+  tags: [spotify-player]
