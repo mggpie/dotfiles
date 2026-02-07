@@ -1,11 +1,11 @@
 # Kanshi - dynamic output configuration
-# Add your monitor profiles here
 
-profile docked {
-    # output "HDMI-A-1" mode 1920x1080 position 0,0
-    # output eDP-1 mode 1920x1080 position 1920,0
+profile monitor {
+    output DP-1 mode 3440x1440@75.050Hz scale 1.0 enable
+    output HDMI-A-2 disable
 }
 
-profile undocked {
-    output eDP-1 enable
+profile tv {
+    output HDMI-A-2 mode 3840x2160@60.000Hz scale 3.0 enable
+    output DP-1 disable
 }
