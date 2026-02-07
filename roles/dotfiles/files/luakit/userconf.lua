@@ -5,6 +5,21 @@ local modes = require "modes"
 local settings = require "settings"
 local window = require "window"
 
+-- ── Hide scrollbars ──────────────────────────────────────────────
+require "hide_scrollbars"
+
+-- ── Dark background for blank/new pages ──────────────────────────
+local webview = require "webview"
+webview.add_signal("init", function(view)
+    view:add_signal("load-status", function(v, status)
+        if status == "committed" then
+            v:eval_js([[
+                document.documentElement.style.backgroundColor = "#000000";
+            ]], { no_return = true })
+        end
+    end)
+end)
+
 -- ── General settings ─────────────────────────────────────────────
 settings.window.home_page        = "about:blank"
 settings.window.new_tab_page     = "about:blank"
