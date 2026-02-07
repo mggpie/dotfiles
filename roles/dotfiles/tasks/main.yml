@@ -44,6 +44,8 @@
   ansible.builtin.import_tasks: vscode.yml
 - name: Import zed tasks
   ansible.builtin.import_tasks: zed.yml
+- name: Import lite-xl tasks
+  ansible.builtin.import_tasks: lite-xl.yml
 
 # === Desktop Environment ===
 - name: Import theme tasks
@@ -92,6 +94,8 @@
   ansible.builtin.import_tasks: firefox.yml
 - name: Import qutebrowser tasks
   ansible.builtin.import_tasks: qutebrowser.yml
+- name: Import luakit tasks
+  ansible.builtin.import_tasks: luakit.yml
 - name: Import pcmanfm tasks
   ansible.builtin.import_tasks: pcmanfm.yml
 - name: Import thunar tasks
@@ -100,6 +104,8 @@
   ansible.builtin.import_tasks: mpv.yml
 - name: Import vlc tasks
   ansible.builtin.import_tasks: vlc.yml
+- name: Import deadbeef tasks
+  ansible.builtin.import_tasks: deadbeef.yml
 - name: Import imv tasks
   ansible.builtin.import_tasks: imv.yml
 - name: Import krita tasks

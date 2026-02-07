@@ -1,0 +1,28 @@
+---
+- name: Install luakit
+  community.general.xbps:
+    name: luakit
+    state: present
+  become: true
+  tags: [luakit]
+
+- name: Create luakit config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/luakit"
+    state: directory
+    mode: "0755"
+  tags: [luakit]
+
+- name: Deploy luakit user configuration
+  ansible.builtin.copy:
+    src: luakit/userconf.lua
+    dest: "{{ user_home }}/.config/luakit/userconf.lua"
+    mode: "0644"
+  tags: [luakit]
+
+- name: Deploy luakit theme
+  ansible.builtin.copy:
+    src: luakit/theme.lua
+    dest: "{{ user_home }}/.config/luakit/theme.lua"
+    mode: "0644"
+  tags: [luakit]

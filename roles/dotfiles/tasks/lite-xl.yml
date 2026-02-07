@@ -1,0 +1,45 @@
+---
+- name: Install lite-xl
+  community.general.xbps:
+    name: lite-xl
+    state: present
+  become: true
+  tags: [lite-xl]
+
+- name: Create lite-xl directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ user_home }}/.config/lite-xl"
+    - "{{ user_home }}/.config/lite-xl/colors"
+    - "{{ user_home }}/.config/lite-xl/plugins"
+  tags: [lite-xl]
+
+- name: Deploy lite-xl configuration
+  ansible.builtin.copy:
+    src: lite-xl/init.lua
+    dest: "{{ user_home }}/.config/lite-xl/init.lua"
+    mode: "0644"
+  tags: [lite-xl]
+
+- name: Deploy lite-xl Tango dark theme
+  ansible.builtin.copy:
+    src: lite-xl/colors/tango_dark.lua
+    dest: "{{ user_home }}/.config/lite-xl/colors/tango_dark.lua"
+    mode: "0644"
+  tags: [lite-xl]
+
+- name: Download lite-xl plugins
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/lite-xl/lite-xl-plugins/master/plugins/{{ item }}"
+    dest: "{{ user_home }}/.config/lite-xl/plugins/{{ item }}"
+    mode: "0644"
+  loop:
+    - smoothcaret.lua
+    - motiontrail.lua
+    - minimap.lua
+    - colorpreview.lua
+    - autoinsert.lua
+  tags: [lite-xl]
