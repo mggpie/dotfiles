@@ -37,8 +37,7 @@ function upall
     mkdir -p (dirname $log_file)
 
     # LED: flashing red during maintenance
-    openrgb -d 0 --mode flashing --color FF0000 2>/dev/null &
-    disown
+    openrgb -d 0 --mode flashing --color FF0000 >/dev/null 2>&1
 
     echo "=== System Maintenance Started: $timestamp ===" | tee -a $log_file
 
@@ -145,6 +144,5 @@ function upall
     echo -e "\nLog saved to: $log_file"
 
     # LED: restore rainbow
-    openrgb -d 0 --mode rainbow 2>/dev/null &
-    disown
+    openrgb -d 0 --mode rainbow >/dev/null 2>&1
 end
