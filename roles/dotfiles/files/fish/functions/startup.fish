@@ -22,7 +22,7 @@ function startup
 
     # Workspace 9: Messenger (left) + Telegram (right)
     swaymsg 'workspace number 9'
-    swaymsg 'exec firefox --new-window https://www.messenger.com'
+    swaymsg 'exec luakit https://www.messenger.com'
     sleep 2
     swaymsg 'exec Telegram'
 

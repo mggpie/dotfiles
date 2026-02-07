@@ -26,3 +26,24 @@
     dest: "{{ user_home }}/.config/luakit/theme.lua"
     mode: "0644"
   tags: [luakit]
+
+- name: Create luakit adblock directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/share/luakit/adblock"
+    state: directory
+    mode: "0755"
+  tags: [luakit]
+
+- name: Download EasyList filter list
+  ansible.builtin.get_url:
+    url: https://easylist.to/easylist/easylist.txt
+    dest: "{{ user_home }}/.local/share/luakit/adblock/easylist.txt"
+    mode: "0644"
+  tags: [luakit]
+
+- name: Download EasyPrivacy filter list
+  ansible.builtin.get_url:
+    url: https://easylist.to/easylist/easyprivacy.txt
+    dest: "{{ user_home }}/.local/share/luakit/adblock/easyprivacy.txt"
+    mode: "0644"
+  tags: [luakit]

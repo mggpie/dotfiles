@@ -92,6 +92,7 @@ dotfiles/
 | `ssh` | SSH configuration |
 | `vscode` | Visual Studio Code |
 | `zed` | Zed editor |
+| `lite-xl` | Lite XL editor |
 
 ### Desktop Environment
 | Tag | Description |
@@ -127,6 +128,7 @@ dotfiles/
 |-----|-------------|
 | `firefox` | Web browser |
 | `qutebrowser` | Keyboard-driven browser |
+| `luakit` | Lightweight WebKit browser |
 | `pcmanfm` | GUI file manager (PCManFM) |
 | `thunar` | GUI file manager (Thunar) |
 | `mpv` | Media player |
@@ -138,6 +140,7 @@ dotfiles/
 | `obsidian` | Note-taking app |
 | `krita` | Digital painting |
 | `vlc` | Media player |
+| `deadbeef` | Music player |
 | `para` | PARA workspace setup |
 
 ## System Maintenance
