@@ -8,13 +8,23 @@ local window = require "window"
 -- ── Hide scrollbars ──────────────────────────────────────────────
 require "hide_scrollbars"
 
--- ── Auto-hide tab bar + status bar with single tab ──────────────
+-- ── Auto-hide tab bar + bottom bar with single tab ──────────────
 window.add_signal("init", function(w)
+    local single = false
+
     local function update_bars()
-        local multiple = w.tabs:count() > 1
-        w.tablist.visible = multiple
-        w.sbar.ebox.visible = multiple
+        single = w.tabs:count() <= 1
+        w.tablist.visible = not single
+        w.bar_layout.visible = not single
     end
+
+    -- Show bottom bar when entering command/search mode, hide on exit
+    w:add_signal("mode-changed", function(_, mode)
+        if single then
+            w.bar_layout.visible = (mode == "command" or mode == "search")
+        end
+    end)
+
     w.tabs:add_signal("page-added", update_bars)
     w.tabs:add_signal("page-removed", update_bars)
     update_bars()
@@ -41,7 +51,7 @@ settings.window.new_tab_page     = "about:blank"
 settings.window.scroll_step      = 40
 settings.window.close_with_last_tab = true
 settings.webview.zoom_level      = 100
-settings.webview.enable_smooth_scrolling = true
+settings.webview.enable_smooth_scrolling = false
 
 -- ── Search engines ───────────────────────────────────────────────
 settings.window.search_engines = {
