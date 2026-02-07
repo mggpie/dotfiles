@@ -39,8 +39,8 @@
   tags: [firefox]
 
 - name: Check if Firefox is running
-  ansible.builtin.shell: pgrep firefox
-  register: firefox_running
+  ansible.builtin.command: pgrep firefox
+  register: dotfiles_firefox_running
   changed_when: false
   failed_when: false
   tags: [firefox]
@@ -48,7 +48,7 @@
 - name: Warn if Firefox is running
   ansible.builtin.debug:
     msg: "WARNING: Firefox is currently running. Please close it for changes to take effect."
-  when: firefox_running.rc == 0
+  when: dotfiles_firefox_running.rc == 0
   tags: [firefox]
 
 - name: Deploy firefox user.js

@@ -55,5 +55,6 @@
     regexp: '^FONT='
     line: 'FONT=ter-v16b'
     create: true
+    mode: "0644"
   become: true
   tags: [fonts]
