@@ -15,7 +15,7 @@ alias logout "swaymsg exit"
 alias suspend "loginctl suspend"
 alias hibernate "loginctl hibernate"
 alias reboot "loginctl reboot"
-alias poweroff "loginctl poweroff"
+alias poweroff "$HOME/.local/bin/poweroff"
 
 alias .. "cd .."
 alias ... "cd ../.."
