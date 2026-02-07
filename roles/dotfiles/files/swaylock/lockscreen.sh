@@ -13,9 +13,11 @@ TIME=$(date '+%H:%M')
 DATE=$(date '+%A, %-d %B')
 
 # Weather (reuse open-meteo API)
-WEATHER=$(curl -sf 'https://api.open-meteo.com/v1/forecast?latitude=52.23&longitude=21.01&current_weather=true&timezone=Europe/Warsaw' 2>/dev/null)
+WEATHER=$(curl -sf 'https://api.open-meteo.com/v1/forecast?latitude=52.23&longitude=21.01&daily=temperature_2m_max,temperature_2m_min&current_weather=true&timezone=Europe/Warsaw&forecast_days=1' 2>/dev/null)
 if [ -n "$WEATHER" ]; then
     TEMP=$(echo "$WEATHER" | jq -r '.current_weather.temperature | round')
+    TMIN=$(echo "$WEATHER" | jq -r '.daily.temperature_2m_min[0] | round')
+    TMAX=$(echo "$WEATHER" | jq -r '.daily.temperature_2m_max[0] | round')
     CODE=$(echo "$WEATHER" | jq -r '.current_weather.weathercode')
     case $CODE in
         0)  DESC="Clear" ;;
@@ -38,9 +40,11 @@ if [ -n "$WEATHER" ]; then
         95) DESC="Thunderstorm" ;;
         *)  DESC="Unknown" ;;
     esac
-    WEATHER_TEXT="${TEMP}°C  ·  ${DESC}"
+    WEATHER_LINE1="${DESC}  ${TEMP}°C"
+    WEATHER_LINE2="↓ ${TMIN}°C   ↑ ${TMAX}°C"
 else
-    WEATHER_TEXT=""
+    WEATHER_LINE1=""
+    WEATHER_LINE2=""
 fi
 
 # Generate image
@@ -48,11 +52,13 @@ magick -size "$RES" xc:"#000000" \
     -gravity center \
     -font "$FONT" \
     -fill "$WHITE" \
-    -pointsize 200 -annotate +0-100 "$TIME" \
+    -pointsize 200 -annotate +0-120 "$TIME" \
     -fill "$GRAY" \
-    -pointsize 40 -annotate +0+30 "$DATE" \
+    -pointsize 40 -annotate +0+20 "$DATE" \
     -fill "$BLUE" \
-    -pointsize 32 -annotate +0+100 "$WEATHER_TEXT" \
+    -pointsize 32 -annotate +0+90 "$WEATHER_LINE1" \
+    -fill "$GRAY" \
+    -pointsize 26 -annotate +0+135 "$WEATHER_LINE2" \
     "$IMG"
 
 # Lock
