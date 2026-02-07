@@ -82,6 +82,14 @@
   become: true
   tags: [base]
 
+- name: Disable power button in elogind (handled by sway)
+  ansible.builtin.lineinfile:
+    path: /etc/elogind/logind.conf
+    regexp: '^#?HandlePowerKey='
+    line: 'HandlePowerKey=ignore'
+  become: true
+  tags: [base]
+
 - name: SSH only on VMs
   ansible.builtin.file:
     path: /var/service/sshd

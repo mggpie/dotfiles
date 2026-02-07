@@ -143,6 +143,7 @@ bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
 bindsym XF86HomePage exec firefox
 bindsym XF86Search exec $menu
 bindsym XF86Documents exec pcmanfm ~/Desktop
+bindsym --locked XF86PowerOff exec $HOME/.local/bin/poweroff
 bindsym Print exec screenshot
 
 floating_modifier $mod normal
