@@ -25,7 +25,7 @@
 
 - name: Add user to i2c group
   ansible.builtin.user:
-    name: "{{ user_name }}"
+    name: "{{ username }}"
     groups: i2c
     append: true
   become: true
