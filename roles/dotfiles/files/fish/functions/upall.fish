@@ -36,6 +36,10 @@ function upall
     # Create log directory if it doesn't exist
     mkdir -p (dirname $log_file)
 
+    # LED: flashing red during maintenance
+    openrgb -d 0 --mode flashing --color FF0000 2>/dev/null &
+    disown
+
     echo "=== System Maintenance Started: $timestamp ===" | tee -a $log_file
 
     # Get initial disk usage
@@ -139,4 +143,8 @@ function upall
 
     echo -e "\n=== System Maintenance Completed: "(date '+%Y-%m-%d %H:%M:%S')" ===" | tee -a $log_file
     echo -e "\nLog saved to: $log_file"
+
+    # LED: restore rainbow
+    openrgb -d 0 --mode rainbow 2>/dev/null &
+    disown
 end
