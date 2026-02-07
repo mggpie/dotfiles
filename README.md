@@ -137,6 +137,7 @@ dotfiles/
 | `imv` | Image viewer |
 | `zathura` | PDF viewer |
 | `newsboat` | RSS reader |
+| `amfora` | Gemini protocol browser |
 | `qbittorrent` | Torrent client |
 | `telegram` | Telegram messenger |
 | `obsidian` | Note-taking app |
