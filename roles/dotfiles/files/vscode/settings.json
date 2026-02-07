@@ -1,6 +1,6 @@
 {
     "editor.fontSize": 14,
-    "editor.fontFamily": "'Intel One Mono', 'Noto Sans Mono', monospace",
+    "editor.fontFamily": "'IntoneMono Nerd Font', 'Intel One Mono', 'Noto Sans Mono', monospace",
     "editor.fontLigatures": true,
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
