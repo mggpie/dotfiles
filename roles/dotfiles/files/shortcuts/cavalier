@@ -1,2 +1,2 @@
 #!/bin/sh
-exec nixGL cavalier "$@"
+exec nixGL NickvisionCavalier.GNOME "$@"
