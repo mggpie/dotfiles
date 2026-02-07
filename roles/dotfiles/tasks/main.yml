@@ -26,6 +26,8 @@
   ansible.builtin.import_tasks: maza.yml
 - name: Import bluetooth tasks
   ansible.builtin.import_tasks: bluetooth.yml
+- name: Import openrgb tasks
+  ansible.builtin.import_tasks: openrgb.yml
 - name: Import wifi tasks
   ansible.builtin.import_tasks: wifi.yml
 
