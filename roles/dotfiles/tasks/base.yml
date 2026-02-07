@@ -7,7 +7,7 @@
     name: opendoas
     state: present
   become: true
-  become_method: su
+  become_method: ansible.builtin.su
   tags: [bootstrap]
 
 - name: Bootstrap - configure doas
@@ -17,7 +17,7 @@
     dest: /etc/doas.conf
     mode: "0400"
   become: true
-  become_method: su
+  become_method: ansible.builtin.su
   tags: [bootstrap]
 
 - name: Install base packages
