@@ -223,4 +223,9 @@
     mode: "0755"
   tags: [shortcuts]
 
-
+- name: Create cavalier shortcut
+  ansible.builtin.copy:
+    src: shortcuts/cavalier
+    dest: "{{ user_home }}/.local/bin/cavalier"
+    mode: "0755"
+  tags: [shortcuts]
