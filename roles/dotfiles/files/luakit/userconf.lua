@@ -8,6 +8,16 @@ local window = require "window"
 -- ── Hide scrollbars ──────────────────────────────────────────────
 require "hide_scrollbars"
 
+-- ── Auto-hide tab bar with single tab ────────────────────────────
+window.add_signal("init", function(w)
+    local function update_tablist()
+        w.tablist.visible = w.tabs:count() > 1
+    end
+    w.tabs:add_signal("page-added", update_tablist)
+    w.tabs:add_signal("page-removed", update_tablist)
+    update_tablist()
+end)
+
 -- ── Dark background for blank/new pages + selection highlight ─────
 local webview = require "webview"
 webview.add_signal("init", function(view)
