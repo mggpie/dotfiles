@@ -32,6 +32,8 @@
       - udisks2
       - zip
       - unzip
+      - ImageMagick
+      - ffmpeg
     state: present
   become: true
   tags: [base]
