@@ -1,0 +1,4 @@
+---
+- name: Restart bluetoothd
+  ansible.builtin.command: sv restart bluetoothd
+  become: true

@@ -26,56 +26,24 @@
   become: true
   tags: [bluetooth]
 
-- name: Create Bluetooth autoconnect script
-  ansible.builtin.copy:
-    content: |
-      #!/bin/sh
-      # Bose QC45 auto-connect script
-      # Runs periodically to check if headphones are available
-
-      BOSE_MAC="{{ bose_mac }}"
-      LOG_FILE="$HOME/.local/share/bose-autoconnect.log"
-
-      # Check if bluetoothctl is available
-      command -v bluetoothctl >/dev/null 2>&1 || exit 1
-
-      # Check if Bluetooth is powered on
-      if ! bluetoothctl show | grep -q "Powered: yes"; then
-          exit 0
-      fi
-
-      # Check if already connected
-      if bluetoothctl info "$BOSE_MAC" 2>/dev/null | grep -q "Connected: yes"; then
-          exit 0
-      fi
-
-      # Check if device is available (scan for a short time)
-      bluetoothctl --timeout 3 scan on >/dev/null 2>&1 &
-      sleep 3
-
-      # Try to connect if device is found
-      if bluetoothctl devices | grep -q "$BOSE_MAC"; then
-          echo "$(date): Attempting to connect to Bose QC45" >> "$LOG_FILE"
-          if bluetoothctl connect "$BOSE_MAC" >/dev/null 2>&1; then
-              echo "$(date): Connected successfully" >> "$LOG_FILE"
-              notify-send -i bluetooth "Bose QC45" "Connected"
-          fi
-      fi
-    dest: "{{ user_home }}/.local/bin/bose-autoconnect"
-    mode: "0755"
+- name: Enable Bluetooth AutoEnable
+  ansible.builtin.lineinfile:
+    path: /etc/bluetooth/main.conf
+    regexp: '^#?AutoEnable='
+    line: 'AutoEnable=true'
+  become: true
+  notify: Restart bluetoothd
   tags: [bluetooth]
 
-- name: Create local bin directory
+- name: Remove old Bose autoconnect script
   ansible.builtin.file:
-    path: "{{ user_home }}/.local/bin"
-    state: directory
-    mode: "0755"
+    path: "{{ user_home }}/.local/bin/bose-autoconnect"
+    state: absent
   tags: [bluetooth]
 
-- name: Add Bose autoconnect to crontab (every 2 minutes)
+- name: Remove old Bose autoconnect cron
   ansible.builtin.cron:
     name: "Bose QC45 autoconnect"
-    minute: "*/2"
-    job: "{{ user_home }}/.local/bin/bose-autoconnect"
     user: "{{ username }}"
+    state: absent
   tags: [bluetooth]

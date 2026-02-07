@@ -7,9 +7,9 @@ function tv --description "Toggle between TV and Monitor with audio switching"
     set -l audio_card "alsa_card.pci-0000_00_1f.3"
 
     # Check current state by checking if TV is enabled
-    set -l tv_power (swaymsg -t get_outputs -r | jq -r ".[] | select(.name == \"$tv_output\") | .power // false")
+    set -l tv_active (swaymsg -t get_outputs -r | jq -r ".[] | select(.name == \"$tv_output\") | .active")
 
-    if test "$tv_power" = "true"
+    if test "$tv_active" = "true"
         # TV is currently on, switch to Monitor
         echo "Switching to Monitor..."
 
@@ -27,6 +27,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
 
         # Switch audio to monitor BEFORE disabling TV to avoid dummy output
         pactl set-card-profile $audio_card $monitor_audio_profile
+        pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
         sleep 0.1
 
         # Now disable TV
@@ -54,6 +55,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
 
         # Switch audio to TV HDMI
         pactl set-card-profile $audio_card $tv_audio_profile
+        pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo-extra1
 
         echo "✓ Switched to TV (4K 60Hz) with audio"
         echo "💡 Tip: Enable 'Game Mode' or 'PC Mode' on TV to reduce input lag/flickering"
