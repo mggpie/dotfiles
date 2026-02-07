@@ -8,6 +8,11 @@ theme.font = "11px IntoneMono Nerd Font"
 theme.fg   = "#d0cfcc"
 theme.bg   = "#000000"
 
+-- General colour pairings
+theme.ok    = { fg = "#d0cfcc", bg = "#000000" }
+theme.warn  = { fg = "#c4a000", bg = "#000000" }
+theme.error = { fg = "#eeeeec", bg = "#cc0000" }
+
 -- Status
 theme.success_fg = "#4e9a06"
 theme.loaded_fg  = "#3465a4"
@@ -54,7 +59,7 @@ theme.dbar_error_fg = "#cc0000"
 
 -- Input bar
 theme.ibar_fg = "#d0cfcc"
-theme.ibar_bg = "#0a0a0a"
+theme.ibar_bg = "rgba(0,0,0,0)"
 
 -- Tab labels
 theme.tab_fg           = "#888888"
@@ -67,16 +72,26 @@ theme.selected_ntheme  = "#eeeeec"
 theme.loading_fg       = "#3465a4"
 theme.loading_bg       = "#000000"
 
+theme.selected_private_tab_bg = "#3d295b"
+theme.private_tab_bg          = "#22254a"
+
 -- SSL
 theme.trust_fg   = "#4e9a06"
 theme.notrust_fg = "#cc0000"
 
 -- Follow mode hints
-theme.follow_font          = "12px IntoneMono Nerd Font bold"
-theme.follow_fg            = "#000000"
-theme.follow_bg            = "#fce94f"
-theme.follow_border        = "1px #c4a000"
-theme.follow_active_bg     = "#8ae234"
-theme.follow_active_border = "1px #4e9a06"
+theme.hint_font                  = "12px IntoneMono Nerd Font bold"
+theme.hint_fg                    = "#000000"
+theme.hint_bg                    = "#fce94f"
+theme.hint_border                = "1px dashed #c4a000"
+theme.hint_opacity               = "0.3"
+theme.hint_overlay_bg            = "rgba(252,233,79,0.3)"
+theme.hint_overlay_border        = "1px dotted #c4a000"
+theme.hint_overlay_selected_bg   = "rgba(138,226,52,0.3)"
+theme.hint_overlay_selected_border = theme.hint_overlay_border
+
+-- Gopher
+theme.gopher_light = { bg = "#e8e8e8", fg = "#17181c", link = "#3465a4" }
+theme.gopher_dark  = { bg = "#000000", fg = "#d0cfcc", link = "#729fcf" }
 
 return theme

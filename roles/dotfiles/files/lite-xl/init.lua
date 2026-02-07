@@ -14,7 +14,7 @@ core.reload_module("colors.tango_dark")
 config.fps = 60
 config.max_undos = 10000
 config.highlight_current_line = true
-config.line_height = 1.6
+config.line_height = 1.2
 config.indent_size = 4
 config.tab_type = "soft"
 config.mouse_wheel_scroll = 50 * SCALE
@@ -35,15 +35,6 @@ config.plugins.smoothcaret = { rate = 0.55 }
 
 -- Motion trail (caret leaves a trail)
 config.plugins.motiontrail = { steps = 50 }
-
--- Minimap
-config.plugins.minimap = {
-  enabled = true,
-  width = 80,
-  instant_scroll = false,
-  syntax_highlight = true,
-  scale = 1,
-}
 
 -- ── Micro-like keybindings ───────────────────────────────────────
 -- Most standard bindings already match (Ctrl+S/Z/Y/C/X/V/F/G/A, etc.)

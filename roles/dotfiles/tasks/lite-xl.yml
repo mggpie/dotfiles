@@ -39,7 +39,6 @@
   loop:
     - smoothcaret.lua
     - motiontrail.lua
-    - minimap.lua
     - colorpreview.lua
     - autoinsert.lua
   tags: [lite-xl]
