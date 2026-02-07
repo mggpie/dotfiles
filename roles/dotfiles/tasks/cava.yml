@@ -20,3 +20,11 @@
     dest: "{{ user_home }}/.config/cava/config"
     mode: "0644"
   tags: [cava]
+
+- name: Install Cavalier from nix
+  ansible.builtin.command:
+    cmd: nix profile install nixpkgs#cavalier
+  register: cavalier_install
+  changed_when: "'already installed' not in cavalier_install.stderr"
+  failed_when: cavalier_install.rc != 0 and 'already installed' not in cavalier_install.stderr
+  tags: [cava]
