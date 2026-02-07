@@ -36,10 +36,13 @@
   tags: [fish]
 
 - name: Deploy fish conf.d
-  ansible.builtin.copy:
-    src: fish/conf.d/
-    dest: "{{ user_home }}/.config/fish/conf.d/"
+  ansible.builtin.template:
+    src: "{{ role_path }}/files/fish/conf.d/{{ item | basename }}"
+    dest: "{{ user_home }}/.config/fish/conf.d/{{ item | basename }}"
     mode: "0644"
+  loop: "{{ lookup('fileglob', role_path + '/files/fish/conf.d/*', wantlist=True) }}"
+  loop_control:
+    label: "{{ item | basename }}"
   tags: [fish]
 
 - name: Add upall-check to user crontab
