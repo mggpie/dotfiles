@@ -116,6 +116,8 @@
   ansible.builtin.import_tasks: vlc.yml
 - name: Import deadbeef tasks
   ansible.builtin.import_tasks: deadbeef.yml
+- name: Import cava tasks
+  ansible.builtin.import_tasks: cava.yml
 - name: Import imv tasks
   ansible.builtin.import_tasks: imv.yml
 - name: Import krita tasks

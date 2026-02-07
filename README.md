@@ -143,6 +143,7 @@ dotfiles/
 | `krita` | Digital painting |
 | `vlc` | Media player |
 | `deadbeef` | Music player |
+| `cava` | Audio visualizer |
 | `para` | PARA workspace setup |
 
 ## System Maintenance
