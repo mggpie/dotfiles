@@ -118,6 +118,7 @@ dotfiles/
 | Tag | Description |
 |-----|-------------|
 | `micro` | Terminal text editor |
+| `neovim` | Neovim text editor |
 | `lf` | Terminal file manager |
 | `htop` | Process viewer |
 | `maza` | Ad-blocking hosts file |

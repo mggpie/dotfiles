@@ -82,6 +82,8 @@
   ansible.builtin.import_tasks: htop.yml
 - name: Import micro tasks
   ansible.builtin.import_tasks: micro.yml
+- name: Import neovim tasks
+  ansible.builtin.import_tasks: neovim.yml
 - name: Import lf tasks
   ansible.builtin.import_tasks: lf.yml
 - name: Import mpd tasks
