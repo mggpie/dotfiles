@@ -8,6 +8,10 @@ local window = require "window"
 -- ── Hide scrollbars ──────────────────────────────────────────────
 require "hide_scrollbars"
 
+-- ── Adblock ──────────────────────────────────────────────────────
+require "adblock"
+require "adblock_chrome"
+
 -- ── Auto-hide tab bar with single tab ────────────────────────────
 window.add_signal("init", function(w)
     local function update_tablist()
@@ -40,6 +44,7 @@ settings.window.scroll_step      = 40
 settings.window.close_with_last_tab = true
 settings.webview.zoom_level      = 100
 settings.webview.enable_smooth_scrolling = true
+settings.webview.enable_dns_prefetching  = true
 
 -- ── Search engines ───────────────────────────────────────────────
 settings.window.search_engines = {
