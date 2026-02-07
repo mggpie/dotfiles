@@ -1,0 +1,13 @@
+---
+# Default values - override in inventory/localhost.yml
+
+username: "{{ ansible_user_id }}"
+user_home: "/home/{{ username }}"
+
+timezone: UTC
+locale: en_US.UTF-8
+keymap: us
+
+cpu_vendor: intel
+
+user_groups: wheel,audio,video,storage,network,input

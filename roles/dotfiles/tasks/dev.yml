@@ -24,7 +24,6 @@
       - eza
       - curl
       - wget
-      - lf
       - bat
       - ripgrep
       - htop
@@ -57,21 +56,6 @@
     state: link
   become: true
   tags: [dev, docker]
-
-# lf configuration
-- name: Create lf config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/lf"
-    state: directory
-    mode: "0755"
-  tags: [dev]
-
-- name: Deploy lf config
-  ansible.builtin.copy:
-    src: lf/lfrc
-    dest: "{{ user_home }}/.config/lf/lfrc"
-    mode: "0644"
-  tags: [dev]
 
 # bat configuration
 - name: Create bat config directory

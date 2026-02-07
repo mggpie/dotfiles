@@ -17,6 +17,7 @@
       src: "{{ user_home }}/.local/zed.app/bin/zed"
       dest: "{{ user_home }}/.local/bin/zed"
       state: link
+      force: true
   tags: [zed]
 
 - name: Create Zed config directory

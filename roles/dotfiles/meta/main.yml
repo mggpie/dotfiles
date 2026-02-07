@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: mggpie
+  description: Ansible-managed dotfiles for Void Linux with Sway
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Void Linux
+      versions:
+        - rolling
+  galaxy_tags:
+    - dotfiles
+    - sway
+    - voidlinux
+    - wayland
+
+dependencies: []

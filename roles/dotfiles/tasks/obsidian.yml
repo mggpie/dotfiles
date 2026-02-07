@@ -3,8 +3,7 @@
   ansible.builtin.command:
     cmd: >-
       nix profile install github:nix-community/nixGL
-      --extra-experimental-features nix-command
-      --extra-experimental-features flakes --impure
+      {{ nix_experimental_flags }} --impure
   register: dotfiles_nixgl_install
   changed_when: "'already installed' not in dotfiles_nixgl_install.stderr"
   failed_when: dotfiles_nixgl_install.rc != 0 and 'already installed' not in dotfiles_nixgl_install.stderr
@@ -14,8 +13,7 @@
   ansible.builtin.command:
     cmd: >-
       nix profile install nixpkgs#obsidian
-      --extra-experimental-features nix-command
-      --extra-experimental-features flakes --impure
+      {{ nix_experimental_flags }} --impure
   environment:
     NIXPKGS_ALLOW_UNFREE: "1"
   register: dotfiles_obsidian_install
@@ -37,13 +35,6 @@
       exec nixGL ~/.nix-profile/bin/obsidian "$@"
     dest: "{{ user_home }}/.local/bin/obsidian"
     mode: '0755'
-  tags: [obsidian]
-
-- name: Deploy fish functions
-  ansible.builtin.copy:
-    src: fish/functions/
-    dest: "{{ user_home }}/.config/fish/functions/"
-    mode: '0644'
   tags: [obsidian]
 
 - name: Create .local/share/applications directory

@@ -35,19 +35,23 @@
     mode: "0644"
   tags: [fish]
 
-- name: Deploy fish conf.d
-  ansible.builtin.template:
-    src: "{{ role_path }}/files/fish/conf.d/{{ item | basename }}"
-    dest: "{{ user_home }}/.config/fish/conf.d/{{ item | basename }}"
+- name: Deploy fish conf.d static files
+  ansible.builtin.copy:
+    src: fish/conf.d/
+    dest: "{{ user_home }}/.config/fish/conf.d/"
     mode: "0644"
-  loop: "{{ lookup('fileglob', role_path + '/files/fish/conf.d/*', wantlist=True) }}"
-  loop_control:
-    label: "{{ item | basename }}"
   tags: [fish]
 
-- name: Add upall-check to user crontab
+- name: Deploy fish environment template
+  ansible.builtin.template:
+    src: fish/conf.d/env.fish
+    dest: "{{ user_home }}/.config/fish/conf.d/env.fish"
+    mode: "0644"
+  tags: [fish]
+
+- name: Add upall-check to user crontab (runs on boot, weekly interval)
   ansible.builtin.cron:
-    name: "Auto-run upall weekly"
+    name: "Run upall-check on boot"
     special_time: reboot
     job: "/bin/fish -c upall-check"
     user: "{{ username }}"

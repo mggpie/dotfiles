@@ -34,6 +34,7 @@
     dest: /etc/wpa_supplicant/wpa_supplicant.conf
     mode: "0600"
   become: true
+  no_log: true
   tags: [wifi]
 
 - name: Detect WiFi interface
@@ -54,6 +55,7 @@
     dest: /etc/sv/wpa_supplicant/conf
     mode: "0644"
   become: true
+  when: dotfiles_wifi_interface.stdout | length > 0
   tags: [wifi]
 
 - name: WiFi service disabled by default (manual start only)

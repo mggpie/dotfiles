@@ -21,6 +21,7 @@
     url: https://raw.githubusercontent.com/tanrax/maza-ad-blocking/master/maza
     dest: /tmp/maza
     mode: '0755'
+  check_mode: false
   tags: [maza]
 
 - name: Fix maza script color detection for ansible
@@ -47,10 +48,19 @@
   changed_when: true
   tags: [maza]
 
+- name: Check if maza is active
+  ansible.builtin.command: grep -q '# MAZA' /etc/hosts
+  register: dotfiles_maza_active
+  changed_when: false
+  failed_when: false
+  become: true
+  tags: [maza]
+
 - name: Start maza ad blocking
   become: true
   ansible.builtin.shell: /usr/local/bin/maza start
   args:
     executable: /bin/bash
+  when: dotfiles_maza_active.rc != 0
   changed_when: true
   tags: [maza]

@@ -8,8 +8,11 @@
     line: 'GRUB_TIMEOUT=0'
     backup: true
   become: true
+  notify: Regenerate GRUB config
   tags: [grub]
 
+# NOTE: mitigations=off disables CPU vulnerability mitigations (Spectre/Meltdown)
+# for performance. This is a deliberate security tradeoff for a desktop system.
 - name: Configure GRUB command line parameters
   ansible.builtin.lineinfile:
     path: /etc/default/grub
@@ -24,9 +27,5 @@
       i915.enable_psr=2 split_lock_detect=off intel_pstate=active"
     backup: true
   become: true
-  tags: [grub]
-
-- name: Display GRUB reminder
-  ansible.builtin.debug:
-    msg: "GRUB configuration updated. Run 'sudo grub-mkconfig -o /boot/grub/grub.cfg' and reboot."
+  notify: Regenerate GRUB config
   tags: [grub]

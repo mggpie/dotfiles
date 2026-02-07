@@ -1,0 +1,7 @@
+---
+# Internal role constants - not meant to be overridden
+
+# Nix experimental features flags (safety net for standalone tag runs)
+# base.yml configures nix.conf with these features permanently,
+# but standalone --tags runs may execute before base has run
+nix_experimental_flags: "--extra-experimental-features 'nix-command flakes'"
