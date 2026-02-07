@@ -8,18 +8,16 @@ local window = require "window"
 -- ── Hide scrollbars ──────────────────────────────────────────────
 require "hide_scrollbars"
 
--- ── Adblock ──────────────────────────────────────────────────────
-require "adblock"
-require "adblock_chrome"
-
--- ── Auto-hide tab bar with single tab ────────────────────────────
+-- ── Auto-hide tab bar + status bar with single tab ──────────────
 window.add_signal("init", function(w)
-    local function update_tablist()
-        w.tablist.visible = w.tabs:count() > 1
+    local function update_bars()
+        local multiple = w.tabs:count() > 1
+        w.tablist.visible = multiple
+        w.sbar.ebox.visible = multiple
     end
-    w.tabs:add_signal("page-added", update_tablist)
-    w.tabs:add_signal("page-removed", update_tablist)
-    update_tablist()
+    w.tabs:add_signal("page-added", update_bars)
+    w.tabs:add_signal("page-removed", update_bars)
+    update_bars()
 end)
 
 -- ── Dark background for blank/new pages + selection highlight ─────
@@ -44,7 +42,6 @@ settings.window.scroll_step      = 40
 settings.window.close_with_last_tab = true
 settings.webview.zoom_level      = 100
 settings.webview.enable_smooth_scrolling = true
-settings.webview.enable_dns_prefetching  = true
 
 -- ── Search engines ───────────────────────────────────────────────
 settings.window.search_engines = {
