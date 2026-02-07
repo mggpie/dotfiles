@@ -36,6 +36,8 @@
   ansible.builtin.import_tasks: openrgb.yml
 - name: Import wifi tasks
   ansible.builtin.import_tasks: wifi.yml
+- name: Import gaming tasks
+  ansible.builtin.import_tasks: gaming.yml
 
 # === Development ===
 - name: Import dev tasks

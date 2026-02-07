@@ -82,6 +82,7 @@ dotfiles/
 | `bluetooth` | Bluetooth configuration |
 | `wifi` | Wi-Fi configuration |
 | `openrgb` | RGB LED control (ASUS Aura) |
+| `gaming` | Steam, Gamescope, GameMode, MangoHud |
 
 ### Development
 | Tag | Description |
