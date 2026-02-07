@@ -1,6 +1,6 @@
 default-timeout=5000
-background-color=#1e1e2e
-text-color=#cdd6f4
-border-color=#89b4fa
-border-radius=5
-font=monospace 11
+background-color=#000000
+text-color=#D0CFCC
+border-color=#3465A4
+border-radius=0
+font=IntoneMono Nerd Font 10

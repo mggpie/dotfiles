@@ -29,8 +29,8 @@ seat seat0 xcursor_theme capitaine-cursors 24
 
 # Colors: border background text indicator child_border
 client.focused          #000000 #000000 #ffffff #000000 #000000
-client.focused_inactive #333333 #222222 #888888 #333333 #333333
-client.unfocused        #333333 #222222 #888888 #333333 #333333
+client.focused_inactive #000000 #000000 #ffffff #000000 #000000
+client.unfocused        #000000 #000000 #ffffff #000000 #000000
 
 ### Input
 input type:keyboard {
@@ -41,6 +41,10 @@ input type:touchpad {
     tap enabled
     dwt enabled
     natural_scroll disabled
+}
+
+input "1118:2048:Microsoft_Microsoft___Nano_Transceiver_v2.0_Mouse" {
+    natural_scroll enabled
 }
 
 ### Key bindings
