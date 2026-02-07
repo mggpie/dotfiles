@@ -18,7 +18,7 @@ set -gx XDG_CONFIG_HOME $HOME/.config
 set -gx XDG_DATA_HOME $HOME/.local/share
 set -gx XDG_CACHE_HOME $HOME/.cache
 set -gx XDG_STATE_HOME $HOME/.local/state
-set -gx --path XDG_DATA_DIRS $HOME/.local/share/flatpak/exports/share /var/lib/flatpak/exports/share /usr/local/share /usr/share
+set -gx --path XDG_DATA_DIRS /usr/local/share /usr/share
 
 # Wayland
 set -gx MOZ_ENABLE_WAYLAND 1                   # Firefox/Mozilla native Wayland
@@ -47,10 +47,7 @@ if test "$DBUS_SESSION_BUS_ADDRESS" = "disabled:"
     set -e DBUS_SESSION_BUS_ADDRESS
 end
 
-# Accessibility bus for Flatpak (fix a11y errors)
-if test -n "$WAYLAND_DISPLAY"; and test -z "$AT_SPI_BUS_ADDRESS"
-    /usr/libexec/at-spi-bus-launcher --launch-immediately &>/dev/null &
-end
+
 
 # GIO/GVFS for trash support in file managers
 set -gx GIO_USE_VFS gvfs

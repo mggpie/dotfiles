@@ -156,17 +156,3 @@
     dest: "{{ user_home }}/.config/nix/nix.conf"
     mode: "0644"
   tags: [base, nix]
-
-# Flatpak
-
-- name: Install flatpak
-  community.general.xbps:
-    name: flatpak
-    state: present
-  become: true
-  tags: [base, flatpak]
-
-- name: Add Flathub repository
-  ansible.builtin.command: flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
-  changed_when: false
-  tags: [base, flatpak]
