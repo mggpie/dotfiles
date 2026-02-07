@@ -8,13 +8,16 @@ local window = require "window"
 -- ── Hide scrollbars ──────────────────────────────────────────────
 require "hide_scrollbars"
 
--- ── Dark background for blank/new pages ──────────────────────────
+-- ── Dark background for blank/new pages + selection highlight ─────
 local webview = require "webview"
 webview.add_signal("init", function(view)
     view:add_signal("load-status", function(v, status)
         if status == "committed" then
             v:eval_js([[
                 document.documentElement.style.backgroundColor = "#000000";
+                var s = document.createElement("style");
+                s.textContent = "::selection { background: #3465a4 !important; color: #eeeeec !important; }";
+                document.head.appendChild(s);
             ]], { no_return = true })
         end
     end)
