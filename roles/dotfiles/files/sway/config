@@ -165,6 +165,8 @@ exec swayidle -w \
     timeout 3600 '$HOME/.local/bin/poweroff' \
     before-sleep 'swaylock -f'
 for_window [app_id=".*"] inhibit_idle fullscreen
+for_window [app_id="foot"] inhibit_idle none
+for_window [app_id="org.wezfurlong.wezterm"] inhibit_idle none
 exec openrgb -d 0 --mode rainbow
 exec fish -c startup
 
