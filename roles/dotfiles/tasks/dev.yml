@@ -3,6 +3,7 @@
 
 - name: Install development packages
   community.general.xbps:
+    update_cache: false
     name:
       - python3
       - python3-pip

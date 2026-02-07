@@ -3,6 +3,7 @@
 
 - name: Install fastfetch
   community.general.xbps:
+    update_cache: false
     name: fastfetch
     state: present
   become: true

@@ -1,6 +1,7 @@
 ---
 - name: Install kanshi
   community.general.xbps:
+    update_cache: false
     name: kanshi
     state: present
   become: true

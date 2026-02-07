@@ -1,6 +1,7 @@
 ---
 - name: Install thunar and dependencies
   community.general.xbps:
+    update_cache: false
     name:
       - Thunar                          # główny file manager
       - thunar-archive-plugin           # rozpakowywanie/pakowanie archiwów

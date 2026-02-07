@@ -1,6 +1,7 @@
 ---
 - name: Install spotify-player
   community.general.xbps:
+    update_cache: false
     name: spotify-player
     state: present
   become: true

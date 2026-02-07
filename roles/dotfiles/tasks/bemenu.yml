@@ -1,6 +1,7 @@
 ---
 - name: Install bemenu
   community.general.xbps:
+    update_cache: false
     name: bemenu
     state: present
   become: true

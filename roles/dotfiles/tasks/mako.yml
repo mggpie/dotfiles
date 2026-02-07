@@ -1,6 +1,7 @@
 ---
 - name: Install mako
   community.general.xbps:
+    update_cache: false
     name: mako
     state: present
   become: true

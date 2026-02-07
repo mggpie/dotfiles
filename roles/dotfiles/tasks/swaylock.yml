@@ -1,6 +1,7 @@
 ---
 - name: Install swaylock
   community.general.xbps:
+    update_cache: false
     name: swaylock
     state: present
   become: true
@@ -8,6 +9,7 @@
 
 - name: Install swayidle
   community.general.xbps:
+    update_cache: false
     name: swayidle
     state: present
   become: true
@@ -15,6 +17,7 @@
 
 - name: Install sway-audio-idle-inhibit
   community.general.xbps:
+    update_cache: false
     name: sway-audio-idle-inhibit
     state: present
   become: true

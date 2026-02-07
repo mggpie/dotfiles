@@ -1,6 +1,7 @@
 ---
 - name: Install qutebrowser
   community.general.xbps:
+    update_cache: false
     name: qutebrowser
     state: present
   become: true
@@ -8,6 +9,7 @@
 
 - name: Install qutebrowser dependencies
   community.general.xbps:
+    update_cache: false
     name:
       - python3-PyQt5
       - python3-adblock

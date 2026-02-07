@@ -1,6 +1,7 @@
 ---
 - name: Install DeaDBeeF and plugins
   community.general.xbps:
+    update_cache: false
     name:
       - deadbeef
       - deadbeef-fb

@@ -1,6 +1,7 @@
 ---
 - name: Install wezterm
   community.general.xbps:
+    update_cache: false
     name: wezterm
     state: present
   become: true

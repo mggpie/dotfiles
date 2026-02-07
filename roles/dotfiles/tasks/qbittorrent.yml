@@ -1,6 +1,7 @@
 ---
 - name: Install qbittorrent
   community.general.xbps:
+    update_cache: false
     name:
       - qbittorrent
       - qt6-plugin-tls-openssl

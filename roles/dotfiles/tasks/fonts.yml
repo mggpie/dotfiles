@@ -3,6 +3,7 @@
 
 - name: Install fonts from xbps
   community.general.xbps:
+    update_cache: false
     name:
       - font-inter
       - nerd-fonts
@@ -41,6 +42,7 @@
 
 - name: Install terminus-font for TTY
   community.general.xbps:
+    update_cache: false
     name:
       - terminus-font
     state: present

@@ -1,6 +1,7 @@
 ---
 - name: Install pipewire
   community.general.xbps:
+    update_cache: false
     name:
       - pipewire
       - wireplumber

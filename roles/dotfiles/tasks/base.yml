@@ -3,6 +3,7 @@
 
 - name: Bootstrap - install doas
   community.general.xbps:
+    update_cache: false
     name: opendoas
     state: present
   become: true
@@ -21,6 +22,7 @@
 
 - name: Install base packages
   community.general.xbps:
+    update_cache: false
     name:
       - chrony
       - fontconfig
@@ -40,6 +42,7 @@
 
 - name: Enable nonfree repository
   community.general.xbps:
+    update_cache: false
     name: void-repo-nonfree
     state: present
   become: true
@@ -47,6 +50,7 @@
 
 - name: Install CPU microcode
   community.general.xbps:
+    update_cache: false
     name: "{{ 'intel-ucode' if cpu_vendor == 'intel' else 'linux-firmware-amd' }}"
     state: present
   become: true

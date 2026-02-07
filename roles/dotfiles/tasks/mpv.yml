@@ -1,6 +1,7 @@
 ---
 - name: Install mpv
   community.general.xbps:
+    update_cache: false
     name: mpv
     state: present
   become: true
@@ -43,6 +44,7 @@
 
 - name: Install yt-dlp for YouTube support
   community.general.xbps:
+    update_cache: false
     name: yt-dlp
     state: present
   become: true
@@ -50,6 +52,7 @@
 
 - name: Install subliminal for subtitle downloading
   community.general.xbps:
+    update_cache: false
     name: subliminal
     state: present
   become: true
