@@ -98,6 +98,8 @@
   ansible.builtin.import_tasks: spotify-player.yml
 - name: Import newsboat tasks
   ansible.builtin.import_tasks: newsboat.yml
+- name: Import amfora tasks
+  ansible.builtin.import_tasks: amfora.yml
 
 # === Applications ===
 - name: Import firefox tasks
