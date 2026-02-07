@@ -80,6 +80,8 @@ dotfiles/
 | `fonts` | Inter, Intel One Mono, Nerd Fonts |
 | `theme` | GTK/Qt theming |
 | `bluetooth` | Bluetooth configuration |
+| `wifi` | Wi-Fi configuration |
+| `openrgb` | RGB LED control (ASUS Aura) |
 
 ### Development
 | Tag | Description |
@@ -89,6 +91,7 @@ dotfiles/
 | `gh` | GitHub CLI |
 | `ssh` | SSH configuration |
 | `vscode` | Visual Studio Code |
+| `zed` | Zed editor |
 
 ### Desktop Environment
 | Tag | Description |
@@ -116,11 +119,14 @@ dotfiles/
 | `lf` | Terminal file manager |
 | `htop` | Process viewer |
 | `maza` | Ad-blocking hosts file |
+| `mpd` | Music Player Daemon + ncmpcpp |
+| `spotify-player` | Spotify TUI client |
 
 ### Applications
 | Tag | Description |
 |-----|-------------|
 | `firefox` | Web browser |
+| `qutebrowser` | Keyboard-driven browser |
 | `pcmanfm` | GUI file manager (PCManFM) |
 | `thunar` | GUI file manager (Thunar) |
 | `mpv` | Media player |
@@ -147,6 +153,7 @@ upall logs      # View full log
 Features:
 - 9-step maintenance: fstrim, xbps updates, kernel cleanup, maza ad-blocking, Nix updates, trash cleanup
 - Automatic weekly execution via `@reboot` cron job
+- RGB LED feedback: flashing red during maintenance, rainbow when done
 - Error tracking with file report in `~/Downloads/upall-error.txt`
 - Log saved to `~/.local/state/upall.log`
 
