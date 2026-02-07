@@ -38,15 +38,18 @@
 
 - name: Detect WiFi interface
   ansible.builtin.shell: |
+    set -o pipefail
     iw dev | grep Interface | awk '{print $2}' | head -n1
-  register: wifi_interface
+  args:
+    executable: /bin/bash
+  register: dotfiles_wifi_interface
   changed_when: false
   tags: [wifi]
 
 - name: Configure wpa_supplicant service
   ansible.builtin.copy:
     content: |
-      WPA_INTERFACE={{ wifi_interface.stdout }}
+      WPA_INTERFACE={{ dotfiles_wifi_interface.stdout }}
       CONF_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
     dest: /etc/sv/wpa_supplicant/conf
     mode: "0644"
