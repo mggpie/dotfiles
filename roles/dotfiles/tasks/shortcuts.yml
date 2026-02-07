@@ -195,4 +195,25 @@
     mode: "0755"
   tags: [shortcuts]
 
+- name: Create aura-tango shortcut
+  ansible.builtin.copy:
+    src: shortcuts/aura-tango
+    dest: "{{ user_home }}/.local/bin/aura-tango"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create aura-rainbow shortcut
+  ansible.builtin.copy:
+    src: shortcuts/aura-rainbow
+    dest: "{{ user_home }}/.local/bin/aura-rainbow"
+    mode: "0755"
+  tags: [shortcuts]
+
+- name: Create aura-off shortcut
+  ansible.builtin.copy:
+    src: shortcuts/aura-off
+    dest: "{{ user_home }}/.local/bin/aura-off"
+    mode: "0755"
+  tags: [shortcuts]
+
 
