@@ -13,5 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create dummy vault and become password files
+        run: |
+          echo "dummy" > .vault_pass
+          echo "dummy" > .become_pass
+
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
