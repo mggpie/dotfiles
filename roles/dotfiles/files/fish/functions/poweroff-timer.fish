@@ -21,6 +21,9 @@ function poweroff-timer
     echo "System will power off in $minutes minute(s)"
     echo "To cancel: poweroff-timer cancel"
 
+    # Turn off RGB aura immediately
+    openrgb -d 0 --mode off >/dev/null 2>&1
+
     fish -c "sleep $seconds && $HOME/.local/bin/poweroff" &
     echo $last_pid > /tmp/timer.pid
 end
