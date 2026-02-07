@@ -161,6 +161,7 @@ exec swayidle -w \
     timeout 300 'swaylock -f' \
     timeout 600 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
+    timeout 1800 'loginctl poweroff' \
     before-sleep 'swaylock -f'
 exec sway-audio-idle-inhibit
 exec openrgb -d 0 --mode rainbow
