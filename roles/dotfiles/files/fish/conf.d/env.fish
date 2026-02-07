@@ -51,6 +51,10 @@ end
 
 # GIO/GVFS for trash support in file managers
 set -gx GIO_USE_VFS gvfs
+# Nix sets GIO_EXTRA_MODULES to its dconf only, missing system gvfs module
+if not contains /usr/lib/gio/modules $GIO_EXTRA_MODULES
+    set -gx --path GIO_EXTRA_MODULES $GIO_EXTRA_MODULES /usr/lib/gio/modules
+end
 
 # Increase file descriptor limit (WezTerm needs >4096)
 ulimit -n 65536 2>/dev/null
