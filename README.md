@@ -98,6 +98,7 @@ dotfiles/
 | Tag | Description |
 |-----|-------------|
 | `sway` | Sway window manager |
+| `swaylock` | Screen lock + idle management |
 | `waybar` | Status bar |
 | `kanshi` | Dynamic output configuration |
 | `bemenu` | Application launcher |

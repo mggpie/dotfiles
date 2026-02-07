@@ -52,6 +52,8 @@
   ansible.builtin.import_tasks: theme.yml
 - name: Import sway tasks
   ansible.builtin.import_tasks: sway.yml
+- name: Import swaylock tasks
+  ansible.builtin.import_tasks: swaylock.yml
 - name: Import waybar tasks
   ansible.builtin.import_tasks: waybar.yml
 - name: Import kanshi tasks

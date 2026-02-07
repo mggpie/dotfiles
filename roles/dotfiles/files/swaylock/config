@@ -1,0 +1,44 @@
+ignore-empty-password
+show-failed-attempts
+daemonize
+font=IntoneMono Nerd Font
+indicator-radius=80
+indicator-thickness=8
+
+color=000000
+
+# Idle state: subtle dark ring
+inside-color=00000000
+ring-color=3465A4
+line-color=00000000
+separator-color=00000000
+text-color=D0CFCC
+
+# Typing (verifying input)
+inside-ver-color=00000000
+ring-ver-color=3465A4
+line-ver-color=00000000
+text-ver-color=D0CFCC
+
+# Backspace
+key-hl-color=3465A4
+bs-hl-color=CC0000
+
+# Cleared
+inside-clear-color=00000000
+ring-clear-color=D0CFCC
+line-clear-color=00000000
+text-clear-color=D0CFCC
+
+# Wrong password
+inside-wrong-color=00000000
+ring-wrong-color=CC0000
+line-wrong-color=00000000
+text-wrong-color=CC0000
+
+# Caps Lock
+inside-caps-lock-color=00000000
+ring-caps-lock-color=C4A000
+caps-lock-key-hl-color=C4A000
+caps-lock-bs-hl-color=CC0000
+text-caps-lock-color=C4A000

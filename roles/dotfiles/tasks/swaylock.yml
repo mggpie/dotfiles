@@ -1,0 +1,35 @@
+---
+- name: Install swaylock
+  community.general.xbps:
+    name: swaylock
+    state: present
+  become: true
+  tags: [swaylock]
+
+- name: Install swayidle
+  community.general.xbps:
+    name: swayidle
+    state: present
+  become: true
+  tags: [swaylock]
+
+- name: Install sway-audio-idle-inhibit
+  community.general.xbps:
+    name: sway-audio-idle-inhibit
+    state: present
+  become: true
+  tags: [swaylock]
+
+- name: Create swaylock config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/swaylock"
+    state: directory
+    mode: "0755"
+  tags: [swaylock]
+
+- name: Deploy swaylock configuration
+  ansible.builtin.copy:
+    src: swaylock/config
+    dest: "{{ user_home }}/.config/swaylock/config"
+    mode: "0644"
+  tags: [swaylock]
