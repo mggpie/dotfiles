@@ -90,6 +90,13 @@
     mode: "0755"
   tags: [shortcuts]
 
+- name: Create messenger shortcut
+  ansible.builtin.copy:
+    src: shortcuts/messenger
+    dest: "{{ user_home }}/.local/bin/messenger"
+    mode: "0755"
+  tags: [shortcuts]
+
 - name: Create telegram shortcut
   ansible.builtin.copy:
     src: shortcuts/telegram
