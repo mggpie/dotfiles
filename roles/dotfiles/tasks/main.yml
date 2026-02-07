@@ -80,6 +80,8 @@
   ansible.builtin.import_tasks: lf.yml
 - name: Import mpd tasks
   ansible.builtin.import_tasks: mpd.yml
+- name: Import spotify-player tasks
+  ansible.builtin.import_tasks: spotify-player.yml
 - name: Import newsboat tasks
   ansible.builtin.import_tasks: newsboat.yml
 

@@ -1,0 +1,7 @@
+---
+- name: Install spotify-player
+  community.general.xbps:
+    name: spotify-player
+    state: present
+  become: true
+  tags: [spotify-player]
