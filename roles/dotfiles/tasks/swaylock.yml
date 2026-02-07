@@ -15,14 +15,6 @@
   become: true
   tags: [swaylock]
 
-- name: Install sway-audio-idle-inhibit
-  community.general.xbps:
-    update_cache: false
-    name: sway-audio-idle-inhibit
-    state: present
-  become: true
-  tags: [swaylock]
-
 - name: Create swaylock config directory
   ansible.builtin.file:
     path: "{{ user_home }}/.config/swaylock"

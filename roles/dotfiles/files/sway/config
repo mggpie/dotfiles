@@ -164,7 +164,7 @@ exec swayidle -w \
     resume 'swaymsg "output * dpms on"' \
     timeout 3600 '$HOME/.local/bin/poweroff' \
     before-sleep 'swaylock -f'
-exec sway-audio-idle-inhibit
+for_window [app_id=".*"] inhibit_idle fullscreen
 exec openrgb -d 0 --mode rainbow
 exec fish -c startup
 

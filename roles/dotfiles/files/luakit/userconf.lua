@@ -48,10 +48,14 @@ end)
 -- ── General settings ─────────────────────────────────────────────
 settings.window.home_page        = "about:blank"
 settings.window.new_tab_page     = "about:blank"
-settings.window.scroll_step      = 40
+settings.window.scroll_step      = 160
 settings.window.close_with_last_tab = true
 settings.webview.zoom_level      = 100
 settings.webview.enable_smooth_scrolling = false
+
+-- ── Hardware acceleration ────────────────────────────────────────
+settings.webview.hardware_acceleration_policy = "always"
+settings.webview.enable_accelerated_2d_canvas = true
 
 -- ── Search engines ───────────────────────────────────────────────
 settings.window.search_engines = {
