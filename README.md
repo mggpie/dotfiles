@@ -7,9 +7,9 @@
 
 Ansible-managed Void Linux (glibc) desktop with Sway, built for long sessions. One `bootstrap.sh` takes a fresh Void install to a fully configured workstation - window manager, audio stack, Bluetooth, shell, editors, and 50+ applications - in a single idempotent run.
 
-I picked Void Linux because to me it's one of the most architecturally interesting distros out there, right next to NixOS - runit instead of systemd, xbps that's faster than anything else, and rolling release with actual QA. It ships totally bare, so you build everything from scratch exactly how you want it.
-
 The aesthetic is purely functional. Tango Dark and Adwaita Dark palettes with Intel One Mono Nerd Font were chosen for readability during 12-hour days, not for screenshots. Everything is keyboard-driven, minimal, and stays out of the way.
+
+I picked Void Linux because it's one of the most architecturally interesting distros out there to me.
 
 ## What's Inside
 
@@ -65,10 +65,10 @@ echo "your-root-password" > .become_pass
 ## Usage
 
 ```sh
-ansible-playbook playbook.yml                 # Full run
-ansible-playbook playbook.yml --tags sway     # Single app
-ansible-playbook playbook.yml --tags fish,foot # Multiple tags
-ansible-playbook playbook.yml --list-tags     # Show all tags
+ansible-playbook playbook.yml                   # Full run
+ansible-playbook playbook.yml --tags sway       # Single app
+ansible-playbook playbook.yml --tags fish,foot  # Multiple tags
+ansible-playbook playbook.yml --list-tags       # Show all tags
 ```
 
 ## Tags
