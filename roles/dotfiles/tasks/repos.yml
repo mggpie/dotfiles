@@ -52,10 +52,10 @@
     state: absent
   tags: [repos]
 
-- name: Daily repos sync cron
+- name: Repos sync on boot (runs if 1+ day since last sync)
   ansible.builtin.cron:
     name: repos-sync
-    special_time: daily
-    job: "fish -c repos-sync"
+    special_time: reboot
+    job: "sleep 30 && /bin/fish -c repos-sync"
     user: "{{ username }}"
   tags: [repos]
