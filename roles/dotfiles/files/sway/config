@@ -171,7 +171,7 @@ for_window [app_id="org.wezfurlong.wezterm"] inhibit_idle none
 for_window [app_id="notepad"] floating enable, move scratchpad, scratchpad show
 for_window [title="radio-stream"] move to workspace 10
 exec openrgb -d 0 --mode rainbow
-exec fish -c 'sleep 3; radio start'
+exec fish -c 'while not curl -sf https://www.youtube.com >/dev/null 2>&1; sleep 2; end; radio start'
 exec fish -c startup
 
 include /etc/sway/config.d/*
