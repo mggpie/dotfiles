@@ -53,11 +53,12 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Now disable monitor
         swaymsg output $monitor_output disable
 
-        # Switch audio to TV HDMI
+        # Switch audio to TV HDMI at 50%
         pactl set-card-profile $audio_card $tv_audio_profile
         pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo-extra1
+        pactl set-sink-volume @DEFAULT_SINK@ 50%
 
-        echo "✓ Switched to TV (4K 60Hz) with audio"
+        echo "✓ Switched to TV (4K 60Hz) with audio at 50%"
         echo "💡 Tip: Enable 'Game Mode' or 'PC Mode' on TV to reduce input lag/flickering"
     end
 end
