@@ -1,17 +1,6 @@
 function repos-sync
     # Scans PARA directories for GitHub repos and updates vars/main.yml to match.
-    # Runs on boot via cron. Skips if last sync was less than 1 day ago.
-
-    set -l state_file $HOME/.local/state/repos-sync-last
-    set -l threshold 86400 # 1 day in seconds
-
-    if test -f $state_file
-        set -l last_run (cat $state_file)
-        set -l now (date +%s)
-        if test (math "$now - $last_run") -lt $threshold
-            return 0
-        end
-    end
+    # Runs on every boot via cron. Idempotent - only commits if something changed.
 
     set -l dotfiles $HOME/Desktop/1-Projects/dotfiles
     set -l vars_file $dotfiles/roles/dotfiles/vars/main.yml
@@ -58,8 +47,4 @@ function repos-sync
         git commit -m "auto: repos-sync updated PARA destinations"
         git push
     end
-
-    # Save last run timestamp
-    mkdir -p (dirname $state_file)
-    date +%s >$state_file
 end
