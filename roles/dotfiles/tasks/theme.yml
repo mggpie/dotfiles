@@ -12,7 +12,7 @@
 
 - name: Install capitaine-cursors via Nix
   ansible.builtin.command:
-    cmd: nix {{ nix_experimental_flags }} profile install nixpkgs#capitaine-cursors
+    cmd: nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#capitaine-cursors
   register: dotfiles_nix_install_result
   changed_when: "'already installed' not in dotfiles_nix_install_result.stderr"
   failed_when: dotfiles_nix_install_result.rc != 0 and 'already installed' not in dotfiles_nix_install_result.stderr

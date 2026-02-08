@@ -7,7 +7,7 @@ galaxy_info:
   platforms:
     - name: Void Linux
       versions:
-        - rolling
+        - all
   galaxy_tags:
     - dotfiles
     - sway
