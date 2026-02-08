@@ -5,7 +5,7 @@
     "spacing": 0,
     "modules-left": ["sway/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["pulseaudio", "custom/weather", "battery"],
+    "modules-right": ["custom/radio-prev", "custom/radio-toggle", "custom/radio-next", "pulseaudio", "custom/weather", "battery"],
 
     "sway/workspaces": {
         "disable-scroll": true,
@@ -26,6 +26,22 @@
         "return-type": "json",
         "interval": 600,
         "format": "{}"
+    },
+    "custom/radio-prev": {
+        "format": "<span size='x-large'>󰒮</span>",
+        "on-click": "fish -c 'radio prev'",
+        "tooltip": false
+    },
+    "custom/radio-toggle": {
+        "exec": "fish -c 'radio status'",
+        "return-type": "json",
+        "interval": 3,
+        "on-click": "fish -c 'radio toggle'"
+    },
+    "custom/radio-next": {
+        "format": "<span size='x-large'>󰒭</span>",
+        "on-click": "fish -c 'radio next'",
+        "tooltip": false
     },
     "pulseaudio": {
         "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume}%</span>",

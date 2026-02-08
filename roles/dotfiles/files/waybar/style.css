@@ -28,8 +28,20 @@ window#waybar {
     background: transparent;
 }
 
-#clock, #battery, #custom-weather, #pulseaudio {
+#clock, #battery, #custom-weather, #custom-radio-toggle, #pulseaudio {
     padding: 0 8px;
+}
+
+#custom-radio-prev, #custom-radio-next {
+    padding: 0 2px;
+}
+
+#custom-radio-prev {
+    padding-left: 8px;
+}
+
+#custom-radio-next {
+    padding-right: 4px;
 }
 
 #battery {

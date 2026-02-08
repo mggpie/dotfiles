@@ -15,9 +15,9 @@ The aesthetic is purely functional. Tango Dark and Adwaita Dark palettes with In
 
 **OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide + 4K TV via HDMI).
 
-**Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
+**Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). Lofi radio streams from YouTube via mpv (audio only) - starts with Sway, shows current station in Waybar, left-click to toggle, right-click to cycle stations. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
 
-**Shell:** Fish with ~30 custom functions. `deploy sway fish mpv` auto-commits, pushes, and runs `ansible-playbook` with those tags in one shot. `startup` scripts a full multi-workspace layout. `weather` fetches forecasts from Open-Meteo and maps WMO codes to Nerd Font icons via jq for Waybar.
+**Shell:** Fish with ~30 custom functions. `deploy sway fish mpv` auto-commits, pushes, and runs `ansible-playbook` with those tags in one shot. `startup` scripts a workspace layout (Firefox 33% left + VSCode 66% right) with a scratchpad notepad accessible via Super+\`. `weather` fetches forecasts from Open-Meteo and maps WMO codes to Nerd Font icons via jq for Waybar.
 
 **RGB as status indicator:** The PC's ASUS Aura LEDs aren't cosmetic - they're a state machine. Rainbow = system ready. Flashing red = maintenance running. Off = shutdown timer active. Rainbow flash = 2-second warning before poweroff.
 
@@ -65,10 +65,10 @@ echo "your-root-password" > .become_pass
 ## Usage
 
 ```sh
-ansible-playbook playbook.yml                  # Full run
-ansible-playbook playbook.yml --tags sway      # Single app
-ansible-playbook playbook.yml --tags fish,foot  # Multiple tags
-ansible-playbook playbook.yml --list-tags      # Show all tags
+ansible-playbook playbook.yml                 # Full run
+ansible-playbook playbook.yml --tags sway     # Single app
+ansible-playbook playbook.yml --tags fish,foot # Multiple tags
+ansible-playbook playbook.yml --list-tags     # Show all tags
 ```
 
 ## Tags
@@ -100,6 +100,7 @@ ansible-playbook playbook.yml --list-tags      # Show all tags
 | `dev` | Python, Lua, Go, Docker, Terraform, Ansible |
 | `git` | Git configuration + git-filter-repo |
 | `gh` | GitHub CLI |
+| `repos` | Clone all GitHub repos to archive + monthly review reminder |
 | `ssh` | SSH keys (vault-encrypted) |
 | `vscode` | Visual Studio Code (via Nix) |
 | `zed` | Zed editor |

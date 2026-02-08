@@ -20,6 +20,8 @@
   ansible.builtin.import_tasks: grub.yml
 - name: Import para tasks
   ansible.builtin.import_tasks: para.yml
+- name: Import repos tasks
+  ansible.builtin.import_tasks: repos.yml
 - name: Import intel-graphics tasks
   ansible.builtin.import_tasks: intel-graphics.yml
 - name: Import tlp tasks
