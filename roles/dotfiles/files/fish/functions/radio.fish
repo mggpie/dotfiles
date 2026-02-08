@@ -7,7 +7,7 @@ function radio
         "Life in the Colony" "https://www.youtube.com/watch?v=s0aDp1CFZ7Q" \
         "Swamp Camp"         "https://www.youtube.com/watch?v=EZG7xHVwyXk" \
         "Relaxing Forest"    "https://www.youtube.com/watch?v=td7xQnweIFE" \
-        "Gothic OST"         "https://www.youtube.com/watch?v=td7xQnweIFE" \
+        "Gothic OST"         "https://www.youtube.com/watch?v=Q7gVCSu7imE" \
         "Ognisko"            "https://www.youtube.com/watch?v=8KrLtLr-Gy8"
 
     set -l names
@@ -26,8 +26,13 @@ function radio
             if test -f $pid_file && kill -0 (cat $pid_file) 2>/dev/null
                 return
             end
-            set -l idx (math (random) % (count $names) + 1)
-            echo $idx >$state_file
+            set -l idx
+            if test -f $state_file
+                set idx (cat $state_file)
+            else
+                set idx (math (random) % (count $names) + 1)
+                echo $idx >$state_file
+            end
             echo $idx >>$history_file
             mpv --vo=null --no-video --really-quiet --force-media-title=radio-stream $urls[$idx] &
             echo $last_pid >$pid_file
@@ -38,7 +43,6 @@ function radio
                 kill (cat $pid_file) 2>/dev/null
                 rm -f $pid_file
             end
-            rm -f $state_file
             rm -f $history_file
 
         case toggle
