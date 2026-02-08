@@ -23,7 +23,7 @@ The aesthetic is purely functional. Tango Dark and Adwaita Dark palettes with In
 
 **Packages & system:** Dual package manager - xbps (~1200 packages), Nix as unprivileged overlay (~500) for apps not in Void repos. Tuned i915 kernel params, TTY autologin, only TTY1-2 kept, unused services masked, CPU mitigations off (never do this on a production machine), `GRUB_TIMEOUT=0`. Ansible Vault for SSH keys and tokens, `no_log: true` on secret tasks.
 
-**File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level with cron auto-migration from Downloads to Inbox. `poweroff` unmounts all USB drives before shutdown.
+**File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level - all GitHub repos auto-cloned to the right directory, new repos detected, deleted repos cleaned up, directory moves tracked. Cron auto-migration from Downloads to Inbox. `poweroff` unmounts all USB drives before shutdown.
 
 **Extras:** maza host-level ad blocking (no Pi-hole, no browser extension). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time.
 
@@ -100,7 +100,7 @@ ansible-playbook playbook.yml --list-tags     # Show all tags
 | `dev` | Python, Lua, Go, Docker, Terraform, Ansible |
 | `git` | Git configuration + git-filter-repo |
 | `gh` | GitHub CLI |
-| `repos` | Clone all GitHub repos to PARA dirs, daily auto-sync |
+| `repos` | Clone all GitHub repos to PARA dirs, auto-sync on boot |
 | `ssh` | SSH keys (vault-encrypted) |
 | `vscode` | Visual Studio Code (via Nix) |
 | `zed` | Zed editor |
@@ -180,6 +180,12 @@ upall logs      # Full log
 ```
 
 RGB LEDs flash red during maintenance, rainbow when done. Errors saved to `~/Downloads/upall-error.txt`.
+
+**`repos-sync`** - syncs local PARA directories with GitHub (runs automatically via `@reboot` cron):
+
+- New repos on GitHub → cloned to `1-Projects` or `4-Archives` based on `repos_active`
+- Repos deleted from GitHub → local clone removed
+- Repos moved between PARA dirs → `vars/main.yml` updated, committed and pushed automatically
 
 **`move-downloads`** - moves files older than 30 min from `~/Downloads` to `~/Desktop/0-Inbox` (PARA methodology).
 
