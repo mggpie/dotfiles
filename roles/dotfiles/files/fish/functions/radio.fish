@@ -19,6 +19,7 @@ function radio
 
     set -l pid_file /tmp/radio_pid
     set -l state_file /tmp/radio_state
+    set -l history_file /tmp/radio_history
 
     switch "$argv[1]"
         case start
@@ -27,6 +28,7 @@ function radio
             end
             set -l idx (math (random) % (count $names) + 1)
             echo $idx >$state_file
+            echo $idx >>$history_file
             mpv --vo=null --no-video --really-quiet --force-media-title=radio-stream $urls[$idx] &
             echo $last_pid >$pid_file
             disown $last_pid
@@ -37,6 +39,7 @@ function radio
                 rm -f $pid_file
             end
             rm -f $state_file
+            rm -f $history_file
 
         case toggle
             if test -f $pid_file && kill -0 (cat $pid_file) 2>/dev/null
@@ -46,12 +49,15 @@ function radio
             end
 
         case prev
-            set -l idx (math (random) % (count $names) + 1)
-            if test -f $state_file
-                set -l current (cat $state_file)
-                while test $idx -eq $current -a (count $names) -gt 1
-                    set idx (math (random) % (count $names) + 1)
-                end
+            if not test -f $history_file
+                return
+            end
+            # Remove current station from history
+            sed -i '$d' $history_file
+            # Get previous station
+            set -l idx (tail -1 $history_file 2>/dev/null)
+            if test -z "$idx"
+                return
             end
             echo $idx >$state_file
             if test -f $pid_file
@@ -72,6 +78,7 @@ function radio
                 end
             end
             echo $idx >$state_file
+            echo $idx >>$history_file
             if test -f $pid_file
                 kill (cat $pid_file) 2>/dev/null
                 rm -f $pid_file
