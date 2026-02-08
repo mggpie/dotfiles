@@ -1,13 +1,14 @@
 function radio
     set -l stations \
-        "lofi hip hop"       "https://www.youtube.com/watch?v=jfKfPfyJRdk" \
-        "lofi sleep"         "https://www.youtube.com/watch?v=28KRPhVzCus" \
-        "lofi jazz"          "https://www.youtube.com/watch?v=HuFYqnbVbzY" \
-        "synthwave"          "https://www.youtube.com/watch?v=4xDzrJKXOOY" \
-        "dark ambient"       "https://www.youtube.com/watch?v=S_MOd40zlYU" \
-        "gothic 1 ambient"   "https://www.youtube.com/watch?v=Li4i5JmYXDY" \
-        "gothic 2 ambient"   "https://www.youtube.com/watch?v=6OU1Wo2vJZQ" \
-        "gothic 3 ambient"   "https://www.youtube.com/watch?v=7x9nzN54GtY"
+        "Lofi Hip-Hop"       "https://www.youtube.com/watch?v=jfKfPfyJRdk" \
+        "Jarkendar"          "https://www.youtube.com/watch?v=dRnH2cU3_m4" \
+        "Khorinis"           "https://www.youtube.com/watch?v=nPGvZ8yZlyY&t" \
+        "Forest sounds"      "https://www.youtube.com/watch?v=OVLIbpPejCU" \
+        "Life in the Colony" "https://www.youtube.com/watch?v=s0aDp1CFZ7Q" \
+        "Swamp Camp"         "https://www.youtube.com/watch?v=EZG7xHVwyXk" \
+        "Relaxing Forest"    "https://www.youtube.com/watch?v=td7xQnweIFE" \
+        "Gothic OST"         "https://www.youtube.com/watch?v=td7xQnweIFE" \
+        "Ognisko"            "https://www.youtube.com/watch?v=8KrLtLr-Gy8"
 
     set -l names
     set -l urls
