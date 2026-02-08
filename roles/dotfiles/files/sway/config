@@ -54,7 +54,7 @@ bindsym $mod+Shift+q kill
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -B 'Yes' 'swaymsg exit'
 bindsym $mod+Escape exec swaylock
-bindsym $mod+grave scratchpad show
+bindsym $mod+grave [app_id="notepad"] scratchpad show
 
 # Focus
 bindsym $mod+$left focus left
@@ -168,10 +168,10 @@ exec swayidle -w \
 for_window [app_id=".*"] inhibit_idle fullscreen
 for_window [app_id="foot"] inhibit_idle none
 for_window [app_id="org.wezfurlong.wezterm"] inhibit_idle none
-for_window [title="notepad"] floating enable, move scratchpad, scratchpad show
+for_window [app_id="notepad"] floating enable, move scratchpad, scratchpad show
 for_window [title="radio-stream"] move to workspace 10
 exec openrgb -d 0 --mode rainbow
-exec fish -c 'radio start'
+exec fish -c 'sleep 3; radio start'
 exec fish -c startup
 
 include /etc/sway/config.d/*

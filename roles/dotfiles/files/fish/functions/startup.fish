@@ -4,7 +4,7 @@ function startup
     pkill -x firefox 2>/dev/null
 
     # Scratchpad notepad (floating, hidden until Super+`)
-    swaymsg 'exec wezterm start --title notepad -- fish -c notepad'
+    swaymsg 'exec wezterm start --class notepad -- micro ~/Desktop/0-Inbox/notepad.md'
     sleep 1
 
     # Workspace 1: Firefox (33% left) + VSCode (66% right)
@@ -17,4 +17,10 @@ function startup
     swaymsg 'exec code'
     sleep 2
     swaymsg '[app_id="Firefox"] resize set width 33 ppt'
+
+    # Workspace 2: WezTerm
+    swaymsg 'workspace number 2'
+    swaymsg 'exec wezterm'
+    sleep 1
+    swaymsg 'workspace number 1'
 end
