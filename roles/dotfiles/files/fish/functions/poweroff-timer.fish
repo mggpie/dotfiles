@@ -2,7 +2,10 @@ function poweroff-timer
     if test "$argv[1]" = "cancel"
         if test -f /tmp/timer.pid
             set pid (cat /tmp/timer.pid)
-            kill $pid 2>/dev/null && echo "Timer cancelled" || echo "No active timer"
+            kill $pid 2>/dev/null && begin
+                echo "Timer cancelled"
+                openrgb -d 0 --mode rainbow >/dev/null 2>&1
+            end || echo "No active timer"
             rm -f /tmp/timer.pid
         else
             echo "No active timer"
