@@ -21,7 +21,7 @@ The aesthetic is purely functional. Tango Dark and Adwaita Dark palettes with In
 
 **RGB as status indicator:** The PC's ASUS Aura LEDs aren't cosmetic - they're a state machine. Rainbow = system ready. Flashing red = maintenance running. Off = shutdown timer active. Rainbow flash = 2-second warning before poweroff.
 
-**Packages & system:** Dual package manager - xbps (~1200 packages), Nix as unprivileged overlay (~500) for apps not in Void repos. Tuned i915 kernel params, TTY autologin, only TTY1-2 kept, unused services masked, `GRUB_TIMEOUT=0`. Ansible Vault for SSH keys and tokens, `no_log: true` on secret tasks.
+**Packages & system:** Dual package manager - xbps (~1200 packages), Nix as unprivileged overlay (~500) for apps not in Void repos. Tuned i915 kernel params, TTY autologin, only TTY1-2 kept, unused services masked, CPU mitigations off (never do this on a production machine), `GRUB_TIMEOUT=0`. Ansible Vault for SSH keys and tokens, `no_log: true` on secret tasks.
 
 **File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level with cron auto-migration from Downloads to Inbox. `poweroff` unmounts all USB drives before shutdown.
 

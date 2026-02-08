@@ -11,8 +11,9 @@
   notify: Regenerate GRUB config
   tags: [grub]
 
-# NOTE: mitigations=off disables CPU vulnerability mitigations (Spectre/Meltdown)
-# for performance. This is a deliberate security tradeoff for a desktop system.
+# WARNING: mitigations=off disables CPU vulnerability mitigations (Spectre/Meltdown/etc.)
+# for performance. NEVER do this on a production or multi-user machine.
+# This is a deliberate tradeoff for a single-user desktop.
 - name: Configure GRUB command line parameters
   ansible.builtin.lineinfile:
     path: /etc/default/grub
