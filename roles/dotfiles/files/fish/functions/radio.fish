@@ -46,13 +46,12 @@ function radio
             end
 
         case prev
-            set -l idx 1
+            set -l idx (math (random) % (count $names) + 1)
             if test -f $state_file
-                set idx (cat $state_file)
-            end
-            set idx (math $idx - 1)
-            if test $idx -lt 1
-                set idx (count $names)
+                set -l current (cat $state_file)
+                while test $idx -eq $current -a (count $names) -gt 1
+                    set idx (math (random) % (count $names) + 1)
+                end
             end
             echo $idx >$state_file
             if test -f $pid_file
@@ -65,13 +64,12 @@ function radio
             disown $last_pid
 
         case next
-            set -l idx 1
+            set -l idx (math (random) % (count $names) + 1)
             if test -f $state_file
-                set idx (cat $state_file)
-            end
-            set idx (math $idx + 1)
-            if test $idx -gt (count $names)
-                set idx 1
+                set -l current (cat $state_file)
+                while test $idx -eq $current -a (count $names) -gt 1
+                    set idx (math (random) % (count $names) + 1)
+                end
             end
             echo $idx >$state_file
             if test -f $pid_file
