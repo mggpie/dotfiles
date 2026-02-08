@@ -70,3 +70,10 @@
     dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-policy.conf"
     mode: "0644"
   tags: [pipewire]
+
+- name: Limit volume to 100% (no over-amplification)
+  ansible.builtin.copy:
+    src: pipewire/50-volume-limit.conf
+    dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-volume-limit.conf"
+    mode: "0644"
+  tags: [pipewire]

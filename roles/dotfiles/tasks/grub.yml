@@ -23,8 +23,8 @@
       msr.allow_writes=on pcie_aspm=force module.sig_unenforce
       intel_iommu=on iommu=pt no_timer_check noreplace-smp
       page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable
-      i915.enable_guc=3 i915.fastboot=1 i915.enable_fbc=1
-      i915.enable_psr=2 split_lock_detect=off intel_pstate=active"
+      i915.enable_guc=3 i915.fastboot=1 i915.enable_fbc=0
+      i915.enable_psr=0 split_lock_detect=off intel_pstate=active"
     backup: true
   become: true
   notify: Regenerate GRUB config
