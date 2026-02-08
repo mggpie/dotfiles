@@ -15,7 +15,7 @@ The aesthetic is purely functional. Tango Dark and Adwaita Dark palettes with In
 
 **OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide + 4K TV via HDMI).
 
-**Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). Lofi radio streams from YouTube via mpv (audio only) - starts with Sway, shows current station in Waybar, left-click to toggle, right-click to cycle stations. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
+**Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). Lofi radio with 8 YouTube stations via mpv (audio only) - random station on boot, prev/next buttons and station name in Waybar, click station to toggle. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
 
 **Shell:** Fish with ~30 custom functions. `deploy sway fish mpv` auto-commits, pushes, and runs `ansible-playbook` with those tags in one shot. `startup` scripts a workspace layout (Firefox 33% left + VSCode 66% right) with a scratchpad notepad accessible via Super+\`. `weather` fetches forecasts from Open-Meteo and maps WMO codes to Nerd Font icons via jq for Waybar.
 
@@ -100,7 +100,7 @@ ansible-playbook playbook.yml --list-tags     # Show all tags
 | `dev` | Python, Lua, Go, Docker, Terraform, Ansible |
 | `git` | Git configuration + git-filter-repo |
 | `gh` | GitHub CLI |
-| `repos` | Clone all GitHub repos to archive + monthly review reminder |
+| `repos` | Clone all GitHub repos to PARA dirs, daily auto-sync |
 | `ssh` | SSH keys (vault-encrypted) |
 | `vscode` | Visual Studio Code (via Nix) |
 | `zed` | Zed editor |

@@ -1,16 +1,12 @@
 ---
-- name: Create archive directory
+- name: Create PARA directories
   ansible.builtin.file:
-    path: "{{ user_home }}/Desktop/4-Archives"
+    path: "{{ user_home }}/Desktop/{{ item }}"
     state: directory
     mode: "0755"
-  tags: [repos]
-
-- name: Create projects directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/Desktop/1-Projects"
-    state: directory
-    mode: "0755"
+  loop:
+    - 1-Projects
+    - 4-Archives
   tags: [repos]
 
 - name: Get list of all repos from GitHub
@@ -21,12 +17,12 @@
   become: false
   tags: [repos]
 
-- name: Clone dotfiles to projects
+- name: Clone active repos to projects
   ansible.builtin.git:
     repo: "{{ item.sshUrl }}"
     dest: "{{ user_home }}/Desktop/1-Projects/{{ item.name }}"
     update: false
-  loop: "{{ repos_list.stdout | from_json | selectattr('name', 'in', ['dotfiles', 'void-installer']) }}"
+  loop: "{{ repos_list.stdout | from_json | selectattr('name', 'in', repos_active) }}"
   loop_control:
     label: "{{ item.name }}"
   become: false
@@ -37,23 +33,31 @@
     repo: "{{ item.sshUrl }}"
     dest: "{{ user_home }}/Desktop/4-Archives/{{ item.name }}"
     update: false
-  loop: "{{ repos_list.stdout | from_json | rejectattr('name', 'in', ['dotfiles', 'void-installer']) }}"
+  loop: "{{ repos_list.stdout | from_json | rejectattr('name', 'in', repos_active) }}"
   loop_control:
     label: "{{ item.name }}"
   become: false
   tags: [repos]
 
-- name: Monthly reminder to reorganize repos (runs on reboot if 30+ days passed)
+- name: Deploy repos-sync script
+  ansible.builtin.template:
+    src: repos-sync.j2
+    dest: "{{ user_home }}/.local/bin/repos-sync"
+    mode: "0755"
+  become: false
+  tags: [repos]
+
+- name: Remove old repos reminder cron
   ansible.builtin.cron:
     name: "repos-reorganize-reminder"
-    special_time: reboot
-    job: >-
-      state={{ user_home }}/.local/share/repos-reminder-last;
-      if [ ! -f "$state" ] || [ $(( ($(date +%s) - $(cat "$state")) / 86400 )) -ge 30 ]; then
-      sleep 30 &&
-      echo "[$(date '+%Y-%m-%d')] Review repos - move active to 1-Projects or 2-Areas, rest stays in 4-Archives. Edit roles/dotfiles/tasks/repos.yml to update."
-      >> {{ user_home }}/Desktop/0-Inbox/reminders.md &&
-      date +%s > "$state";
-      fi
+    state: absent
+    user: "{{ username }}"
+  tags: [repos]
+
+- name: Daily repos sync cron
+  ansible.builtin.cron:
+    name: repos-sync
+    special_time: daily
+    job: "{{ user_home }}/.local/bin/repos-sync"
     user: "{{ username }}"
   tags: [repos]

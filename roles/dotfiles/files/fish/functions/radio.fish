@@ -91,7 +91,7 @@ function radio
                 printf "{\"text\": \"<span rise='2000'>%s</span>\", \"tooltip\": \"Radio: %s (click to stop)\"}" \
                     "$names[$idx]" "$names[$idx]"
             else
-                printf "{\"text\": \"<span rise='2000'>off</span>\", \"tooltip\": \"Radio (click to start)\"}"
+                printf "{\"text\": \"<span rise='2000'>Radio</span>\", \"tooltip\": \"Radio (click to start)\"}"
             end
 
         case '*'

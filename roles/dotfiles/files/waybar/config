@@ -5,7 +5,7 @@
     "spacing": 0,
     "modules-left": ["sway/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/radio-prev", "custom/radio-toggle", "custom/radio-next", "pulseaudio", "custom/weather", "battery"],
+    "modules-right": ["custom/radio-prev", "custom/radio-next", "custom/radio-toggle", "pulseaudio", "custom/weather", "battery"],
 
     "sway/workspaces": {
         "disable-scroll": true,
