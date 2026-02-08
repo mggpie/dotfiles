@@ -1,64 +1,4 @@
 ---
-- name: Create PARA directories
-  ansible.builtin.file:
-    path: "{{ user_home }}/Desktop/{{ item }}"
-    state: directory
-    mode: "0755"
-  loop:
-    - 1-Projects
-    - 4-Archives
-  tags: [repos]
-
-- name: Get list of all repos from GitHub
-  ansible.builtin.command:
-    cmd: gh repo list --json name,sshUrl,isArchived --limit 100
-  register: repos_list
-  changed_when: false
-  become: false
-  tags: [repos]
-
-- name: Clone active repos to projects
-  ansible.builtin.git:
-    repo: "{{ item.sshUrl }}"
-    dest: "{{ user_home }}/Desktop/1-Projects/{{ item.name }}"
-    update: false
-  loop: "{{ repos_list.stdout | from_json | rejectattr('isArchived') | selectattr('name', 'in', repos_active) | list }}"
-  loop_control:
-    label: "{{ item.name }}"
-  become: false
-  tags: [repos]
-
-- name: Clone remaining repos to archive
-  ansible.builtin.git:
-    repo: "{{ item.sshUrl }}"
-    dest: "{{ user_home }}/Desktop/4-Archives/{{ item.name }}"
-    update: false
-  loop: "{{ repos_list.stdout | from_json | rejectattr('isArchived') | rejectattr('name', 'in', repos_active) | list }}"
-  loop_control:
-    label: "{{ item.name }}"
-  become: false
-  tags: [repos]
-
-- name: Remove local clones of repos deleted from GitHub # noqa: command-instead-of-shell
-  ansible.builtin.shell: |
-    for dir in 1-Projects 2-Areas 3-Resources 4-Archives; do
-      base="{{ user_home }}/Desktop/$dir"
-      [ -d "$base" ] || continue
-      for repo_path in "$base"/*/; do
-        [ -d "$repo_path/.git" ] || continue
-        name=$(basename "$repo_path")
-        remote=$(git -C "$repo_path" remote get-url origin 2>/dev/null || true)
-        echo "$remote" | grep -q github.com || continue
-        echo " $ALL_REPOS " | grep -q " $name " || { rm -rf "$repo_path"; echo "removed: $name"; }
-      done
-    done
-  environment:
-    ALL_REPOS: "{{ repos_list.stdout | from_json | map(attribute='name') | join(' ') }}"
-  register: cleanup_result
-  changed_when: cleanup_result.stdout | length > 0
-  become: false
-  tags: [repos]
-
 - name: Remove old repos reminder cron
   ansible.builtin.cron:
     name: "repos-reorganize-reminder"
@@ -78,4 +18,12 @@
     special_time: reboot
     job: "sleep 30 && /bin/fish -c repos-sync"
     user: "{{ username }}"
+  tags: [repos]
+
+- name: Run repos-sync now
+  ansible.builtin.command:
+    cmd: /bin/fish -c repos-sync
+  register: repos_sync_result
+  changed_when: repos_sync_result.stdout | length > 0
+  become: false
   tags: [repos]
