@@ -5,3 +5,8 @@
 # base.yml configures nix.conf with these features permanently,
 # but standalone --tags runs may execute before base has run
 dotfiles_nix_experimental_flags: "--extra-experimental-features 'nix-command flakes'"
+
+# Repos that belong in 1-Projects (updated automatically by repos-sync)
+repos_active:
+  - dotfiles
+  - void-installer
