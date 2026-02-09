@@ -8,6 +8,7 @@
       - font-inter
       - nerd-fonts
       - noto-fonts-emoji
+      - cherry-font
     state: present
   become: true
   tags: [fonts]
