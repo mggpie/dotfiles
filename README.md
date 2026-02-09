@@ -204,4 +204,5 @@ echo "your-root-password" > .become_pass
 
 ## Related
 
+- [homelab-infra](https://github.com/mggpie/homelab-infra) - Ansible-managed Proxmox VE homelab on KVM/QEMU
 - [void-installer](https://github.com/mggpie/void-installer) - Void Linux installer with LUKS encryption

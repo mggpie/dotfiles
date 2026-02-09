@@ -9,4 +9,5 @@ dotfiles_nix_experimental_flags: "--extra-experimental-features 'nix-command fla
 # Repos that belong in 1-Projects (updated automatically by repos-sync)
 repos_active:
   - dotfiles
+  - homelab-infra
   - void-installer
