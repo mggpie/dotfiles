@@ -21,8 +21,8 @@ function startup
     sleep 1
     swaymsg '[app_id="notepad"] resize set width 40ppt height 80ppt, move position center'
     
-    # Fix scratchpad centering bug - simulate mouse movement
-    ydotool mousemove -a 960 540
+    # Fix scratchpad centering bug - simulate mouse movement with sway's cursor command
+    swaymsg 'seat - cursor set 960 540'
     sleep 0.1
-    ydotool mousemove -a 961 540
+    swaymsg 'seat - cursor set 961 540'
 end
