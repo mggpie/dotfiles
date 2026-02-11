@@ -11,3 +11,7 @@ repos_active:
   - dotfiles
   - homelab-infra
   - void-installer
+
+# Repos that belong in 4-Archives (updated automatically by repos-sync)
+repos_archived:
+  - tubes-cursor
