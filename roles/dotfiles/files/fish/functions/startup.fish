@@ -18,6 +18,4 @@ function startup
 
     # Scratchpad notepad (floating, hidden until Super+`)
     swaymsg 'exec wezterm start --class notepad -- micro ~/Desktop/0-Inbox/notepad.md'
-    sleep 1
-    swaymsg '[app_id="notepad"] resize set width 40ppt height 80ppt, move position center'
 end
