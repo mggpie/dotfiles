@@ -91,26 +91,19 @@
 #     - firefox_running.rc != 0
 #   tags: [firefox]
 
-# - name: Create chrome directory for userChrome.css
-#   ansible.builtin.file:
-#     path: "{{ dotfiles_firefox_profile_path }}/chrome"
-#     state: directory
-#     mode: "0755"
-#   when: dotfiles_firefox_profile_path is defined
-#   tags: [firefox]
-
-# - name: Deploy firefox userChrome.css
-#   ansible.builtin.copy:
-#     src: firefox/userChrome.css
-#     dest: "{{ dotfiles_firefox_profile_path }}/chrome/userChrome.css"
-#     mode: "0644"
-#   when: dotfiles_firefox_profile_path is defined
-#   tags: [firefox]
-
-- name: Remove chrome directory to disable CSS customization
+- name: Create chrome directory for userChrome.css
   ansible.builtin.file:
     path: "{{ dotfiles_firefox_profile_path }}/chrome"
-    state: absent
+    state: directory
+    mode: "0755"
+  when: dotfiles_firefox_profile_path is defined
+  tags: [firefox]
+
+- name: Deploy firefox userChrome.css
+  ansible.builtin.copy:
+    src: firefox/userChrome.css
+    dest: "{{ dotfiles_firefox_profile_path }}/chrome/userChrome.css"
+    mode: "0644"
   when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
