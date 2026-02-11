@@ -10,7 +10,6 @@
       - wl-clip-persist
       - grim
       - slurp
-      - wlrctl
     state: present
   become: true
   tags: [sway]
