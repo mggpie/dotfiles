@@ -10,6 +10,7 @@
       - wl-clip-persist
       - grim
       - slurp
+      - wlrctl
     state: present
   become: true
   tags: [sway]
@@ -26,12 +27,4 @@
     src: sway/config
     dest: "{{ user_home }}/.config/sway/config"
     mode: "0644"
-  tags: [sway]
-
-- name: Install wlrctl from nix
-  ansible.builtin.command:
-    cmd: nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#wlrctl
-  register: dotfiles_wlrctl_install
-  changed_when: "'already installed' not in dotfiles_wlrctl_install.stderr"
-  failed_when: dotfiles_wlrctl_install.rc != 0 and 'already installed' not in dotfiles_wlrctl_install.stderr
   tags: [sway]
