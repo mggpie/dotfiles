@@ -107,6 +107,14 @@
   when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
+- name: Deploy firefox userContent.css
+  ansible.builtin.copy:
+    src: firefox/userContent.css
+    dest: "{{ dotfiles_firefox_profile_path }}/chrome/userContent.css"
+    mode: "0644"
+  when: dotfiles_firefox_profile_path is defined
+  tags: [firefox]
+
 - name: Create extensions directory
   ansible.builtin.file:
     path: "{{ dotfiles_firefox_profile_path }}/extensions"
