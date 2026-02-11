@@ -20,9 +20,4 @@ function startup
     swaymsg 'exec wezterm start --class notepad -- micro ~/Desktop/0-Inbox/notepad.md'
     sleep 1
     swaymsg '[app_id="notepad"] resize set width 40ppt height 80ppt, move position center'
-    
-    # Fix scratchpad centering bug - simulate mouse movement with sway's cursor command
-    swaymsg 'seat - cursor set 960 540'
-    sleep 0.1
-    swaymsg 'seat - cursor set 961 540'
 end
