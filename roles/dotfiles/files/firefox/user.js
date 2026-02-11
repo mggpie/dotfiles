@@ -47,6 +47,7 @@ user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", 
 user_pref("browser.newtabpage.enabled", true);
 user_pref("browser.startup.homepage", "https://mggpie.github.io/tubes-cursor/");
 user_pref("browser.startup.page", 3);
+user_pref("browser.display.background_color", "#000000");
 
 // URL bar
 user_pref("browser.urlbar.suggest.recentsearches", false);
