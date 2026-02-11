@@ -17,6 +17,5 @@ function startup
     swaymsg '[app_id="Firefox"] resize set width 33 ppt'
 
     # Scratchpad notepad (floating, hidden until Super+`)
-    # Launch with micro on the left, split to empty terminal on the right
-    swaymsg 'exec wezterm start --class notepad -- fish -c "micro ~/Desktop/0-Inbox/notepad.md & sleep 0.3 && wezterm cli split-pane --right"'
+    swaymsg 'exec wezterm start --class notepad -- micro ~/Desktop/0-Inbox/notepad.md'
 end
