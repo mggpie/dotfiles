@@ -91,27 +91,10 @@
 #     - firefox_running.rc != 0
 #   tags: [firefox]
 
-- name: Create chrome directory for userChrome.css
+- name: Remove chrome directory to disable CSS customization
   ansible.builtin.file:
     path: "{{ dotfiles_firefox_profile_path }}/chrome"
-    state: directory
-    mode: "0755"
-  when: dotfiles_firefox_profile_path is defined
-  tags: [firefox]
-
-- name: Deploy firefox userChrome.css
-  ansible.builtin.copy:
-    src: firefox/userChrome.css
-    dest: "{{ dotfiles_firefox_profile_path }}/chrome/userChrome.css"
-    mode: "0644"
-  when: dotfiles_firefox_profile_path is defined
-  tags: [firefox]
-
-- name: Deploy firefox userContent.css
-  ansible.builtin.copy:
-    src: firefox/userContent.css
-    dest: "{{ dotfiles_firefox_profile_path }}/chrome/userContent.css"
-    mode: "0644"
+    state: absent
   when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
@@ -160,14 +143,6 @@
   ansible.builtin.get_url:
     url: "https://addons.mozilla.org/firefox/downloads/latest/block-website/latest.xpi"
     dest: "{{ dotfiles_firefox_profile_path }}/extensions/{54e2eb33-18eb-46ad-a4e4-1329c29f6e17}.xpi"
-    mode: "0644"
-  when: dotfiles_firefox_profile_path is defined
-  tags: [firefox]
-
-- name: Install New Tab Override
-  ansible.builtin.get_url:
-    url: "https://addons.mozilla.org/firefox/downloads/latest/new-tab-override/latest.xpi"
-    dest: "{{ dotfiles_firefox_profile_path }}/extensions/newtaboverride@agenedia.com.xpi"
     mode: "0644"
   when: dotfiles_firefox_profile_path is defined
   tags: [firefox]

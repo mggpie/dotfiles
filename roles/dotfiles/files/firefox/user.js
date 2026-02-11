@@ -37,17 +37,16 @@ user_pref("identity.fxaccounts.toolbar.enabled", false);
 // Performance
 user_pref("gfx.webrender.all", true);
 
-// New tab - tubes-cursor via New Tab Override addon
+// New tab - blank page
 user_pref("browser.newtabpage.activity-stream.showSponsored", false);
 user_pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
 user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
 user_pref("browser.newtabpage.activity-stream.showSearch", false);
 user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
 user_pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
-user_pref("browser.newtabpage.enabled", true);
-user_pref("browser.startup.homepage", "https://mggpie.github.io/tubes-cursor/");
+user_pref("browser.newtabpage.enabled", false);
+user_pref("browser.startup.homepage", "chrome://browser/content/blanktab.html");
 user_pref("browser.startup.page", 3);
-user_pref("browser.display.background_color", "#000000");
 
 // URL bar
 user_pref("browser.urlbar.suggest.recentsearches", false);
