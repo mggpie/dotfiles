@@ -163,6 +163,14 @@
   when: dotfiles_firefox_profile_path is defined
   tags: [firefox]
 
+- name: Install New Tab Override
+  ansible.builtin.get_url:
+    url: "https://addons.mozilla.org/firefox/downloads/latest/new-tab-override/latest.xpi"
+    dest: "{{ dotfiles_firefox_profile_path }}/extensions/newtaboverride@agenedia.com.xpi"
+    mode: "0644"
+  when: dotfiles_firefox_profile_path is defined
+  tags: [firefox]
+
 - name: Set Firefox as default browser
   ansible.builtin.shell: |
     xdg-settings set default-web-browser firefox.desktop
