@@ -7,12 +7,6 @@
   no_log: true
   tags: [always]
 
-- name: Update xbps package cache
-  community.general.xbps:
-    update_cache: true
-  become: true
-  tags: [always]
-
 - name: Import base tasks
   ansible.builtin.import_tasks: base.yml
 - name: Import grub tasks
