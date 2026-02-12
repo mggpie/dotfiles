@@ -42,15 +42,6 @@ set -gx XCURSOR_PATH $HOME/.nix-profile/share/icons:$HOME/.local/share/icons:/us
 # Bluetooth devices (from secrets.yml)
 set -gx BOSE_QC45_MAC "{{ bose_mac }}"
 
-# Audio/display hardware (from defaults/main.yml)
-set -gx AUDIO_CARD "{{ audio_card }}"
-set -gx AUDIO_SINK_MONITOR "{{ audio_sink_monitor }}"
-set -gx AUDIO_SINK_TV "{{ audio_sink_tv }}"
-set -gx AUDIO_PROFILE_MONITOR "{{ audio_profile_monitor }}"
-set -gx AUDIO_PROFILE_TV "{{ audio_profile_tv }}"
-set -gx OUTPUT_MONITOR "{{ output_monitor }}"
-set -gx OUTPUT_TV "{{ output_tv }}"
-
 # D-Bus session (fix "disabled:" issue)
 if test "$DBUS_SESSION_BUS_ADDRESS" = "disabled:"
     set -e DBUS_SESSION_BUS_ADDRESS

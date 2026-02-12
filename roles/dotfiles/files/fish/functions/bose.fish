@@ -3,7 +3,7 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     set -l mac_underscore (string replace -a ':' '_' $mac)
     set -l bt_card "bluez_card.$mac_underscore"
     set -l bt_sink "bluez_output.$mac_underscore.1"
-    set -l hdmi_card "$AUDIO_CARD"
+    set -l hdmi_card "alsa_card.pci-0000_00_1f.3"
 
     if test -z "$mac"
         echo "❌ BOSE_QC45_MAC not set"
@@ -11,13 +11,13 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     end
 
     # Determine current HDMI sink (monitor or TV) for fallback
-    set -l tv_active (swaymsg -t get_outputs -r 2>/dev/null | jq -r '.[] | select(.name == "'"$OUTPUT_TV"'") | .active')
+    set -l tv_active (swaymsg -t get_outputs -r 2>/dev/null | jq -r '.[] | select(.name == "HDMI-A-2") | .active')
     if test "$tv_active" = "true"
-        set -l fallback_profile "$AUDIO_PROFILE_TV"
-        set -l fallback_sink "$AUDIO_SINK_TV"
+        set -l fallback_profile "output:hdmi-stereo-extra1"
+        set -l fallback_sink "alsa_output.pci-0000_00_1f.3.hdmi-stereo-extra1"
     else
-        set -l fallback_profile "$AUDIO_PROFILE_MONITOR"
-        set -l fallback_sink "$AUDIO_SINK_MONITOR"
+        set -l fallback_profile "output:hdmi-stereo"
+        set -l fallback_sink "alsa_output.pci-0000_00_1f.3.hdmi-stereo"
     end
 
     # Check if already connected
