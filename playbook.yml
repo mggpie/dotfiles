@@ -1,17 +1,5 @@
 ---
 - name: Configure system
   hosts: localhost
-
-  pre_tasks:
-    - name: Update xbps package cache
-      community.general.xbps:
-        update_cache: true
-      become: true
-      tags: [always]
-
   roles:
-    - base
-    - desktop
-    - shell
-    - dev
-    - apps
+    - dotfiles

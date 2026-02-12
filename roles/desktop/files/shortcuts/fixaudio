@@ -1,2 +1,0 @@
-#!/bin/sh
-(systemctl --user restart pipewire pipewire-pulse wireplumber &) >/dev/null 2>&1

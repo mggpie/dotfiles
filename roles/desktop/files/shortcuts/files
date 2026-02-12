@@ -1,4 +1,0 @@
-#!/usr/bin/env fish
-set -q FILE_MANAGER; or set FILE_MANAGER pcmanfm
-$FILE_MANAGER $argv &
-disown

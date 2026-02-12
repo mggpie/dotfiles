@@ -1,3 +1,0 @@
-#!/bin/sh
-# lf cleaner script - clears sixel images
-printf '\033[2J'

@@ -1,2 +1,0 @@
-#!/bin/sh
-exec ${FILE_MANAGER:-thunar} ${HOME}/.local/share/Trash/files

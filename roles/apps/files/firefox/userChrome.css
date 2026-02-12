@@ -1,4 +1,0 @@
-/* Prevent white flash on new tab */
-#tabbrowser-tabpanels {
-  background-color: #000000 !important;
-}

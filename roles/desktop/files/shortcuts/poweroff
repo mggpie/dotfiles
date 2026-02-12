@@ -1,6 +1,0 @@
-#!/bin/sh
-# Unmount all USB devices before poweroff
-for dev in $(lsblk -nrpo NAME,TYPE,MOUNTPOINT,RM | awk '$2=="part" && $3!="" && $4=="1" {print $1}'); do
-    udisksctl unmount -b "$dev" --no-user-interaction 2>/dev/null
-done
-exec loginctl poweroff
