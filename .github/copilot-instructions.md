@@ -52,3 +52,20 @@
 - `env.fish` is excluded from the `conf.d/` copy glob and rendered separately via `template`.
 - Never use `shell`/`command` without `changed_when` or a `creates`/`when` guard.
 - `update_cache: false` on all `xbps` tasks — cache is updated once in `main.yml`.
+
+### Fish shell — NOT bash
+This project uses Fish, not bash/zsh. Fish syntax differs fundamentally:
+- **No heredocs.** Fish has no `<<EOF`. Use `printf` or multiline strings with `\n`.
+- **No `export`.** Use `set -gx VAR value`.
+- **No `$()`.** Command substitution is `(command)`.
+- **No `[[ ]]`.** Use `test` or `[ ]` (single brackets).
+- **No `$(( ))`.** Use `math "1 + 2"`.
+- **No `case`/`esac`.** Use `switch`/`case`/`end`.
+- **No `function() {}`.** Use `function name ... end`.
+- **No `&&`/`||` chaining in older fish.** Prefer `; and`/`; or` for max compat — though `&&`/`||` work in fish 3.0+.
+- **No `$?`.** Use `$status`.
+- **No `2>&1`.** Use `2>&1` (same) or `&|` to pipe stderr.
+- **No arrays with `()`.** Use `set arr val1 val2`, access with `$arr[1]` (1-indexed).
+- **No `source ~/.bashrc`.** Use `source ~/.config/fish/config.fish` or `. file`.
+- **No `local`.** Variables are function-scoped by default. Use `set -l` to be explicit.
+- **String ops.** Use `string` builtin (`string match`, `string replace`, `string split`) instead of `sed`/`grep` for simple cases.
