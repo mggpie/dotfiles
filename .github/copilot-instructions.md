@@ -7,18 +7,26 @@
 - Nix overlay for packages not in Void repos.
 - Vault-encrypted secrets in `secrets.yml` (bose MAC, SSH keys, GH token).
 - `.vault_pass` and `.become_pass` files required for deployment — never committed.
+- `roles/dotfiles/files/` mirrors `~/.config/` — e.g. `files/fish/config.fish` → `~/.config/fish/config.fish`.
+- Task files live in `roles/dotfiles/tasks/`, one per application (e.g. `fish.yml`, `sway.yml`).
 
 ## Rules
 
 ### Code style
 - All code and comments in English. Comment like a senior engineer — explain *why*, not *what*.
 - No AI-sounding prose ("Let's", "Sure!", "Here's", "I'll go ahead and..."). Just do the work.
+- Conventional commits: `feat:`, `fix:`, `docs:`, `ci:`, `refactor:`, `test:`, `revert:`. Lowercase, imperative, no period.
 
 ### Deployment
 - After any change: `git add -A && git commit && git push && deploy <tags>`.
 - The `deploy` fish function handles `ansible-playbook` with vault + become.
 - Always verify changes actually work after deploying. Don't assume.
 - Never deploy `firefox` or `vscode` tags unprompted — those configs include local state (logins, synced settings) that diverges from the repo version intentionally.
+
+### Secrets
+- Never decrypt, print, or edit `secrets.yml` directly.
+- Access vault values only through Ansible variables (`bose_mac`, `gh_token`, `ssh_private_key`, `ssh_public_key`).
+- Tasks needing secrets must work gracefully without vault (`failed_when: false` on include_vars).
 
 ### Templating strategy
 - Don't template entire config files for a few variables. Instead, export values as env vars in `fish/conf.d/env.fish` (already a Jinja2 template) and reference `$VAR` in configs.
