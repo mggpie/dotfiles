@@ -1,5 +1,5 @@
 ---
-name: Lint
+name: CI
 
 on:
   push:
@@ -23,5 +23,33 @@ jobs:
 
       - name: Dry-run (--check --diff)
         run: ansible-playbook playbook.yml --check --diff
+        env:
+          ANSIBLE_FORCE_COLOR: "1"
+
+  molecule:
+    runs-on: ubuntu-latest
+    needs: ansible-lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create dummy vault and become password files
+        run: |
+          echo "dummy" > .vault_pass
+          echo "dummy" > .become_pass
+
+      - name: Install dependencies
+        run: |
+          pip install molecule molecule-plugins[docker] ansible testinfra
+
+      - name: Install Ansible collections
+        run: ansible-galaxy collection install -r requirements.yml
+
+      - name: Run molecule test
+        run: molecule test
         env:
           ANSIBLE_FORCE_COLOR: "1"

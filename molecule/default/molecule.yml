@@ -1,0 +1,36 @@
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/requirements.yml
+
+driver:
+  name: docker
+
+platforms:
+  - name: void-dotfiles
+    image: ghcr.io/void-linux/void-glibc-full:latest
+    pre_build_image: true
+    command: /bin/sleep infinity
+    tmpfs:
+      - /run
+      - /tmp
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: converge.yml
+  config_options:
+    defaults:
+      interpreter_python: /usr/bin/python3
+  inventory:
+    host_vars:
+      void-dotfiles:
+        username: root
+        user_home: /root
+        ansible_user: root
+  env:
+    ANSIBLE_FORCE_COLOR: "true"
+
+verifier:
+  name: testinfra
