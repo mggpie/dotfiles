@@ -16,13 +16,6 @@ set $menu bemenu-run \
     --sb "#3465A4" --sf "#EEEEEC" \
     -p "❯"
 
-### Performance (smoother rendering, closer to macOS feel)
-# max_render_time reduces input-to-display latency by starting render
-# closer to vblank; 2ms is safe for most hardware (lower = riskier)
-max_render_time 2
-# Disable adaptive sync if you have mixed-refresh monitors (reduces judder)
-output * adaptive_sync off
-
 ### Appearance
 output * bg #000000 solid_color
 output DP-1 scale 1.0
