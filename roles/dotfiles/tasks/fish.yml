@@ -35,16 +35,19 @@
     mode: "0644"
   tags: [fish]
 
-- name: Deploy fish conf.d
+- name: Deploy fish conf.d (excluding env.fish — rendered separately)
   ansible.builtin.copy:
-    src: fish/conf.d/
+    src: "{{ item }}"
     dest: "{{ user_home }}/.config/fish/conf.d/"
     mode: "0644"
+  with_fileglob:
+    - "{{ role_path }}/files/fish/conf.d/*.fish"
+  when: item | basename != 'env.fish'
   tags: [fish]
 
 - name: Render env.fish template (secrets injection)
   ansible.builtin.template:
-    src: env.fish.j2
+    src: "{{ role_path }}/files/fish/conf.d/env.fish"
     dest: "{{ user_home }}/.config/fish/conf.d/env.fish"
     mode: "0644"
   tags: [fish]
