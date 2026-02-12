@@ -1,4 +1,4 @@
-# DeaDBeeF Configuration — Tango Dark Theme
+# DeaDBeeF Configuration - Tango Dark Theme
 
 # Audio output (PipeWire via ALSA)
 output_plugin ALSA output plugin

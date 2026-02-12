@@ -1,5 +1,5 @@
 ---
-# Minimal create playbook — fixes molecule-docker bug with ansible-core >=2.20
+# Minimal create playbook - fixes molecule-docker bug with ansible-core >=2.20
 # (string-as-bool conditional on HOME lookup). Remove once molecule-docker
 # ships a fix upstream.
 - name: Create

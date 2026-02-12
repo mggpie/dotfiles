@@ -33,7 +33,7 @@
         dest: "{{ user_home }}/.config/fish/functions/"
         mode: "0644"
 
-    - name: Deploy fish conf.d (excluding env.fish — rendered separately)
+    - name: Deploy fish conf.d (excluding env.fish - rendered separately)
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: "{{ user_home }}/.config/fish/conf.d/"

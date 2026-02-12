@@ -1,7 +1,7 @@
 """Testinfra tests for dotfiles role.
 
 Focus on contracts and behaviour, not file existence (Ansible guarantees that).
-Tests cover what molecule actually converges — hardware/GUI/runit tags are skipped.
+Tests cover what molecule actually converges - hardware/GUI/runit tags are skipped.
 """
 
 
@@ -9,7 +9,7 @@ Tests cover what molecule actually converges — hardware/GUI/runit tags are ski
 
 
 def test_doas_permissions(host):
-    """doas.conf must be 0400 — writable doas.conf = privilege escalation."""
+    """doas.conf must be 0400 - writable doas.conf = privilege escalation."""
     f = host.file("/etc/doas.conf")
     assert f.exists
     assert oct(f.mode) == "0o400"
@@ -62,7 +62,7 @@ def test_fish_env_rendered(host):
     """env.fish must have bose_mac rendered (not raw Jinja2)."""
     f = host.file("/root/.config/fish/conf.d/env.fish")
     assert f.exists
-    # Template must be rendered — no raw {{ }} should remain
+    # Template must be rendered - no raw {{ }} should remain
     assert "{{ bose_mac }}" not in f.content_string
     assert "BOSE_QC45_MAC" in f.content_string
 

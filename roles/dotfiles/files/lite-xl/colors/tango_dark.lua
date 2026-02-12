@@ -29,7 +29,7 @@ style.warn             = { common.color "#c4a000" }
 style.error            = { common.color "#cc0000" }
 style.modified         = { common.color "#3465a4" }
 
--- Syntax highlighting — Tango palette
+-- Syntax highlighting - Tango palette
 style.syntax["normal"]   = { common.color "#d0cfcc" }
 style.syntax["symbol"]   = { common.color "#d0cfcc" }
 style.syntax["comment"]  = { common.color "#555753" }

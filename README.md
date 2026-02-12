@@ -46,7 +46,7 @@ roles/dotfiles/
 └── files/               # Config files deployed as-is (+ 1 Jinja2 template)
 ```
 
-CI runs `ansible-lint` + dry-run on every push. Molecule (Docker, Void Linux image) with Testinfra runs on PRs — 15 behavioral tests covering packages, configs, cron jobs, and shell environment.
+CI runs `ansible-lint` + dry-run on every push. Molecule (Docker, Void Linux image) with Testinfra runs on PRs - 15 behavioral tests covering packages, configs, cron jobs, and shell environment.
 
 ## Quick Start
 
@@ -183,9 +183,9 @@ RGB LEDs flash red during maintenance, rainbow when done. Errors saved to `~/Dow
 
 **`repos-sync`** - syncs local PARA directories with GitHub (runs automatically via `@reboot` cron):
 
-- New repos on GitHub → cloned to `1-Projects` or `4-Archives` based on `repos_active`
-- Repos deleted from GitHub → local clone removed
-- Repos moved between PARA dirs → `vars/main.yml` updated, committed and pushed automatically
+- New repos on GitHub -> cloned to `1-Projects` or `4-Archives` based on `repos_active`
+- Repos deleted from GitHub -> local clone removed
+- Repos moved between PARA dirs -> `vars/main.yml` updated, committed and pushed automatically
 
 **`move-downloads`** - moves files older than 30 min from `~/Downloads` to `~/Desktop/0-Inbox` (PARA methodology).
 

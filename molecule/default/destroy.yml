@@ -1,5 +1,5 @@
 ---
-# Custom destroy playbook — fixes molecule-docker bug with ansible-core >=2.20
+# Custom destroy playbook - fixes molecule-docker bug with ansible-core >=2.20
 # (string-as-bool conditional). Remove once molecule-docker ships a fix.
 - name: Destroy
   hosts: localhost

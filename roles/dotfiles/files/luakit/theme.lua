@@ -1,4 +1,4 @@
--- Luakit Theme — Tango Dark
+-- Luakit Theme - Tango Dark
 -- Matches: foot, sway, waybar, qutebrowser color scheme
 
 local theme = {}

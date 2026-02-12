@@ -11,14 +11,14 @@ function repos-sync
     # Read repos_active from vars/main.yml
     set -l repos_active (awk '/^repos_active:/{f=1;next} f && /^  - /{gsub(/^  - /,"");print;next} f{exit}' $vars_file)
 
-    # All repo names (including archived) — for deletion check
+    # All repo names (including archived) - for deletion check
     set -l all_names (gh repo list --json name --limit 100 -q '.[].name' 2>/dev/null)
     test (count $all_names) -eq 0; and return 0
 
-    # Non-archived repos with SSH URLs — for cloning
+    # Non-archived repos with SSH URLs - for cloning
     set -l clone_entries (gh repo list --json name,sshUrl --limit 100 --no-archived -q '.[] | "\(.name)\t\(.sshUrl)"' 2>/dev/null)
 
-    # Clone new repos: active → 1-Projects, rest → 4-Archives
+    # Clone new repos: active -> 1-Projects, rest -> 4-Archives
     for entry in $clone_entries
         set -l name (string split \t $entry)[1]
         set -l url (string split \t $entry)[2]
@@ -48,7 +48,7 @@ function repos-sync
         end
     end
 
-    # Scan 1-Projects and 2-Areas → update repos_active
+    # Scan 1-Projects and 2-Areas -> update repos_active
     set -l active
     for name in $all_names
         for dir in 1-Projects 2-Areas

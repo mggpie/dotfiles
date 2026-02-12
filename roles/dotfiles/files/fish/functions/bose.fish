@@ -32,7 +32,7 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
 
         bluetoothctl disconnect $mac 2>/dev/null
 
-        echo "✅ Disconnected — audio on "(test "$tv_active" = "true" && echo "TV" || echo "Monitor")
+        echo "✅ Disconnected - audio on "(test "$tv_active" = "true" && echo "TV" || echo "Monitor")
         notify-send -i audio-speakers "Bose QC45" "Disconnected"
         return 0
     end
@@ -55,7 +55,7 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     set -l connected false
 
     if test "$is_paired" = "true"
-        # Already paired — try direct connect from PC
+        # Already paired - try direct connect from PC
         bluetoothctl connect $mac 2>/dev/null &
 
         for i in (seq 8)
@@ -67,12 +67,12 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
         end
     end
 
-    # Not paired or direct connect failed — scan, pair, and connect
+    # Not paired or direct connect failed - scan, pair, and connect
     if test "$connected" != "true"
         if test "$is_paired" = "true"
-            echo "⏳ Direct connect failed — scanning..."
+            echo "⏳ Direct connect failed - scanning..."
         else
-            echo "⏳ Not paired yet — scanning..."
+            echo "⏳ Not paired yet - scanning..."
         end
 
         bluetoothctl discoverable on 2>/dev/null
@@ -110,7 +110,7 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     end
 
     if test "$connected" != "true"
-        echo "❌ Connection timed out — put headphones in pairing mode and retry"
+        echo "❌ Connection timed out - put headphones in pairing mode and retry"
         return 1
     end
 
@@ -139,7 +139,7 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     sleep 0.5
     pactl set-default-sink $bt_sink 2>/dev/null
 
-    echo "✅ Connected — audio on Bose QC45 (AAC)"
+    echo "✅ Connected - audio on Bose QC45 (AAC)"
     notify-send -i audio-headphones "Bose QC45" "Connected"
     return 0
 end
