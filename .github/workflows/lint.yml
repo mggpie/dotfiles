@@ -6,6 +6,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   ansible-lint:
@@ -29,6 +30,7 @@ jobs:
   molecule:
     runs-on: ubuntu-latest
     needs: ansible-lint
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
 
