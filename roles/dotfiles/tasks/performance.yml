@@ -1,0 +1,45 @@
+---
+# Kernel and memory performance tuning
+
+- name: Performance
+  tags: [performance, notest]
+  become: true
+  block:
+    - name: Create sysctl.d directory
+      ansible.builtin.file:
+        path: /etc/sysctl.d
+        state: directory
+        mode: "0755"
+
+    - name: Set sysctl memory tuning parameters
+      ansible.builtin.copy:
+        content: |
+          # prefer keeping data in RAM over swapping - 32GB is plenty
+          vm.swappiness = 10
+          # keep inode/dentry caches longer to speed up file access
+          vm.vfs_cache_pressure = 50
+        dest: /etc/sysctl.d/99-performance.conf
+        mode: "0644"
+      notify: Apply sysctl settings
+
+    - name: Install zramen
+      community.general.xbps:
+        update_cache: false
+        name: zramen
+        state: present
+
+    # zstd compresses better than default lz4, worth the negligible CPU cost
+    # on modern hardware. 50% of RAM as zram is a good balance.
+    - name: Configure zramen
+      ansible.builtin.copy:
+        content: |
+          export ZRAM_COMP_ALGORITHM=zstd
+          export ZRAM_SIZE=50
+        dest: /etc/sv/zramen/conf
+        mode: "0644"
+
+    - name: Enable zramen service
+      ansible.builtin.file:
+        src: /etc/sv/zramen
+        dest: /var/service/zramen
+        state: link

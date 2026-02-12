@@ -24,6 +24,8 @@
   ansible.builtin.import_tasks: repos.yml
 - name: Import intel-graphics tasks
   ansible.builtin.import_tasks: intel-graphics.yml
+- name: Import performance tasks
+  ansible.builtin.import_tasks: performance.yml
 - name: Import tlp tasks
   ansible.builtin.import_tasks: tlp.yml
 - name: Import virtualization tasks
