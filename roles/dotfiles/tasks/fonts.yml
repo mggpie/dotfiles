@@ -1,61 +1,57 @@
 ---
 # Fonts configuration
 
-- name: Install fonts from xbps
-  community.general.xbps:
-    update_cache: false
-    name:
-      - font-inter
-      - nerd-fonts
-      - noto-fonts-emoji
-      - cherry-font
-    state: present
-  become: true
+- name: Fonts
   tags: [fonts]
+  block:
+    - name: Install fonts from xbps
+      community.general.xbps:
+        update_cache: false
+        name:
+          - font-inter
+          - nerd-fonts
+          - noto-fonts-emoji
+          - cherry-font
+        state: present
+      become: true
 
-- name: Install Intel One Mono from nix
-  ansible.builtin.shell: |
-    . ~/.nix-profile/etc/profile.d/nix.sh
-    nix profile install nixpkgs#intel-one-mono
-  args:
-    executable: /bin/bash
-    creates: "{{ user_home }}/.nix-profile/share/fonts/truetype/IntelOneMono-*.ttf"
-  tags: [fonts]
+    - name: Install Intel One Mono from nix
+      ansible.builtin.shell: |
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        nix profile install nixpkgs#intel-one-mono
+      args:
+        executable: /bin/bash
+        creates: "{{ user_home }}/.nix-profile/share/fonts/truetype/IntelOneMono-*.ttf"
 
-- name: Create fontconfig directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/fontconfig"
-    state: directory
-    mode: "0755"
-  tags: [fonts]
+    - name: Create fontconfig directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/fontconfig"
+        state: directory
+        mode: "0755"
 
-- name: Deploy fontconfig for emoji
-  ansible.builtin.copy:
-    src: fontconfig/fonts.conf
-    dest: "{{ user_home }}/.config/fontconfig/fonts.conf"
-    mode: "0644"
-  tags: [fonts]
+    - name: Deploy fontconfig for emoji
+      ansible.builtin.copy:
+        src: fontconfig/fonts.conf
+        dest: "{{ user_home }}/.config/fontconfig/fonts.conf"
+        mode: "0644"
 
-- name: Refresh font cache
-  ansible.builtin.command: fc-cache -fv
-  changed_when: false
-  tags: [fonts]
+    - name: Refresh font cache
+      ansible.builtin.command: fc-cache -fv
+      changed_when: false
 
-- name: Install terminus-font for TTY
-  community.general.xbps:
-    update_cache: false
-    name:
-      - terminus-font
-    state: present
-  become: true
-  tags: [fonts]
+    - name: Install terminus-font for TTY
+      community.general.xbps:
+        update_cache: false
+        name:
+          - terminus-font
+        state: present
+      become: true
 
-- name: Set console (TTY) font to Terminus
-  ansible.builtin.lineinfile:
-    path: /etc/rc.conf
-    regexp: '^FONT='
-    line: 'FONT=ter-v16b'
-    create: true
-    mode: "0644"
-  become: true
-  tags: [fonts]
+    - name: Set console (TTY) font to Terminus
+      ansible.builtin.lineinfile:
+        path: /etc/rc.conf
+        regexp: '^FONT='
+        line: 'FONT=ter-v16b'
+        create: true
+        mode: "0644"
+      become: true

@@ -1,66 +1,59 @@
 ---
 # WiFi configuration (backup only, not auto-connect)
 
-- name: Install wpa_supplicant
-  community.general.xbps:
-    update_cache: false
-    name:
-      - wpa_supplicant
-      - iw
-    state: present
+- name: Wifi
+  tags: [wifi]
   become: true
-  tags: [wifi]
+  block:
+    - name: Install wpa_supplicant
+      community.general.xbps:
+        update_cache: false
+        name:
+          - wpa_supplicant
+          - iw
+        state: present
 
-- name: Create wpa_supplicant configuration directory
-  ansible.builtin.file:
-    path: /etc/wpa_supplicant
-    state: directory
-    mode: "0755"
-  become: true
-  tags: [wifi]
+    - name: Create wpa_supplicant configuration directory
+      ansible.builtin.file:
+        path: /etc/wpa_supplicant
+        state: directory
+        mode: "0755"
 
-- name: Configure WiFi network (manual connection only)
-  ansible.builtin.copy:
-    content: |
-      ctrl_interface=/run/wpa_supplicant
-      ctrl_interface_group=wheel
-      update_config=1
+    - name: Configure WiFi network (manual connection only)
+      ansible.builtin.copy:
+        content: |
+          ctrl_interface=/run/wpa_supplicant
+          ctrl_interface_group=wheel
+          update_config=1
 
-      network={
-          ssid="{{ wifi_ssid }}"
-          psk="{{ wifi_password }}"
-          priority=1
-      }
-    dest: /etc/wpa_supplicant/wpa_supplicant.conf
-    mode: "0600"
-  become: true
-  no_log: true
-  tags: [wifi]
+          network={
+              ssid="{{ wifi_ssid }}"
+              psk="{{ wifi_password }}"
+              priority=1
+          }
+        dest: /etc/wpa_supplicant/wpa_supplicant.conf
+        mode: "0600"
+      no_log: true
 
-- name: Detect WiFi interface
-  ansible.builtin.shell: |
-    set -o pipefail
-    iw dev | grep Interface | awk '{print $2}' | head -n1
-  args:
-    executable: /bin/bash
-  register: dotfiles_wifi_interface
-  changed_when: false
-  tags: [wifi]
+    - name: Detect WiFi interface
+      ansible.builtin.shell: |
+        set -o pipefail
+        iw dev | grep Interface | awk '{print $2}' | head -n1
+      args:
+        executable: /bin/bash
+      register: dotfiles_wifi_interface
+      changed_when: false
 
-- name: Configure wpa_supplicant service
-  ansible.builtin.copy:
-    content: |
-      WPA_INTERFACE={{ dotfiles_wifi_interface.stdout }}
-      CONF_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
-    dest: /etc/sv/wpa_supplicant/conf
-    mode: "0644"
-  become: true
-  when: dotfiles_wifi_interface.stdout | length > 0
-  tags: [wifi]
+    - name: Configure wpa_supplicant service
+      ansible.builtin.copy:
+        content: |
+          WPA_INTERFACE={{ dotfiles_wifi_interface.stdout }}
+          CONF_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
+        dest: /etc/sv/wpa_supplicant/conf
+        mode: "0644"
+      when: dotfiles_wifi_interface.stdout | length > 0
 
-- name: WiFi service disabled by default (manual start only)
-  ansible.builtin.file:
-    path: /var/service/wpa_supplicant
-    state: absent
-  become: true
-  tags: [wifi]
+    - name: WiFi service disabled by default (manual start only)
+      ansible.builtin.file:
+        path: /var/service/wpa_supplicant
+        state: absent

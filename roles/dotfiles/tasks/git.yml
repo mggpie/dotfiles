@@ -1,17 +1,18 @@
 ---
-- name: Install git
-  community.general.xbps:
-    update_cache: false
-    name:
-      - git
-      - git-filter-repo
-    state: present
-  become: true
+- name: Git
   tags: [git]
+  block:
+    - name: Install git
+      community.general.xbps:
+        update_cache: false
+        name:
+          - git
+          - git-filter-repo
+        state: present
+      become: true
 
-- name: Deploy git config
-  ansible.builtin.copy:
-    src: git/gitconfig
-    dest: "{{ user_home }}/.gitconfig"
-    mode: "0644"
-  tags: [git]
+    - name: Deploy git config
+      ansible.builtin.copy:
+        src: git/gitconfig
+        dest: "{{ user_home }}/.gitconfig"
+        mode: "0644"

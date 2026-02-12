@@ -1,22 +1,22 @@
 ---
-- name: Install htop
-  community.general.xbps:
-    update_cache: false
-    name: htop
-    state: present
-  become: true
+- name: Htop
   tags: [htop]
+  block:
+    - name: Install htop
+      community.general.xbps:
+        update_cache: false
+        name: htop
+        state: present
+      become: true
 
-- name: Create htop config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/htop"
-    state: directory
-    mode: "0755"
-  tags: [htop]
+    - name: Create htop config directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/htop"
+        state: directory
+        mode: "0755"
 
-- name: Deploy htoprc
-  ansible.builtin.copy:
-    src: htop/htoprc
-    dest: "{{ user_home }}/.config/htop/htoprc"
-    mode: "0644"
-  tags: [htop]
+    - name: Deploy htoprc
+      ansible.builtin.copy:
+        src: htop/htoprc
+        dest: "{{ user_home }}/.config/htop/htoprc"
+        mode: "0644"

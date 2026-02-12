@@ -1,49 +1,46 @@
 ---
-- name: Install Bluetooth packages
-  community.general.xbps:
-    update_cache: false
-    name:
-      - bluez
-      - bluez-alsa
-      - libspa-bluetooth   # PipeWire Bluetooth support
-    state: present
-  become: true
+- name: Bluetooth
   tags: [bluetooth]
+  block:
+    - name: Install Bluetooth packages
+      community.general.xbps:
+        update_cache: false
+        name:
+          - bluez
+          - bluez-alsa
+          - libspa-bluetooth   # PipeWire Bluetooth support
+        state: present
+      become: true
 
-- name: Enable bluetoothd service
-  ansible.builtin.file:
-    src: /etc/sv/bluetoothd
-    dest: /var/service/bluetoothd
-    state: link
-  become: true
-  tags: [bluetooth]
+    - name: Enable bluetoothd service
+      ansible.builtin.file:
+        src: /etc/sv/bluetoothd
+        dest: /var/service/bluetoothd
+        state: link
+      become: true
 
-- name: Add user to bluetooth group
-  ansible.builtin.user:
-    name: "{{ username }}"
-    groups: bluetooth
-    append: true
-  become: true
-  tags: [bluetooth]
+    - name: Add user to bluetooth group
+      ansible.builtin.user:
+        name: "{{ username }}"
+        groups: bluetooth
+        append: true
+      become: true
 
-- name: Enable Bluetooth AutoEnable
-  ansible.builtin.lineinfile:
-    path: /etc/bluetooth/main.conf
-    regexp: '^#?AutoEnable='
-    line: 'AutoEnable=true'
-  become: true
-  notify: Restart bluetoothd
-  tags: [bluetooth]
+    - name: Enable Bluetooth AutoEnable
+      ansible.builtin.lineinfile:
+        path: /etc/bluetooth/main.conf
+        regexp: '^#?AutoEnable='
+        line: 'AutoEnable=true'
+      become: true
+      notify: Restart bluetoothd
 
-- name: Remove old Bose autoconnect script
-  ansible.builtin.file:
-    path: "{{ user_home }}/.local/bin/bose-autoconnect"
-    state: absent
-  tags: [bluetooth]
+    - name: Remove old Bose autoconnect script
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/bin/bose-autoconnect"
+        state: absent
 
-- name: Remove old Bose autoconnect cron
-  ansible.builtin.cron:
-    name: "Bose QC45 autoconnect"
-    user: "{{ username }}"
-    state: absent
-  tags: [bluetooth]
+    - name: Remove old Bose autoconnect cron
+      ansible.builtin.cron:
+        name: "Bose QC45 autoconnect"
+        user: "{{ username }}"
+        state: absent

@@ -1,81 +1,75 @@
 ---
-- name: Install thunar and dependencies
-  community.general.xbps:
-    update_cache: false
-    name:
-      - Thunar                          # główny file manager
-      - thunar-archive-plugin           # rozpakowywanie/pakowanie archiwów
-      - thunar-media-tags-plugin        # tagi dla plików muzycznych/wideo
-      - thunar-volman                   # automatyczne montowanie dysków/USB
-      - tumbler                         # generowanie miniaturek
-      - tumbler-plugins-extra           # dodatkowe miniatury (PDF, fonts, etc)
-      - ffmpegthumbnailer               # miniatury dla wideo
-      - gvfs                            # wirtualny system plików
-      - gvfs-mtp                        # obsługa Androida przez MTP
-      - gvfs-gphoto2                    # obsługa aparatów/telefonów
-      - gvfs-smb                        # sieciowe dyski Windows/Samba
-      - xfconf                          # system konfiguracji dla Thunar
-    state: present
-  become: true
+- name: Thunar
   tags: [thunar]
+  block:
+    - name: Install thunar and dependencies
+      community.general.xbps:
+        update_cache: false
+        name:
+          - Thunar                          # główny file manager
+          - thunar-archive-plugin           # rozpakowywanie/pakowanie archiwów
+          - thunar-media-tags-plugin        # tagi dla plików muzycznych/wideo
+          - thunar-volman                   # automatyczne montowanie dysków/USB
+          - tumbler                         # generowanie miniaturek
+          - tumbler-plugins-extra           # dodatkowe miniatury (PDF, fonts, etc)
+          - ffmpegthumbnailer               # miniatury dla wideo
+          - gvfs                            # wirtualny system plików
+          - gvfs-mtp                        # obsługa Androida przez MTP
+          - gvfs-gphoto2                    # obsługa aparatów/telefonów
+          - gvfs-smb                        # sieciowe dyski Windows/Samba
+          - xfconf                          # system konfiguracji dla Thunar
+        state: present
+      become: true
 
-- name: Create Thunar config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/Thunar"
-    state: directory
-    mode: "0755"
-  tags: [thunar]
+    - name: Create Thunar config directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/Thunar"
+        state: directory
+        mode: "0755"
 
-- name: Deploy Thunar configuration
-  ansible.builtin.copy:
-    src: thunar/thunarrc
-    dest: "{{ user_home }}/.config/Thunar/thunarrc"
-    mode: "0644"
-  tags: [thunar]
+    - name: Deploy Thunar configuration
+      ansible.builtin.copy:
+        src: thunar/thunarrc
+        dest: "{{ user_home }}/.config/Thunar/thunarrc"
+        mode: "0644"
 
-- name: Create Thunar custom actions directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/Thunar"
-    state: directory
-    mode: "0755"
-  tags: [thunar]
+    - name: Create Thunar custom actions directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/Thunar"
+        state: directory
+        mode: "0755"
 
-- name: Deploy Thunar custom actions (extract & compress)
-  ansible.builtin.copy:
-    src: thunar/uca.xml
-    dest: "{{ user_home }}/.config/Thunar/uca.xml"
-    mode: "0644"
-  tags: [thunar]
+    - name: Deploy Thunar custom actions (extract & compress)
+      ansible.builtin.copy:
+        src: thunar/uca.xml
+        dest: "{{ user_home }}/.config/Thunar/uca.xml"
+        mode: "0644"
 
-- name: Create GTK-3 config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/gtk-3.0"
-    state: directory
-    mode: "0755"
-  tags: [thunar]
+    - name: Create GTK-3 config directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/gtk-3.0"
+        state: directory
+        mode: "0755"
 
-- name: Configure GTK bookmarks for PARA
-  ansible.builtin.copy:
-    content: |
-      file://{{ user_home }}/Desktop/0-Inbox 0-Inbox
-      file://{{ user_home }}/Desktop/1-Projects 1-Projects
-      file://{{ user_home }}/Desktop/2-Areas 2-Areas
-      file://{{ user_home }}/Desktop/3-Resources 3-Resources
-      file://{{ user_home }}/Desktop/4-Archives 4-Archives
-    dest: "{{ user_home }}/.config/gtk-3.0/bookmarks"
-    mode: "0644"
-  tags: [thunar]
+    - name: Configure GTK bookmarks for PARA
+      ansible.builtin.copy:
+        content: |
+          file://{{ user_home }}/Desktop/0-Inbox 0-Inbox
+          file://{{ user_home }}/Desktop/1-Projects 1-Projects
+          file://{{ user_home }}/Desktop/2-Areas 2-Areas
+          file://{{ user_home }}/Desktop/3-Resources 3-Resources
+          file://{{ user_home }}/Desktop/4-Archives 4-Archives
+        dest: "{{ user_home }}/.config/gtk-3.0/bookmarks"
+        mode: "0644"
 
-- name: Configure GTK settings for dark theme
-  ansible.builtin.copy:
-    src: thunar/settings.ini
-    dest: "{{ user_home }}/.config/gtk-3.0/settings.ini"
-    mode: "0644"
-  tags: [thunar]
+    - name: Configure GTK settings for dark theme
+      ansible.builtin.copy:
+        src: thunar/settings.ini
+        dest: "{{ user_home }}/.config/gtk-3.0/settings.ini"
+        mode: "0644"
 
-- name: Configure default MIME applications
-  ansible.builtin.copy:
-    src: thunar/mimeapps.list
-    dest: "{{ user_home }}/.config/mimeapps.list"
-    mode: "0644"
-  tags: [thunar]
+    - name: Configure default MIME applications
+      ansible.builtin.copy:
+        src: thunar/mimeapps.list
+        dest: "{{ user_home }}/.config/mimeapps.list"
+        mode: "0644"

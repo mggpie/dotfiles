@@ -1,44 +1,42 @@
 ---
-- name: Install lf and dependencies
-  community.general.xbps:
-    update_cache: false
-    name:
-      - lf
-      - chafa           # Image/video preview (sixel)
-      - ffmpegthumbnailer # Video thumbnails
-      - bat             # Syntax highlighting
-      - poppler-utils   # PDF preview (pdftoppm)
-      - mediainfo       # Audio info
-      - jq              # JSON preview
-      - file            # MIME detection
-    state: present
-  become: true
+- name: Lf
   tags: [lf]
+  block:
+    - name: Install lf and dependencies
+      community.general.xbps:
+        update_cache: false
+        name:
+          - lf
+          - chafa           # Image/video preview (sixel)
+          - ffmpegthumbnailer # Video thumbnails
+          - bat             # Syntax highlighting
+          - poppler-utils   # PDF preview (pdftoppm)
+          - mediainfo       # Audio info
+          - jq              # JSON preview
+          - file            # MIME detection
+        state: present
+      become: true
 
-- name: Create lf config directory
-  ansible.builtin.file:
-    path: "{{ user_home }}/.config/lf"
-    state: directory
-    mode: "0755"
-  tags: [lf]
+    - name: Create lf config directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/lf"
+        state: directory
+        mode: "0755"
 
-- name: Deploy lf config
-  ansible.builtin.copy:
-    src: lf/lfrc
-    dest: "{{ user_home }}/.config/lf/lfrc"
-    mode: "0644"
-  tags: [lf]
+    - name: Deploy lf config
+      ansible.builtin.copy:
+        src: lf/lfrc
+        dest: "{{ user_home }}/.config/lf/lfrc"
+        mode: "0644"
 
-- name: Deploy lf preview script
-  ansible.builtin.copy:
-    src: lf/preview
-    dest: "{{ user_home }}/.config/lf/preview"
-    mode: "0755"
-  tags: [lf]
+    - name: Deploy lf preview script
+      ansible.builtin.copy:
+        src: lf/preview
+        dest: "{{ user_home }}/.config/lf/preview"
+        mode: "0755"
 
-- name: Deploy lf cleaner script
-  ansible.builtin.copy:
-    src: lf/clean
-    dest: "{{ user_home }}/.config/lf/clean"
-    mode: "0755"
-  tags: [lf]
+    - name: Deploy lf cleaner script
+      ansible.builtin.copy:
+        src: lf/clean
+        dest: "{{ user_home }}/.config/lf/clean"
+        mode: "0755"

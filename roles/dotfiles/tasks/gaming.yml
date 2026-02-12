@@ -1,48 +1,44 @@
 ---
 # Steam + modern Linux gaming stack
 
-- name: Install multilib repositories
-  community.general.xbps:
-    update_cache: false
-    name:
-      - void-repo-multilib
-      - void-repo-multilib-nonfree
-    state: present
-  become: true
+- name: Gaming
   tags: [gaming]
+  become: true
+  block:
+    - name: Install multilib repositories
+      community.general.xbps:
+        update_cache: false
+        name:
+          - void-repo-multilib
+          - void-repo-multilib-nonfree
+        state: present
 
-- name: Update package cache after multilib
-  community.general.xbps:
-    update_cache: true
-  become: true
-  tags: [gaming]
+    - name: Update package cache after multilib
+      community.general.xbps:
+        update_cache: true
 
-- name: Install 32-bit graphics libraries
-  community.general.xbps:
-    update_cache: false
-    name:
-      - libgcc-32bit
-      - libstdc++-32bit
-      - libdrm-32bit
-      - libglvnd-32bit
-      - mesa-dri-32bit
-      - mesa-vulkan-intel-32bit
-      - vulkan-loader-32bit
-    state: present
-  become: true
-  tags: [gaming]
+    - name: Install 32-bit graphics libraries
+      community.general.xbps:
+        update_cache: false
+        name:
+          - libgcc-32bit
+          - libstdc++-32bit
+          - libdrm-32bit
+          - libglvnd-32bit
+          - mesa-dri-32bit
+          - mesa-vulkan-intel-32bit
+          - vulkan-loader-32bit
+        state: present
 
-- name: Install Steam and gaming tools
-  community.general.xbps:
-    update_cache: false
-    name:
-      - steam
-      - steam-udev-rules
-      - gamescope
-      - gamemode
-      - libgamemode
-      - MangoHud
-      - protontricks
-    state: present
-  become: true
-  tags: [gaming]
+    - name: Install Steam and gaming tools
+      community.general.xbps:
+        update_cache: false
+        name:
+          - steam
+          - steam-udev-rules
+          - gamescope
+          - gamemode
+          - libgamemode
+          - MangoHud
+          - protontricks
+        state: present

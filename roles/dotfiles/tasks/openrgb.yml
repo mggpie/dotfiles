@@ -1,33 +1,29 @@
 ---
-- name: Install OpenRGB
-  community.general.xbps:
-    update_cache: false
-    name:
-      - openrgb
-      - i2c-tools
-    state: present
-  become: true
+- name: Openrgb
   tags: [openrgb]
+  become: true
+  block:
+    - name: Install OpenRGB
+      community.general.xbps:
+        update_cache: false
+        name:
+          - openrgb
+          - i2c-tools
+        state: present
 
-- name: Load i2c-dev kernel module
-  community.general.modprobe:
-    name: i2c-dev
-    state: present
-  become: true
-  tags: [openrgb]
+    - name: Load i2c-dev kernel module
+      community.general.modprobe:
+        name: i2c-dev
+        state: present
 
-- name: Persist i2c-dev module on boot
-  ansible.builtin.copy:
-    content: "i2c-dev\n"
-    dest: /etc/modules-load.d/i2c-dev.conf
-    mode: "0644"
-  become: true
-  tags: [openrgb]
+    - name: Persist i2c-dev module on boot
+      ansible.builtin.copy:
+        content: "i2c-dev\n"
+        dest: /etc/modules-load.d/i2c-dev.conf
+        mode: "0644"
 
-- name: Add user to i2c group
-  ansible.builtin.user:
-    name: "{{ username }}"
-    groups: i2c
-    append: true
-  become: true
-  tags: [openrgb]
+    - name: Add user to i2c group
+      ansible.builtin.user:
+        name: "{{ username }}"
+        groups: i2c
+        append: true
