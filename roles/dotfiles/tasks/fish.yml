@@ -44,9 +44,16 @@
 
 - name: Render env.fish template (secrets injection)
   ansible.builtin.template:
-    src: "{{ role_path }}/files/fish/conf.d/env.fish"
+    src: env.fish.j2
     dest: "{{ user_home }}/.config/fish/conf.d/env.fish"
     mode: "0644"
+  tags: [fish]
+
+- name: Remove legacy crontab entry (renamed)
+  ansible.builtin.cron:
+    name: "Auto-run upall weekly"
+    state: absent
+    user: "{{ username }}"
   tags: [fish]
 
 - name: Add upall-check to user crontab (runs on boot, weekly interval)
