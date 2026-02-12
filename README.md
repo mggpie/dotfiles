@@ -46,7 +46,7 @@ roles/dotfiles/
 └── files/               # Config files deployed as-is (+ 1 Jinja2 template)
 ```
 
-CI runs `ansible-lint` on every push. Dry-run (`--check --diff`) passes with 250+ tasks, 0 failures.
+CI runs `ansible-lint` + dry-run on every push. Molecule (Docker, Void Linux image) with Testinfra runs on PRs — 15 behavioral tests covering packages, configs, cron jobs, and shell environment.
 
 ## Quick Start
 
