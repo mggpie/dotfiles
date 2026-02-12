@@ -19,10 +19,27 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
+    create: create.yml
+    destroy: destroy.yml
     converge: converge.yml
+  options:
+    # Skip tags that require hardware, runit, GUI, or network-heavy installs
+    skip-tags: >-
+      notest,
+      intel-graphics,graphics,gaming,grub,bluetooth,tlp,wifi,openrgb,
+      sway,swaylock,waybar,kanshi,bemenu,mako,pipewire,
+      foot,wezterm,
+      theme,fonts,
+      firefox,qutebrowser,luakit,pcmanfm,thunar,
+      mpv,vlc,deadbeef,cava,imv,krita,zathura,
+      telegram,qbittorrent,obsidian,
+      vscode,zed,lite-xl,
+      virtualization,qemu,kvm,docker,
+      nix,repos,maza,dev,gh,ssh
   config_options:
     defaults:
       interpreter_python: /usr/bin/python3
+      roles_path: ${MOLECULE_PROJECT_DIRECTORY}/roles
   inventory:
     host_vars:
       void-dotfiles:

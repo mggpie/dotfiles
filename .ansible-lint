@@ -1,6 +1,8 @@
 ---
 exclude_paths:
   - roles/dotfiles/files/
+  - molecule/default/create.yml
+  - molecule/default/destroy.yml
 
 skip_list:
   - yaml[line-length]
