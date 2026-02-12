@@ -1,10 +1,10 @@
 function tv --description "Toggle between TV and Monitor with audio switching"
-    # Define outputs
-    set -l monitor_output "DP-1"
-    set -l tv_output "HDMI-A-2"
-    set -l monitor_audio_profile "output:hdmi-stereo"
-    set -l tv_audio_profile "output:hdmi-stereo-extra1"
-    set -l audio_card "alsa_card.pci-0000_00_1f.3"
+    # Hardware identifiers from env.fish
+    set -l monitor_output "$OUTPUT_MONITOR"
+    set -l tv_output "$OUTPUT_TV"
+    set -l monitor_audio_profile "$AUDIO_PROFILE_MONITOR"
+    set -l tv_audio_profile "$AUDIO_PROFILE_TV"
+    set -l audio_card "$AUDIO_CARD"
 
     # Check current state by checking if TV is enabled
     set -l tv_active (swaymsg -t get_outputs -r | jq -r ".[] | select(.name == \"$tv_output\") | .active")
@@ -27,7 +27,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
 
         # Switch audio to monitor BEFORE disabling TV to avoid dummy output
         pactl set-card-profile $audio_card $monitor_audio_profile
-        pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
+        pactl set-default-sink $AUDIO_SINK_MONITOR
         pactl set-sink-volume @DEFAULT_SINK@ 20%
         sleep 0.1
 
@@ -56,7 +56,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
 
         # Switch audio to TV HDMI at 50%
         pactl set-card-profile $audio_card $tv_audio_profile
-        pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo-extra1
+        pactl set-default-sink $AUDIO_SINK_TV
         pactl set-sink-volume @DEFAULT_SINK@ 50%
 
         echo "✓ Switched to TV (4K 60Hz) with audio at 50%"
