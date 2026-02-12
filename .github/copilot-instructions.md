@@ -7,7 +7,7 @@
 - Nix overlay for packages not in Void repos.
 - Vault-encrypted secrets in `secrets.yml` (bose MAC, SSH keys, GH token).
 - `.vault_pass` and `.become_pass` files required for deployment - never committed.
-- `roles/dotfiles/files/` mirrors `~/.config/` - e.g. `files/fish/config.fish` -> `~/.config/fish/config.fish`.
+- `roles/dotfiles/files/` holds all managed config files in one place. Most map to `~/.config/` (e.g. `files/fish/config.fish` -> `~/.config/fish/config.fish`) but some target other locations (e.g. `files/ssh/config` -> `~/.ssh/config`, `files/tlp/tlp.conf` -> `/etc/tlp.conf`).
 - Task files live in `roles/dotfiles/tasks/`, one per application (e.g. `fish.yml`, `sway.yml`).
 
 ## Rules
@@ -51,7 +51,7 @@
 - `tags: [always]` only on vault include and cache update.
 
 ### Idempotency
-- `env.fish` is excluded from the `conf.d/` copy glob and rendered separately via `template`.
+- `env.fish` is excluded from the `conf.d/` copy glob and rendered via the `ansible.builtin.template` module (the file lives in `files/`, not in a separate `templates/` directory).
 - Never use `shell`/`command` without `changed_when` or a `creates`/`when` guard.
 - `update_cache: false` on all `xbps` tasks - cache is updated once in `main.yml`.
 
