@@ -1,0 +1,112 @@
+---
+- name: Install qbittorrent
+  community.general.xbps:
+    update_cache: false
+    name:
+      - qbittorrent
+      - qt6-plugin-tls-openssl
+    state: present
+  become: true
+  tags: [qbittorrent]
+
+- name: Create qbittorrent config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/qBittorrent"
+    state: directory
+    mode: "0755"
+  tags: [qbittorrent]
+
+- name: Deploy qbittorrent config
+  ansible.builtin.copy:
+    src: qbittorrent/qBittorrent.conf
+    dest: "{{ user_home }}/.config/qBittorrent/qBittorrent.conf"
+    mode: "0644"
+  tags: [qbittorrent]
+
+- name: Create qbittorrent search plugins directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/share/qBittorrent/nova3/engines"
+    state: directory
+    mode: "0755"
+  tags: [qbittorrent]
+
+- name: Deploy qbittorrent nova3 core files
+  ansible.builtin.copy:
+    src: qbittorrent/nova3/
+    dest: "{{ user_home }}/.local/share/qBittorrent/nova3/"
+    mode: "0644"
+  tags: [qbittorrent]
+
+- name: Download official qBittorrent search plugins
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/qbittorrent/search-plugins/master/nova3/engines/{{ item }}.py"
+    dest: "{{ user_home }}/.local/share/qBittorrent/nova3/engines/{{ item }}.py"
+    mode: "0644"
+  loop:
+    - eztv
+    - jackett
+    - limetorrents
+    - piratebay
+    - solidtorrents
+    - torlock
+    - torrentproject
+    - torrentscsv
+  tags: [qbittorrent]
+
+- name: Download unofficial qBittorrent search plugins
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "{{ user_home }}/.local/share/qBittorrent/nova3/engines/{{ item.name }}.py"
+    mode: "0644"
+  loop:
+    - { name: 'academictorrents', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/academictorrents.py' }
+    - { name: 'acgrip', url: 'https://raw.githubusercontent.com/Cc050511/qBit-search-plugins/main/acgrip.py' }
+    - { name: 'anidex', url: 'https://raw.githubusercontent.com/nindogo/qbtSearchScripts/master/anidex.py' }
+    - { name: 'animetosho', url: 'https://raw.githubusercontent.com/AlaaBrahim/qBitTorrent-animetosho-search-plugin/main/animetosho.py' }
+    - { name: 'audiobookbay', url: 'https://raw.githubusercontent.com/nklido/qBittorrent_search_engines/master/engines/audiobookbay.py' }
+    - { name: 'bitsearch', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/bitsearch.py' }
+    - { name: 'btdig', url: 'https://raw.githubusercontent.com/galaris/BTDigg-qBittorrent-plugin/main/btdig.py' }
+    - { name: 'calidadtorrent', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/calidadtorrent.py' }
+    - { name: 'cloudtorrents', url: 'https://raw.githubusercontent.com/elazar/qbittorrent-search-plugins/refs/heads/add-cloudtorrents-plugin/nova3/engines/cloudtorrents.py' }
+    - { name: 'cpasbien', url: 'https://raw.githubusercontent.com/MarcBresson/cpasbien/master/src/cpasbien.py' }
+    - { name: 'darklibria', url: 'https://raw.githubusercontent.com/bugsbringer/qbit-plugins/master/darklibria.py' }
+    - { name: 'divxtotal', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/divxtotal.py' }
+    - { name: 'dmhy', url: 'https://raw.githubusercontent.com/diazchika/dmhy/main/dmhy.py' }
+    - { name: 'dodi_repacks', url: 'https://raw.githubusercontent.com/Bioux1/qbtSearchPlugins/main/dodi_repacks.py' }
+    - { name: 'dontorrent', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/dontorrent.py' }
+    - { name: 'elitetorrent', url: 'https://raw.githubusercontent.com/iordic/qbittorrent-search-plugins/master/engines/elitetorrent.py' }
+    - { name: 'esmeraldatorrent', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/esmeraldatorrent.py' }
+    - { name: 'fitgirl_repacks', url: 'https://raw.githubusercontent.com/Bioux1/qbtSearchPlugins/main/fitgirl_repacks.py' }
+    - { name: 'glotorrents', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/glotorrents.py' }
+    - { name: 'kickasstorrents', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/kickasstorrents.py' }
+    - { name: 'linuxtracker', url: 'https://raw.githubusercontent.com/MadeOfMagicAndWires/qBit-plugins/6074a7cccb90dfd5c81b7eaddd3138adec7f3377/engines/linuxtracker.py' }
+    - { name: 'magnetdl', url: 'https://raw.githubusercontent.com/nindogo/qbtSearchScripts/master/magnetdl.py' }
+    - { name: 'maxitorrent', url: 'https://raw.githubusercontent.com/joseeloren/search-plugins/master/nova3/engines/maxitorrent.py' }
+    - { name: 'mejortorrent', url: 'https://raw.githubusercontent.com/iordic/qbittorrent-search-plugins/master/engines/mejortorrent.py' }
+    - { name: 'mikan', url: 'https://raw.githubusercontent.com/Cycloctane/qBittorrent-plugins/master/engines/mikan.py' }
+    - { name: 'mikanani', url: 'https://raw.githubusercontent.com/Cc050511/qBit-search-plugins/main/mikanani.py' }
+    - { name: 'naranjatorrent', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/naranjatorrent.py' }
+    - { name: 'nyaapantsu', url: 'https://raw.githubusercontent.com/MadeOfMagicAndWires/qBit-plugins/refs/heads/main/engines/nyaapantsu.py' }
+    - { name: 'nyaasi', url: 'https://raw.githubusercontent.com/MadeOfMagicAndWires/qBit-plugins/master/engines/nyaasi.py' }
+    - { name: 'onlinefix', url: 'https://raw.githubusercontent.com/caiocinel/onlinefix-qbittorrent-plugin/main/onlinefix.py' }
+    - { name: 'pediatorrent', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/pediatorrent.py' }
+    - { name: 'pirateiro', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/pirateiro.py' }
+    - { name: 'rockbox', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/rockbox.py' }
+    - { name: 'rutor', url: 'https://raw.githubusercontent.com/imDMG/qBt_SE/master/engines/rutor.py' }
+    - { name: 'sktorrent', url: 'https://raw.githubusercontent.com/Ashalda/sktorrent-qbt/refs/heads/main/sktorrent.py' }
+    - { name: 'smallgames', url: 'https://raw.githubusercontent.com/hannsen/qbittorrent_search_plugins/master/smallgames.py' }
+    - { name: 'snowfl', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/snowfl.py' }
+    - { name: 'subsplease', url: 'https://raw.githubusercontent.com/kli885/qBittorent-SubsPlease-Search-Plugin/main/subsplease.py' }
+    - { name: 'thepiratebay', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/thepiratebay.py' }
+    - { name: 'therarbg', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/therarbg.py' }
+    - { name: 'tomadivx', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/tomadivx.py' }
+    - { name: 'torrent9', url: 'https://raw.githubusercontent.com/menegop/qbfrench/master/torrent9.py' }
+    - { name: 'torrentdownload', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/torrentdownload.py' }
+    - { name: 'torrentdownloads', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/torrentdownloads.py' }
+    - { name: 'torrentgalaxy', url: 'https://raw.githubusercontent.com/nindogo/qbtSearchScripts/master/torrentgalaxy.py' }
+    - { name: 'traht', url: 'https://raw.githubusercontent.com/BurningMop/qBittorrent-Search-Plugins/refs/heads/main/traht.py' }
+    - { name: 'uniondht', url: 'https://raw.githubusercontent.com/msagca/qbittorrent-plugins/main/uniondht.py' }
+    - { name: 'yourbittorrent', url: 'https://raw.githubusercontent.com/LightDestory/qBittorrent-Search-Plugins/master/src/engines/yourbittorrent.py' }
+    - { name: 'yts', url: 'https://codeberg.org/lazulyra/qbit-plugins/raw/branch/main/yts/yts.py' }
+    - { name: 'zooqle', url: 'https://raw.githubusercontent.com/444995/qbit-search-plugins/main/engines/zooqle.py' }
+  tags: [qbittorrent]

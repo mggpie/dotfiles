@@ -1,0 +1,6 @@
+/* Force black background on blank/new tab pages */
+@-moz-document url("about:blank"), url("about:newtab"), url("about:home") {
+  html, body {
+    background-color: #000000 !important;
+  }
+}

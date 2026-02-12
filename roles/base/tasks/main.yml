@@ -1,0 +1,41 @@
+---
+# Load secrets if vault is available
+- name: Include secrets
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/secrets.yml"
+  failed_when: false
+  no_log: true
+  tags: [always]
+
+- name: Update xbps package cache
+  community.general.xbps:
+    update_cache: true
+  become: true
+  tags: [always]
+
+- name: Import base tasks
+  ansible.builtin.import_tasks: base.yml
+- name: Import grub tasks
+  ansible.builtin.import_tasks: grub.yml
+- name: Import para tasks
+  ansible.builtin.import_tasks: para.yml
+- name: Import repos tasks
+  ansible.builtin.import_tasks: repos.yml
+- name: Import intel-graphics tasks
+  ansible.builtin.import_tasks: intel-graphics.yml
+- name: Import tlp tasks
+  ansible.builtin.import_tasks: tlp.yml
+- name: Import virtualization tasks
+  ansible.builtin.import_tasks: virtualization.yml
+- name: Import fonts tasks
+  ansible.builtin.import_tasks: fonts.yml
+- name: Import maza tasks
+  ansible.builtin.import_tasks: maza.yml
+- name: Import bluetooth tasks
+  ansible.builtin.import_tasks: bluetooth.yml
+- name: Import openrgb tasks
+  ansible.builtin.import_tasks: openrgb.yml
+- name: Import wifi tasks
+  ansible.builtin.import_tasks: wifi.yml
+- name: Import gaming tasks
+  ansible.builtin.import_tasks: gaming.yml

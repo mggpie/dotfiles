@@ -1,0 +1,27 @@
+---
+# Load secrets if vault is available
+- name: Include secrets
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/secrets.yml"
+  failed_when: false
+  no_log: true
+  tags: [always]
+
+- name: Import theme tasks
+  ansible.builtin.import_tasks: theme.yml
+- name: Import sway tasks
+  ansible.builtin.import_tasks: sway.yml
+- name: Import swaylock tasks
+  ansible.builtin.import_tasks: swaylock.yml
+- name: Import waybar tasks
+  ansible.builtin.import_tasks: waybar.yml
+- name: Import kanshi tasks
+  ansible.builtin.import_tasks: kanshi.yml
+- name: Import bemenu tasks
+  ansible.builtin.import_tasks: bemenu.yml
+- name: Import shortcuts tasks
+  ansible.builtin.import_tasks: shortcuts.yml
+- name: Import mako tasks
+  ansible.builtin.import_tasks: mako.yml
+- name: Import pipewire tasks
+  ansible.builtin.import_tasks: pipewire.yml

@@ -1,0 +1,10 @@
+---
+galaxy_info:
+  author: mggpie
+  description: Shell and CLI tools - Fish, terminal emulators, TUI apps
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Void Linux
+      versions: [all]
+dependencies: []

@@ -1,0 +1,75 @@
+# DeaDBeeF Configuration — Tango Dark Theme
+
+# Audio output (PipeWire via ALSA)
+output_plugin ALSA output plugin
+alsa_soundcard default
+
+# Replaygain
+replaygain_mode 0
+replaygain.source_mode 0
+
+# GUI layout: playlists on top, cover art + waveform on bottom
+gtkui.layout vsplit.450 {tabs {playlist {}}} {hbox {coverart {}} {waveform {}}}
+
+# Override all GUI colors
+gtkui.override_bar_colors 1
+gtkui.override_listview_colors 1
+gtkui.override_tabstrip_colors 1
+
+# Toolbar / header bar
+gtkui.color.bar_foreground #d0cfccff
+gtkui.color.bar_background #000000ff
+
+# Playlist listview
+gtkui.color.listview_even_row #000000ff
+gtkui.color.listview_odd_row #0a0a0aff
+gtkui.color.listview_selection #3465a4ff
+gtkui.color.listview_text #d0cfccff
+gtkui.color.listview_selected_text #eeeeeeff
+gtkui.color.listview_playing_text #4e9a06ff
+gtkui.color.listview_group_text #eeeeeeff
+gtkui.color.listview_column_text #d0cfccff
+gtkui.color.listview_cursor #3465a4ff
+
+# Tab strip
+gtkui.color.tabstrip_dark #000000ff
+gtkui.color.tabstrip_mid #0a0a0aff
+gtkui.color.tabstrip_light #1a1a1aff
+gtkui.color.tabstrip_base #000000ff
+gtkui.color.tabstrip_text #888888ff
+gtkui.color.tabstrip_playing_text #d0cfccff
+gtkui.color.tabstrip_selected_text #eeeeeeff
+
+# Waveform seekbar colors
+waveform.foreground #3465a4ff
+waveform.background #000000ff
+waveform.progressbar #4e9a06ff
+waveform.rms #729fcfff
+
+# Seekbar
+gtkui.color.seekbar_front #3465a4ff
+gtkui.color.seekbar_back #0a0a0aff
+
+# Title format
+gtkui.titlebar_playing_tf %artist% — %title% — DeaDBeeF
+gtkui.titlebar_stopped_tf DeaDBeeF
+
+# Column header format
+gtkui.columns.0 "♯" "%tracknumber%" 50 0 0 0 0
+gtkui.columns.1 "Title" "%title%" 260 0 0 0 0
+gtkui.columns.2 "Artist" "%artist%" 180 0 0 0 0
+gtkui.columns.3 "Album" "%album%" 180 0 0 0 0
+gtkui.columns.4 "Year" "%year%" 60 1 0 0 0
+gtkui.columns.5 "Duration" "%length%" 70 1 0 0 0
+
+# UI preferences
+gtkui.tabstrip_visible 1
+gtkui.statusbar_visible 1
+gtkui.listview_header_visible 1
+gui.eq.visible 0
+gtkui.disable_seekbar_overlay 0
+
+# Playback
+streamer.dsp.src.quality 2
+shuffle.albums 0
+playback.loop 0

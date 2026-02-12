@@ -16,7 +16,23 @@
         ssh_public_key: ""
 
   roles:
-    - role: dotfiles
+    - role: base
+      vars:
+        username: root
+        user_home: /root
+    - role: desktop
+      vars:
+        username: root
+        user_home: /root
+    - role: shell
+      vars:
+        username: root
+        user_home: /root
+    - role: dev
+      vars:
+        username: root
+        user_home: /root
+    - role: apps
       vars:
         username: root
         user_home: /root

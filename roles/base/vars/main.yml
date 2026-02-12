@@ -1,0 +1,18 @@
+---
+# Internal role constants - not meant to be overridden
+
+# Nix experimental features flags (safety net for standalone tag runs)
+# base.yml configures nix.conf with these features permanently,
+# but standalone --tags runs may execute before base has run
+dotfiles_nix_experimental_flags: "--extra-experimental-features 'nix-command flakes'"
+
+# Repos that belong in 1-Projects (updated automatically by repos-sync)
+repos_active:
+  - dotfiles
+  - tubes-cursor
+  - homelab-infra
+  - void-installer
+
+# Repos that belong in 4-Archives (updated automatically by repos-sync)
+repos_archived:
+  - tubes-cursor

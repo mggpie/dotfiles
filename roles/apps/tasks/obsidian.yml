@@ -1,0 +1,59 @@
+---
+- name: Install nixGL for OpenGL support
+  ansible.builtin.command:
+    cmd: >-
+      nix profile install github:nix-community/nixGL
+      {{ dotfiles_nix_experimental_flags }} --impure
+  register: dotfiles_nixgl_install
+  changed_when: "'already installed' not in dotfiles_nixgl_install.stderr"
+  failed_when: dotfiles_nixgl_install.rc != 0 and 'already installed' not in dotfiles_nixgl_install.stderr
+  tags: [obsidian]
+
+- name: Install obsidian from nix unstable
+  ansible.builtin.command:
+    cmd: >-
+      nix profile install nixpkgs#obsidian
+      {{ dotfiles_nix_experimental_flags }} --impure
+  environment:
+    NIXPKGS_ALLOW_UNFREE: "1"
+  register: dotfiles_obsidian_install
+  changed_when: "'already installed' not in dotfiles_obsidian_install.stderr"
+  failed_when: dotfiles_obsidian_install.rc != 0 and 'already installed' not in dotfiles_obsidian_install.stderr
+  tags: [obsidian]
+
+- name: Create .local/bin directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/bin"
+    state: directory
+    mode: '0755'
+  tags: [obsidian]
+
+- name: Create obsidian wrapper script for PATH
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      exec nixGL ~/.nix-profile/bin/obsidian "$@"
+    dest: "{{ user_home }}/.local/bin/obsidian"
+    mode: '0755'
+  tags: [obsidian]
+
+- name: Create .local/share/applications directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/share/applications"
+    state: directory
+    mode: '0755'
+  tags: [obsidian]
+
+- name: Create obsidian .desktop file
+  ansible.builtin.copy:
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Name=Obsidian
+      Exec={{ user_home }}/.local/bin/obsidian %u
+      Icon=obsidian
+      Terminal=false
+      Categories=Office;
+    dest: "{{ user_home }}/.local/share/applications/obsidian.desktop"
+    mode: '0644'
+  tags: [obsidian]

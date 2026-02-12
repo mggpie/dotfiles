@@ -1,0 +1,12 @@
+---
+username: "{{ ansible_user_id }}"
+user_home: "/home/{{ username }}"
+
+# Audio/display hardware (injected into fish env)
+audio_card: "alsa_card.pci-0000_00_1f.3"
+audio_sink_monitor: "alsa_output.pci-0000_00_1f.3.hdmi-stereo"
+audio_sink_tv: "alsa_output.pci-0000_00_1f.3.hdmi-stereo-extra1"
+audio_profile_monitor: "output:hdmi-stereo"
+audio_profile_tv: "output:hdmi-stereo-extra1"
+output_monitor: "DP-1"
+output_tv: "HDMI-A-2"

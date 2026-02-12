@@ -1,0 +1,62 @@
+* {
+    font-family: "Adwaita Sans", "IntoneMono Nerd Font", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    min-height: 0;
+}
+
+window#waybar {
+    background: #000000;
+    color: #D0CFCC;
+}
+
+#workspaces button {
+    padding: 0 6px;
+    color: #888888;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+#workspaces button:hover {
+    color: #D0CFCC;
+    background: transparent;
+}
+
+#workspaces button.focused {
+    color: #FFFFFF;
+    background: transparent;
+}
+
+#clock, #battery, #custom-weather, #custom-radio-toggle, #pulseaudio {
+    padding: 0 8px;
+}
+
+#custom-radio-prev {
+    padding: 0 2px 0 8px;
+}
+
+#custom-radio-next {
+    padding: 0 2px;
+}
+
+#battery {
+    margin-right: 6px;
+}
+
+#battery.charging {
+    color: #4E9A06;
+}
+
+#battery.warning:not(.charging) {
+    color: #C4A000;
+}
+
+#battery.critical:not(.charging) {
+    color: #CC0000;
+}
+
+tooltip label {
+    font-family: "IntoneMono Nerd Font", monospace;
+    font-size: 14px;
+}

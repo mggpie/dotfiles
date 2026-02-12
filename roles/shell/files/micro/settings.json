@@ -1,0 +1,16 @@
+{
+    "ambiguouswidth": 1,
+    "autosave": 5,
+    "autosu": true,
+    "clipboard": "external",
+    "colorscheme": "gotham",
+    "eofnewline": false,
+    "hlsearch": true,
+    "hltaberrors": false,
+    "hltrailingws": false,
+    "keepautoindent": true,
+    "savecursor": true,
+    "saveundo": true,
+    "softwrap": true,
+    "wordwrap": true
+}

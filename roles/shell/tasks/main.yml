@@ -1,0 +1,33 @@
+---
+# Load secrets if vault is available
+- name: Include secrets
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/secrets.yml"
+  failed_when: false
+  no_log: true
+  tags: [always]
+
+- name: Import fish tasks
+  ansible.builtin.import_tasks: fish.yml
+- name: Import foot tasks
+  ansible.builtin.import_tasks: foot.yml
+- name: Import wezterm tasks
+  ansible.builtin.import_tasks: wezterm.yml
+- name: Import fastfetch tasks
+  ansible.builtin.import_tasks: fastfetch.yml
+- name: Import htop tasks
+  ansible.builtin.import_tasks: htop.yml
+- name: Import micro tasks
+  ansible.builtin.import_tasks: micro.yml
+- name: Import neovim tasks
+  ansible.builtin.import_tasks: neovim.yml
+- name: Import lf tasks
+  ansible.builtin.import_tasks: lf.yml
+- name: Import mpd tasks
+  ansible.builtin.import_tasks: mpd.yml
+- name: Import spotify-player tasks
+  ansible.builtin.import_tasks: spotify-player.yml
+- name: Import newsboat tasks
+  ansible.builtin.import_tasks: newsboat.yml
+- name: Import amfora tasks
+  ansible.builtin.import_tasks: amfora.yml

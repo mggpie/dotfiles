@@ -1,0 +1,72 @@
+---
+# System theming - GTK, Qt, cursors, icons
+
+- name: Install theme packages
+  community.general.xbps:
+    update_cache: false
+    name:
+      - papirus-icon-theme # Icon theme
+    state: present
+  become: true
+  tags: [theme]
+
+- name: Install capitaine-cursors via Nix
+  ansible.builtin.command:
+    cmd: nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#capitaine-cursors
+  register: dotfiles_nix_install_result
+  changed_when: "'already installed' not in dotfiles_nix_install_result.stderr"
+  failed_when: dotfiles_nix_install_result.rc != 0 and 'already installed' not in dotfiles_nix_install_result.stderr
+  tags: [theme]
+
+# GTK 3 configuration
+- name: Create GTK-3.0 config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/gtk-3.0"
+    state: directory
+    mode: "0755"
+  tags: [theme]
+
+- name: Configure GTK-3.0 dark theme
+  ansible.builtin.copy:
+    src: theme/gtk-3.0-settings.ini
+    dest: "{{ user_home }}/.config/gtk-3.0/settings.ini"
+    mode: "0644"
+  tags: [theme]
+
+# GTK 4 configuration
+- name: Create GTK-4.0 config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/gtk-4.0"
+    state: directory
+    mode: "0755"
+  tags: [theme]
+
+- name: Configure GTK-4.0 dark theme
+  ansible.builtin.copy:
+    src: theme/gtk-4.0-settings.ini
+    dest: "{{ user_home }}/.config/gtk-4.0/settings.ini"
+    mode: "0644"
+  tags: [theme]
+
+# Set default cursor globally
+- name: Set default X11 cursor
+  ansible.builtin.copy:
+    src: theme/Xresources
+    dest: "{{ user_home }}/.Xresources"
+    mode: "0644"
+  tags: [theme]
+
+- name: Configure GTK 2.0 dark theme
+  ansible.builtin.copy:
+    src: theme/gtkrc-2.0
+    dest: "{{ user_home }}/.gtkrc-2.0"
+    mode: "0644"
+  tags: [theme]
+
+# Scale UI to ~0.9 (since Sway fractional scale breaks Electron)
+- name: Set GTK text scaling factor to 0.9
+  ansible.builtin.command:
+    cmd: gsettings set org.gnome.desktop.interface text-scaling-factor 0.9
+  become: false
+  changed_when: false
+  tags: [theme]

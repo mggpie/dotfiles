@@ -1,0 +1,29 @@
+---
+- name: Remove old repos reminder cron
+  ansible.builtin.cron:
+    name: "repos-reorganize-reminder"
+    state: absent
+    user: "{{ username }}"
+  tags: [repos]
+
+- name: Remove old repos-sync script
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/bin/repos-sync"
+    state: absent
+  tags: [repos]
+
+- name: Repos sync on boot
+  ansible.builtin.cron:
+    name: repos-sync
+    special_time: reboot
+    job: "sleep 30 && /bin/fish -c repos-sync"
+    user: "{{ username }}"
+  tags: [repos]
+
+- name: Run repos-sync now
+  ansible.builtin.command:
+    cmd: /bin/fish -c repos-sync
+  register: repos_sync_result
+  changed_when: repos_sync_result.stdout | length > 0
+  become: false
+  tags: [repos]

@@ -1,0 +1,11 @@
+# Kanshi - dynamic output configuration
+
+profile monitor {
+    output DP-1 mode 3440x1440@75.050Hz scale 1.0 enable
+    output HDMI-A-2 disable
+}
+
+profile tv {
+    output HDMI-A-2 mode 3840x2160@60.000Hz scale 3.0 enable
+    output DP-1 disable
+}

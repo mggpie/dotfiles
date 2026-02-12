@@ -29,24 +29,18 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 ## How It's Built
 
-The entire system is a single Ansible role with ~50 task files, each owning one application. Every task has tags for selective runs, uses fully qualified collection names, and is written to be idempotent - `changed_when`, `creates:`, and `failed_when` ensure re-runs don't touch what's already configured.
+The entire system is a single Ansible playbook with 5 roles, each owning a logical domain. Every task has tags for selective runs, uses fully qualified collection names, and is written to be idempotent - `changed_when`, `creates:`, and `failed_when` ensure re-runs don't touch what's already configured.
 
 ```
-roles/dotfiles/
-├── defaults/main.yml    # Fallback variables
-├── vars/main.yml        # Internal constants
-├── meta/main.yml        # Role metadata
-├── handlers/main.yml    # Service restarts (bluetoothd, grub-mkconfig)
-├── tasks/
-│   ├── main.yml         # Ordered imports: system > dev > desktop > terminal > apps
-│   ├── base.yml         # Locale, doas, runit services, Nix setup
-│   ├── sway.yml         # Window manager + keybindings
-│   ├── fish.yml         # Shell + functions + environment template
-│   └── ...              # 1 file per application (~50 total)
-└── files/               # Config files deployed as-is (+ 1 Jinja2 template)
+roles/
+├── base/       # System: locale, doas, services, Nix, drivers, fonts, GRUB
+├── desktop/    # Sway, Waybar, PipeWire, swaylock, kanshi, mako, theming
+├── shell/      # Fish, foot, wezterm, lf, micro, neovim, mpd, newsboat
+├── dev/        # Git, GitHub CLI, SSH, Python, Go, Docker, VSCode, Zed
+└── apps/       # Firefox, Thunar, mpv, qBittorrent, Obsidian, and more
 ```
 
-CI runs `ansible-lint` on every push. Dry-run (`--check --diff`) passes with 250+ tasks, 0 failures.
+CI runs `ansible-lint` and `molecule test` (Docker + testinfra) on every push. Dry-run (`--check --diff`) passes with 250+ tasks, 0 failures.
 
 ## Quick Start
 

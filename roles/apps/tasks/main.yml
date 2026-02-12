@@ -1,0 +1,31 @@
+---
+- name: Import firefox tasks
+  ansible.builtin.import_tasks: firefox.yml
+- name: Import qutebrowser tasks
+  ansible.builtin.import_tasks: qutebrowser.yml
+- name: Import luakit tasks
+  ansible.builtin.import_tasks: luakit.yml
+- name: Import pcmanfm tasks
+  ansible.builtin.import_tasks: pcmanfm.yml
+- name: Import thunar tasks
+  ansible.builtin.import_tasks: thunar.yml
+- name: Import mpv tasks
+  ansible.builtin.import_tasks: mpv.yml
+- name: Import vlc tasks
+  ansible.builtin.import_tasks: vlc.yml
+- name: Import deadbeef tasks
+  ansible.builtin.import_tasks: deadbeef.yml
+- name: Import cava tasks
+  ansible.builtin.import_tasks: cava.yml
+- name: Import imv tasks
+  ansible.builtin.import_tasks: imv.yml
+- name: Import krita tasks
+  ansible.builtin.import_tasks: krita.yml
+- name: Import zathura tasks
+  ansible.builtin.import_tasks: zathura.yml
+- name: Import telegram tasks
+  ansible.builtin.import_tasks: telegram.yml
+- name: Import qbittorrent tasks
+  ansible.builtin.import_tasks: qbittorrent.yml
+- name: Import obsidian tasks
+  ansible.builtin.import_tasks: obsidian.yml

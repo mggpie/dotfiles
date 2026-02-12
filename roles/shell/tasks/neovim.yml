@@ -1,0 +1,22 @@
+---
+- name: Install neovim
+  community.general.xbps:
+    update_cache: false
+    name: neovim
+    state: present
+  become: true
+  tags: [neovim]
+
+- name: Create neovim config directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/nvim"
+    state: directory
+    mode: "0755"
+  tags: [neovim]
+
+- name: Deploy neovim configuration
+  ansible.builtin.copy:
+    src: nvim/init.lua
+    dest: "{{ user_home }}/.config/nvim/init.lua"
+    mode: "0644"
+  tags: [neovim]

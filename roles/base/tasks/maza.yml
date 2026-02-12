@@ -1,0 +1,66 @@
+---
+- name: Install curl
+  become: true
+  community.general.xbps:
+    name: curl
+    state: present
+  tags: [maza]
+
+- name: Backup hosts file
+  become: true
+  ansible.builtin.copy:
+    src: /etc/hosts
+    dest: /etc/hosts.backup
+    remote_src: true
+    force: false
+    mode: "0644"
+  tags: [maza]
+
+- name: Download maza script
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/tanrax/maza-ad-blocking/master/maza
+    dest: /tmp/maza
+    mode: '0755'
+  check_mode: false
+  tags: [maza]
+
+- name: Fix maza script color detection for ansible
+  ansible.builtin.lineinfile:
+    path: /tmp/maza
+    regexp: '^if \[ -t 1 \]; then$'
+    line: 'if false; then  # Disabled color detection for ansible'
+  tags: [maza]
+
+- name: Install maza to /usr/local/bin
+  become: true
+  ansible.builtin.copy:
+    src: /tmp/maza
+    dest: /usr/local/bin/maza
+    remote_src: true
+    mode: '0755'
+  tags: [maza]
+
+- name: Update maza database
+  become: true
+  ansible.builtin.shell: /usr/local/bin/maza update
+  args:
+    executable: /bin/bash
+  changed_when: true
+  tags: [maza]
+
+- name: Check if maza is active
+  ansible.builtin.command: grep -q '# MAZA' /etc/hosts
+  register: dotfiles_maza_active
+  changed_when: false
+  failed_when: false
+  become: true
+  tags: [maza]
+
+- name: Start maza ad blocking
+  become: true
+  ansible.builtin.shell: /usr/local/bin/maza start
+  args:
+    executable: /bin/bash
+  when: dotfiles_maza_active.rc != 0
+  changed_when: true
+  tags: [maza]

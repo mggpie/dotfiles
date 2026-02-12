@@ -1,0 +1,8 @@
+---
+- name: Install telegram-desktop
+  community.general.xbps:
+    update_cache: false
+    name: telegram-desktop
+    state: present
+  become: true
+  tags: [telegram]
