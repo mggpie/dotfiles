@@ -6,5 +6,5 @@ Profiles=profile-zero;
 
 [X-Action-Profile profile-zero]
 MimeTypes=application/zip;application/x-tar;application/x-compressed-tar;application/x-bzip-compressed-tar;application/x-xz-compressed-tar;
-Exec=wezterm start sh -c 'case "%f" in *.zip) unzip "%f" -d "${PWD}";; *.tar.gz|*.tgz) tar -xzf "%f" -C "${PWD}";; *.tar.bz2|*.tbz2) tar -xjf "%f" -C "${PWD}";; *.tar.xz) tar -xJf "%f" -C "${PWD}";; *.tar) tar -xf "%f" -C "${PWD}";; esac && echo "\nFinished! Press Enter to close" && read'
-Name=Extract archive
+Exec=wezterm start sh -c 'f="%f"; d="$(dirname "$f")"; b="$(basename "$f")"; n="${b%%%%.*}"; mkdir -p "$d/$n"; case "$f" in *.zip) unzip "$f" -d "$d/$n";; *.tar.gz|*.tgz) tar -xzf "$f" -C "$d/$n";; *.tar.bz2|*.tbz2) tar -xjf "$f" -C "$d/$n";; *.tar.xz) tar -xJf "$f" -C "$d/$n";; *.tar) tar -xf "$f" -C "$d/$n";; esac && echo "\nExtracted to $d/$n\nPress Enter to close" && read'
+Name=Extract archive to subdirectory
