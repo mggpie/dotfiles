@@ -84,7 +84,7 @@ ansible-playbook playbook.yml --list-tags       # Show all tags
 | `grub` | GRUB bootloader + kernel parameters |
 | `intel-graphics` | Mesa, Vulkan, VA-API drivers |
 | `performance` | sysctl tuning (swappiness, vfs_cache_pressure) + zram |
-| `tlp` | Power management |
+| `tlp` | Power management (installed but disabled - kernel defaults more responsive) |
 | `virtualization` | QEMU/KVM/libvirt |
 | `fonts` | Inter, Intel One Mono, Nerd Fonts |
 | `theme` | GTK/Qt theming (Tango Dark, Adwaita Dark) |
