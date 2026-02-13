@@ -18,6 +18,17 @@
 - **No fancy Unicode.** Use plain `-` (hyphen-minus), not em dashes, en dashes, or arrows. `->` not `→`.
 - **Commit messages:** lowercase, imperative, no period, no prefix. Say what changed, not the category. Good: `fix env.fish idempotency, template instead of copy`. Bad: `fix: resolve idempotency issues in environment configuration`. Never use conventional commit prefixes (`feat:`, `fix:`, `docs:`, etc.).
 
+### General workflow
+- **Verify, don't guess.** When unsure about system values (app_id, paths, command output), check first with appropriate tools (swaymsg, ls, grep). Don't assume or iterate - get it right on first try.
+- **Find root causes.** If a timing/ordering issue exists, fix the mechanism (use polling), not the symptom (adjust sleep values).
+- **Deploy after changes.** After editing files, commit/push/deploy without being asked unless user explicitly says not to.
+
+### Code style
+- All code and comments in English. Comment like a senior engineer - explain *why*, not *what*.
+- No AI-sounding prose ("Let's", "Sure!", "Here's", "I'll go ahead and..."). Just do the work.
+- **No fancy Unicode.** Use plain `-` (hyphen-minus), not em dashes, en dashes, or arrows. `->` not `→`.
+- **Commit messages:** lowercase, imperative, no period, no prefix. Say what changed, not the category. Good: `fix env.fish idempotency, template instead of copy`. Bad: `fix: resolve idempotency issues in environment configuration`. Never use conventional commit prefixes (`feat:`, `fix:`, `docs:`, etc.).
+
 ### Deployment
 - After any change: `git add -A && git commit && git push && deploy <tags>`.
 - The `deploy` fish function commits, pushes, and runs `ansible-playbook` with the given tags.
@@ -60,6 +71,11 @@
 - Never create bash/sh/zsh scripts. All scripted behavior belongs in fish functions (`files/fish/functions/`).
 - If the function should be launchable from bemenu-run (as a GUI shortcut), also add a thin wrapper to `files/shortcuts/` that calls the fish function: `#!/usr/bin/fish\nfunction_name $argv`.
 - Shortcuts are deployed to `~/.local/bin/` and must be executable, one-purpose, and named without extensions.
+
+### Sway
+- **Window ordering:** Never use `sleep` to sequence window launches. Poll `swaymsg -t get_tree` for the window to appear before launching the next one.
+- **app_id casing matters.** Firefox is `"Firefox"` (capital F), wezterm is `"org.wezfurlong.wezterm"`. Always verify actual app_id values from `swaymsg -t get_tree` - don't guess.
+- Known app_ids: `Firefox`, `org.wezfurlong.wezterm`, `notepad` (custom wezterm class).
 
 ### Fish shell - NOT bash
 This project uses Fish, not bash/zsh. Fish syntax differs fundamentally:
