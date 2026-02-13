@@ -6,9 +6,9 @@ function startup
     # Workspace 1: Firefox (40% left) + VSCode (40% middle) + WezTerm (20% right)
     swaymsg 'workspace number 1'
     swaymsg 'exec firefox'
-    sleep 1
+    sleep 1.5
     swaymsg 'exec code'
-    sleep 1
+    sleep 1.5
     swaymsg 'exec wezterm start -- fish -c notepad'
     while not swaymsg -t get_tree | grep -q '"name": "Visual Studio Code"'
         sleep 0.1
