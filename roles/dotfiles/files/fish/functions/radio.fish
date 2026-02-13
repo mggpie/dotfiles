@@ -8,7 +8,8 @@ function radio
         "Swamp Camp"         "https://www.youtube.com/watch?v=EZG7xHVwyXk" \
         "Relaxing Forest"    "https://www.youtube.com/watch?v=td7xQnweIFE" \
         "Gothic OST"         "https://www.youtube.com/watch?v=Q7gVCSu7imE" \
-        "Campfire"           "https://www.youtube.com/watch?v=8KrLtLr-Gy8"
+        "Campfire"           "https://www.youtube.com/watch?v=8KrLtLr-Gy8" \
+        "Robin Hood"         "https://www.youtube.com/watch?v=LpuaYBEW0D0"
 
     set -l names
     set -l urls
