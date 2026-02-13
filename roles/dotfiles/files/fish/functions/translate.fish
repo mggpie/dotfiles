@@ -6,7 +6,7 @@ function translate --description "Translate selected text and copy to clipboard"
         return 1
     end
 
-    set -l translated (trans -b en:pl "$selected" 2>/dev/null)
+    set -l translated (trans -b pl:en "$selected" 2>/dev/null)
     
     if test -z "$translated"
         notify-send "Translate" "Translation failed"
