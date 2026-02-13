@@ -1,12 +1,13 @@
 function rotate-keys -d "rotate SSH and GitHub tokens seamlessly"
+    printf "[1/9] initializing key rotation...\n"
     set -l temp_dir (mktemp -d)
     set -l new_key "$temp_dir/id_ed25519"
     
-    # get old GitHub token for deletion
+    printf "[2/9] capturing old GitHub token...\n"
     set -l old_gh_token (gh auth token 2>/dev/null)
     
-    # generate new SSH key without passphrase
-    ssh-keygen -t ed25519 -f "$new_key" -N "" -C "mggpie@void" >/dev/null 2>&1
+    printf "[3/9] generating new SSH ed25519 key...\n"
+    ssh-keygen -t ed25519 -f "$new_key" -N "" -C "mggpie@void"
     
     if not test $status -eq 0
         printf "failed to generate SSH key\n" >&2
@@ -16,12 +17,13 @@ function rotate-keys -d "rotate SSH and GitHub tokens seamlessly"
     
     set -l new_private (cat "$new_key")
     set -l new_public (cat "$new_key.pub")
+    printf "  public key: %s\n" (string sub -l 50 "$new_public")...
     
-    # get old public key fingerprint for deletion
     set -l old_fingerprint (ssh-keygen -lf ~/.ssh/id_ed25519.pub 2>/dev/null | awk '{print $2}')
+    printf "  old fingerprint: %s\n" "$old_fingerprint"
     
-    # rotate GitHub token
-    gh auth refresh -s repo,read:org,gist,write:packages,delete:packages,admin:public_key >/dev/null 2>&1
+    printf "[4/9] refreshing GitHub token (will open browser for OAuth)...\n"
+    gh auth refresh -s repo,read:org,gist,write:packages,delete:packages,admin:public_key
     
     if not test $status -eq 0
         printf "failed to refresh GitHub token\n" >&2
@@ -30,9 +32,10 @@ function rotate-keys -d "rotate SSH and GitHub tokens seamlessly"
     end
     
     set -l new_gh_token (gh auth token 2>/dev/null)
+    printf "  new token: %s...\n" (string sub -l 20 "$new_gh_token")
     
-    # add new SSH key to GitHub via gh CLI
-    printf "%s" "$new_public" | gh ssh-key add - --title "void-$(date +%Y%m%d)" >/dev/null 2>&1
+    printf "[5/9] adding new SSH key to GitHub...\n"
+    printf "%s" "$new_public" | gh ssh-key add - --title "void-$(date +%Y%m%d)"
     
     if not test $status -eq 0
         printf "failed to add SSH key to GitHub\n" >&2
@@ -40,10 +43,9 @@ function rotate-keys -d "rotate SSH and GitHub tokens seamlessly"
         return 1
     end
     
-    # backup current vault
+    printf "[6/9] backing up and updating vault...\n"
     cp secrets.yml "$temp_dir/secrets.yml.bak"
     
-    # update vault with new keys
     set -l vault_content (ansible-vault view secrets.yml 2>/dev/null)
     
     if not test $status -eq 0
@@ -87,7 +89,7 @@ function rotate-keys -d "rotate SSH and GitHub tokens seamlessly"
         !in_private && !in_gh_hosts { print }
     ')
     
-    # encrypt updated vault
+    printf "  encrypting updated vault...\n"
     printf "%s\n" "$updated_vault" | ansible-vault encrypt --output secrets.yml 2>/dev/null
     
     if not test $status -eq 0
@@ -97,37 +99,39 @@ function rotate-keys -d "rotate SSH and GitHub tokens seamlessly"
         return 1
     end
     
-    # deploy new SSH key locally
+    printf "[7/9] deploying new SSH key locally...\n"
     cp "$new_key" ~/.ssh/id_ed25519
     cp "$new_key.pub" ~/.ssh/id_ed25519.pub
     chmod 600 ~/.ssh/id_ed25519
     chmod 644 ~/.ssh/id_ed25519.pub
     
-    # restart ssh-agent with new key
-    ssh-add -D >/dev/null 2>&1
-    ssh-add ~/.ssh/id_ed25519 >/dev/null 2>&1
+    printf "[8/9] restarting ssh-agent...\n"
+    ssh-add -D
+    ssh-add ~/.ssh/id_ed25519
     
-    # delete old SSH key from GitHub
+    printf "[9/9] cleaning up old credentials...\n"
     if test -n "$old_fingerprint"
+        printf "  deleting old SSH key from GitHub...\n"
         for key_id in (gh api /user/keys --jq '.[] | select(.key | contains("'$old_fingerprint'")) | .id')
-            gh api -X DELETE "/user/keys/$key_id" >/dev/null 2>&1
+            gh api -X DELETE "/user/keys/$key_id"
         end
     end
     
-    # revoke old GitHub token
     if test -n "$old_gh_token"
         and test "$old_gh_token" != "$new_gh_token"
+        printf "  revoking old GitHub token...\n"
         gh api -X DELETE "/applications/Iv1.0000000000000000/token" \
-            -f access_token="$old_gh_token" >/dev/null 2>&1
+            -f access_token="$old_gh_token"
     end
     
-    # cleanup
     rm -rf "$temp_dir"
     
-    # commit and push vault update
+    printf "\ncommitting vault changes...\n"
     git -C (dirname (status --current-filename)) add secrets.yml
     git -C (dirname (status --current-filename)) commit -m "rotate ssh keys"
     git -C (dirname (status --current-filename)) push
     
-    printf "keys rotated successfully\n"
+    printf "\n✓ keys rotated successfully\n"
+    printf "\npress any key to close...\n"
+    read -n 1
 end
