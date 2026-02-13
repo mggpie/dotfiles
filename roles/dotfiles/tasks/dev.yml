@@ -28,6 +28,8 @@
           - curl
           - wget
           - bat
+          - minicom
+          - picocom
           - ripgrep
           - htop
           - calc
