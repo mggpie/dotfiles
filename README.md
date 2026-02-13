@@ -13,8 +13,6 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 ## What's Inside
 
-> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
-
 **OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide @ 60Hz - smoother Sway rendering than 75Hz, most apps target 60fps, less GPU work + 4K TV via HDMI).
 
 **Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). YouTube radio via mpv (audio only) - prev/next and station name in Waybar, click to toggle, resumes the same station after stop. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
@@ -30,6 +28,8 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 **Extras:** maza host-level ad blocking (no Pi-hole, no browser extension). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time.
 
 ## How It's Built
+
+> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
 
 The entire system is a single Ansible role with ~50 task files, each owning one application. Every task has tags for selective runs, uses fully qualified collection names, and is written to be idempotent - `changed_when`, `creates:`, and `failed_when` ensure re-runs don't touch what's already configured.
 
