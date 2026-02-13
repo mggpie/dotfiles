@@ -11,9 +11,9 @@ The aesthetic is purely functional. Tango Dark and Adwaita Dark palettes with In
 
 I picked Void Linux because it's one of the most architecturally interesting distros out there to me.
 
-> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
-
 ## What's Inside
+
+> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
 
 **OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide @ 60Hz - smoother Sway rendering than 75Hz, most apps target 60fps, less GPU work + 4K TV via HDMI).
 
