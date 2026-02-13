@@ -5,13 +5,13 @@
 
 ![screenshot](screenshot.png)
 
-> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
-
 Ansible-managed Void Linux (glibc) desktop with Sway, built for long sessions. One `bootstrap.sh` takes a fresh Void install to a fully configured workstation - window manager, audio stack, Bluetooth, shell, editors, and 50+ applications - in a single idempotent run.
 
 The aesthetic is purely functional. Tango Dark and Adwaita Dark palettes with Intel One Mono Nerd Font were chosen for readability during 12-hour days, not for screenshots. Everything is keyboard-driven, minimal, and stays out of the way.
 
 I picked Void Linux because it's one of the most architecturally interesting distros out there to me.
+
+> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
 
 ## What's Inside
 

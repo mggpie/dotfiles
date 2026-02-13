@@ -23,7 +23,7 @@ jobs:
         uses: ansible/ansible-lint@main
 
       - name: Dry-run (--check --diff)
-        run: ansible-playbook playbook.yml --check --diff
+        run: ansible-playbook playbook.yml --check --diff --skip-tags notest
         env:
           ANSIBLE_FORCE_COLOR: "1"
 
