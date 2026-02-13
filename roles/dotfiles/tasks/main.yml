@@ -11,6 +11,7 @@
   community.general.xbps:
     update_cache: true
   become: true
+  when: ansible_facts['os_family'] == 'Void'
   tags: [always]
 
 # === System ===

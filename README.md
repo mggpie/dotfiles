@@ -3,9 +3,9 @@
 [![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 [![Lint](https://github.com/mggpie/dotfiles/actions/workflows/lint.yml/badge.svg)](https://github.com/mggpie/dotfiles/actions/workflows/lint.yml)
 
-> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine where secrets (GitHub tokens, Bluetooth MAC addresses) are regularly rotated. The vault password is 40 characters. Risk is minimal, but never replicate this pattern for production infrastructure or shared systems.
-
 ![screenshot](screenshot.png)
+
+> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
 
 Ansible-managed Void Linux (glibc) desktop with Sway, built for long sessions. One `bootstrap.sh` takes a fresh Void install to a fully configured workstation - window manager, audio stack, Bluetooth, shell, editors, and 50+ applications - in a single idempotent run.
 
