@@ -24,6 +24,7 @@
 - Vault and become passwords are configured in `ansible.cfg` (pointing to `.vault_pass` and `.become_pass` files). Every deploy must include `--vault-password-file` and `--become-password-file` - some tasks require root or decrypted secrets to function.
 - Always verify changes actually work after deploying. Don't assume.
 - Never deploy `firefox` or `vscode` tags unprompted - those configs include local state (logins, synced settings) that diverges from the repo version intentionally.
+- **Every package must be installed via ansible** - never use manual `xbps-install` or `nix-env`. If you need a package, add it to the appropriate task file in `roles/dotfiles/tasks/` first, then deploy.
 
 ### Secrets
 - Never decrypt, print, or edit `secrets.yml` directly.
