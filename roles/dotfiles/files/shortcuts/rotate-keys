@@ -1,2 +1,2 @@
 #!/usr/bin/fish
-foot -T "Key Rotation" -e fish -c "cd ~/Desktop/1-Projects/dotfiles; rotate-keys"
+$TERMINAL -T "Key Rotation" -e fish -c "cd ~/Desktop/1-Projects/dotfiles; rotate-keys"
