@@ -1,0 +1,107 @@
+{
+  "Gestures": [
+    {
+      "pattern": [
+        [
+          -165.26666259765625,
+          -1.2332763671875
+        ]
+      ],
+      "command": {
+        "name": "FocusLeftTab",
+        "settings": {
+          "cycling": true,
+          "excludeDiscarded": false
+        }
+      }
+    },
+    {
+      "pattern": [
+        [
+          175.13336181640625,
+          1.23333740234375
+        ]
+      ],
+      "command": {
+        "name": "FocusRightTab",
+        "settings": {
+          "cycling": true,
+          "excludeDiscarded": false
+        }
+      }
+    },
+    {
+      "pattern": [
+        [
+          2.46661376953125,
+          -196.10003662109375
+        ],
+        [
+          -4.93328857421875,
+          199.79998779296875
+        ]
+      ],
+      "command": {
+        "name": "ReloadTab",
+        "settings": {
+          "cache": true
+        }
+      }
+    },
+    {
+      "pattern": [
+        [
+          3.70001220703125,
+          57.9666748046875
+        ],
+        [
+          41.93328857421875,
+          1.23333740234375
+        ]
+      ],
+      "command": {
+        "name": "CloseTab",
+        "settings": {
+          "nextFocus": "default",
+          "closePinned": true
+        }
+      }
+    },
+    {
+      "pattern": [
+        [
+          0,
+          -48.01666259765625
+        ]
+      ],
+      "command": {
+        "name": "NewTab",
+        "settings": {
+          "position": "default",
+          "focus": true
+        }
+      }
+    }
+  ],
+  "Settings": {
+    "Gesture": {
+      "mouseButton": "2",
+      "Command": {
+        "display": false
+      },
+      "Trace": {
+        "display": false
+      }
+    },
+    "General": {
+      "updateNotification": false,
+      "theme": "highContrast"
+    },
+    "Rocker": {
+      "active": true
+    },
+    "Wheel": {
+      "active": false
+    }
+  }
+}

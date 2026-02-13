@@ -132,6 +132,34 @@
         mode: "0644"
       when: dotfiles_firefox_profile_path is defined
 
+    - name: Create extension storage directories
+      ansible.builtin.file:
+        path: "{{ dotfiles_firefox_profile_path }}/storage/default/moz-extension+++{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "506e023c-7f2b-40a3-8066-bc5deb40aebe"  # Gesturefy
+        - "54e2eb33-18eb-46ad-a4e4-1329c29f6e17"  # Block Site
+      when: dotfiles_firefox_profile_path is defined
+
+    - name: Deploy extension settings
+      ansible.builtin.copy:
+        src: "firefox/{{ item.file }}"
+        dest: "{{ dotfiles_firefox_profile_path }}/storage/default/moz-extension+++{{ item.ext_id }}/idb/{{ item.target }}"
+        mode: "0644"
+      loop:
+        - {file: "gesturefy-settings.json", ext_id: "506e023c-7f2b-40a3-8066-bc5deb40aebe", target: "settings.json"}
+        - {file: "block-site-preferences.json", ext_id: "54e2eb33-18eb-46ad-a4e4-1329c29f6e17", target: "preferences.json"}
+        - {file: "SimpleTranslate_Settings.json", ext_id: "simple-translate@sienori", target: "data.json"}
+      when: dotfiles_firefox_profile_path is defined
+
+    - name: Deploy uBlock Origin settings
+      ansible.builtin.copy:
+        src: firefox/my-ublock-backup_2026-02-13_18.13.49.txt
+        dest: "{{ dotfiles_firefox_profile_path }}/ublock-backup.txt"
+        mode: "0644"
+      when: dotfiles_firefox_profile_path is defined
+
     - name: Set Firefox as default browser
       ansible.builtin.shell: |
         xdg-settings set default-web-browser firefox.desktop

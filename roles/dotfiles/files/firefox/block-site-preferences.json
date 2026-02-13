@@ -1,0 +1,54 @@
+{
+  "blocked": [
+    "wykop.pl"
+  ],
+  "close": 0,
+  "contextmenu-frame": true,
+  "contextmenu-pause": true,
+  "contextmenu-resume": true,
+  "contextmenu-top": true,
+  "contexts": [
+    "main_frame",
+    "sub_frame"
+  ],
+  "crate": 5,
+  "css": "",
+  "disable-actions-options": true,
+  "disable-actions-page": true,
+  "initialBlock": true,
+  "initialBlockCurrent": true,
+  "map": {},
+  "message": "",
+  "no-password-on-add": false,
+  "notes": {
+    "wykop.pl": {
+      "date": 1770394868939,
+      "origin": "options",
+      "count": 28
+    }
+  },
+  "notification": true,
+  "pause-periods": [
+    5,
+    10,
+    15,
+    30,
+    60,
+    360,
+    1440,
+    -1
+  ],
+  "redirect": "",
+  "reverse": false,
+  "schedule": {
+    "times": {}
+  },
+  "schedule-offset": 0,
+  "schedules": {},
+  "sha256": "",
+  "timeout": 60,
+  "title": true,
+  "wrong": 1,
+  "managed.storage.overwrite.on.start": false,
+  "guid": "d1d0e92b-0a3b-47a3-bb23-4296f6eed1d1"
+}
