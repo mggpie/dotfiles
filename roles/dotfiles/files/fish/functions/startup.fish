@@ -8,7 +8,7 @@ function startup
     swaymsg 'workspace number 1'
 
     swaymsg 'exec firefox'
-    while not swaymsg -t get_tree | grep -q '"app_id": "firefox"'
+    while not swaymsg -t get_tree | grep -q '"app_id": "Firefox"'
         sleep 0.1
     end
 
@@ -22,7 +22,7 @@ function startup
         sleep 0.1
     end
 
-    swaymsg '[app_id="firefox"] resize set width 40 ppt'
+    swaymsg '[app_id="Firefox"] resize set width 40 ppt'
     swaymsg '[app_id="org.wezfurlong.wezterm"] resize set width 20 ppt'
 
     # Scratchpad notepad (floating, hidden until Super+`)
