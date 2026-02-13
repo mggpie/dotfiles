@@ -42,6 +42,11 @@ set -gx XCURSOR_PATH $HOME/.nix-profile/share/icons:$HOME/.local/share/icons:/us
 # Bluetooth devices (from secrets.yml)
 set -gx BOSE_QC45_MAC "{{ bose_mac }}"
 
+# Smarthome control (from secrets.yml)
+set -gx SMARTHOME_HOST "{{ smarthome_host }}"
+set -gx SMARTHOME_USER "{{ smarthome_user }}"
+set -gx SMARTHOME_PASS "{{ smarthome_pass }}"
+
 # D-Bus session (fix "disabled:" issue)
 if test "$DBUS_SESSION_BUS_ADDRESS" = "disabled:"
     set -e DBUS_SESSION_BUS_ADDRESS
