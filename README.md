@@ -30,6 +30,8 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 ## How It's Built
 
 > **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
+>
+> **Rotating secrets:** Run `rotate-keys` to seamlessly replace SSH keys and GitHub tokens - generates new keys, updates GitHub via CLI, patches vault, deploys locally, revokes old credentials, and commits changes. GitHub token rotation requires browser authorization (OAuth flow), SSH rotation is fully automated. Both happen atomically with zero downtime.
 
 The entire system is a single Ansible role with ~50 task files, each owning one application. Every task has tags for selective runs, uses fully qualified collection names, and is written to be idempotent - `changed_when`, `creates:`, and `failed_when` ensure re-runs don't touch what's already configured.
 
