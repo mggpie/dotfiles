@@ -1,4 +1,4 @@
-function translate --description "Translate selected text and copy to clipboard"
+function translate --description "Translate selected text and replace it"
     set -l selected (wl-paste -p 2>/dev/null)
     
     if test -z "$selected"
@@ -12,5 +12,6 @@ function translate --description "Translate selected text and copy to clipboard"
     end
 
     echo -n "$translated" | wl-copy
-    notify-send "Translate" "$translated" 2>/dev/null; or true
+    sleep 0.1
+    wtype -k Delete -M ctrl -k v -m ctrl
 end

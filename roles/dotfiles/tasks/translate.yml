@@ -3,8 +3,10 @@
   tags: [translate]
   become: true
   block:
-    - name: Install translate-shell
+    - name: Install translate-shell and wtype
       community.general.xbps:
         update_cache: false
-        name: translate-shell
+        name:
+          - translate-shell
+          - wtype
         state: present
