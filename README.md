@@ -1,6 +1,6 @@
 # Dotfiles
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 [![Lint](https://github.com/mggpie/dotfiles/actions/workflows/lint.yml/badge.svg)](https://github.com/mggpie/dotfiles/actions/workflows/lint.yml)
 
 ![screenshot](screenshot.png)
@@ -201,7 +201,7 @@ echo "your-root-password" > .become_pass
 
 ## License
 
-[MIT](LICENSE)
+[0BSD](LICENSE)
 
 ## Related
 
