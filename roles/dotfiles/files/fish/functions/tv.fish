@@ -21,7 +21,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
             swaymsg move workspace to output $monitor_output 2>/dev/null
         end
 
-        # Configure monitor
+        # Configure monitor (60Hz - smoother Sway rendering, most apps target 60fps)
         swaymsg output $monitor_output mode 3440x1440@59.973Hz
         swaymsg output $monitor_output scale 1.0
 

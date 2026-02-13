@@ -3,6 +3,8 @@
 [![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 [![Lint](https://github.com/mggpie/dotfiles/actions/workflows/lint.yml/badge.svg)](https://github.com/mggpie/dotfiles/actions/workflows/lint.yml)
 
+> **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine where secrets (GitHub tokens, Bluetooth MAC addresses) are regularly rotated. The vault password is 40 characters. Risk is minimal, but never replicate this pattern for production infrastructure or shared systems.
+
 ![screenshot](screenshot.png)
 
 Ansible-managed Void Linux (glibc) desktop with Sway, built for long sessions. One `bootstrap.sh` takes a fresh Void install to a fully configured workstation - window manager, audio stack, Bluetooth, shell, editors, and 50+ applications - in a single idempotent run.
@@ -13,7 +15,7 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 ## What's Inside
 
-**OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide @ 60Hz + 4K TV via HDMI).
+**OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide @ 60Hz - smoother Sway rendering than 75Hz, most apps target 60fps, less GPU work + 4K TV via HDMI).
 
 **Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). YouTube radio via mpv (audio only) - prev/next and station name in Waybar, click to toggle, resumes the same station after stop. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
 

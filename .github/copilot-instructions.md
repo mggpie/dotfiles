@@ -21,7 +21,7 @@
 ### Deployment
 - After any change: `git add -A && git commit && git push && deploy <tags>`.
 - The `deploy` fish function commits, pushes, and runs `ansible-playbook` with the given tags.
-- Vault and become passwords are configured in `ansible.cfg` (pointing to `.vault_pass` and `.become_pass` files).
+- Vault and become passwords are configured in `ansible.cfg` (pointing to `.vault_pass` and `.become_pass` files). Every deploy must include `--vault-password-file` and `--become-password-file` - some tasks require root or decrypted secrets to function.
 - Always verify changes actually work after deploying. Don't assume.
 - Never deploy `firefox` or `vscode` tags unprompted - those configs include local state (logins, synced settings) that diverges from the repo version intentionally.
 

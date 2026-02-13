@@ -2,7 +2,6 @@ function radio
     set -l stations \
         "Lofi Hip-Hop"       "https://www.youtube.com/watch?v=jfKfPfyJRdk" \
         "Jarkendar"          "https://www.youtube.com/watch?v=dRnH2cU3_m4" \
-        "Khorinis"           "https://www.youtube.com/watch?v=nPGvZ8yZlyY&t" \
         "Forest sounds"      "https://www.youtube.com/watch?v=OVLIbpPejCU" \
         "Life in the Colony" "https://www.youtube.com/watch?v=s0aDp1CFZ7Q" \
         "Swamp Camp"         "https://www.youtube.com/watch?v=EZG7xHVwyXk" \

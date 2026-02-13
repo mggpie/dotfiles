@@ -18,6 +18,7 @@ set $menu bemenu-run \
 
 ### Appearance
 output * bg #000000 solid_color
+# 60Hz for smoother Sway rendering - most apps target 60fps, less GPU work than 75Hz
 output DP-1 mode 3440x1440@59.973Hz scale 1.0
 # Disable TV by default, enable only Monitor
 output HDMI-A-2 disable
@@ -168,7 +169,7 @@ exec swayidle -w \
 for_window [app_id=".*"] inhibit_idle fullscreen
 for_window [app_id="foot"] inhibit_idle none
 for_window [app_id="org.wezfurlong.wezterm"] inhibit_idle none
-for_window [app_id="notepad"] floating enable, resize set width 60ppt height 80ppt, move position center, move scratchpad, scratchpad show
+for_window [app_id="notepad"] floating enable, resize set width 24ppt height 80ppt, move position center, move scratchpad
 for_window [title="radio-stream"] move to workspace 10
 exec openrgb -d 0 --mode rainbow
 exec fish -c 'while not curl -sf https://www.youtube.com >/dev/null 2>&1; sleep 2; end; radio start'
