@@ -13,7 +13,7 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 ## What's Inside
 
-**OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide + 4K TV via HDMI).
+**OS & Desktop:** Void Linux glibc (runit init) with Sway on Wayland. Waybar, bemenu, mako, swaylock, kanshi for multi-monitor hot-plugging (3440x1440 ultrawide @ 60Hz + 4K TV via HDMI).
 
 **Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). YouTube radio via mpv (audio only) - prev/next and station name in Waybar, click to toggle, resumes the same station after stop. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
 
