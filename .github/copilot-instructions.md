@@ -55,6 +55,11 @@
 - Never use `shell`/`command` without `changed_when` or a `creates`/`when` guard.
 - `update_cache: false` on all `xbps` tasks - cache is updated once in `main.yml`.
 
+### No standalone shell scripts
+- Never create bash/sh/zsh scripts. All scripted behavior belongs in fish functions (`files/fish/functions/`).
+- If the function should be launchable from bemenu-run (as a GUI shortcut), also add a thin wrapper to `files/shortcuts/` that calls the fish function: `#!/usr/bin/fish\nfunction_name $argv`.
+- Shortcuts are deployed to `~/.local/bin/` and must be executable, one-purpose, and named without extensions.
+
 ### Fish shell - NOT bash
 This project uses Fish, not bash/zsh. Fish syntax differs fundamentally:
 - **No heredocs.** Fish has no `<<EOF`. Use `printf` or multiline strings with `\n`.
