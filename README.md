@@ -145,6 +145,7 @@ ansible-playbook playbook.yml --list-tags       # Show all tags
 | `maza` | Ad-blocking hosts file |
 | `mpd` | Music Player Daemon + ncmpcpp |
 | `spotify-player` | Spotify TUI client |
+| `cava` | Audio visualizer |
 
 </details>
 
@@ -169,7 +170,6 @@ ansible-playbook playbook.yml --list-tags       # Show all tags
 | `krita` | Digital painting |
 | `vlc` | Media player |
 | `deadbeef` | Music player |
-| `cava` | Audio visualizer |
 | `para` | PARA workspace directories |
 
 </details>
