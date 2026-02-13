@@ -18,7 +18,7 @@ set $menu bemenu-run \
 
 ### Appearance
 output * bg #000000 solid_color
-output DP-1 scale 1.0
+output DP-1 mode 3440x1440@59.973Hz scale 1.0
 # Disable TV by default, enable only Monitor
 output HDMI-A-2 disable
 default_border pixel 2
