@@ -1,4 +1,8 @@
 ---
+# TLP installed but not enabled - kernel defaults (schedutil governor) are more
+# responsive than TLP powersave mode on desktop, with minimal power savings benefit.
+# TLP is primarily useful for laptops on battery.
+# To enable manually: doas ln -s /etc/sv/tlp /var/service/tlp
 - name: Tlp
   tags: [tlp]
   become: true
@@ -14,9 +18,3 @@
         src: tlp/tlp.conf
         dest: /etc/tlp.conf
         mode: "0644"
-
-    - name: Enable TLP service
-      ansible.builtin.file:
-        src: /etc/sv/tlp
-        dest: /var/service/tlp
-        state: link
