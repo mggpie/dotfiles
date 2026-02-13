@@ -22,7 +22,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         end
 
         # Configure monitor
-        swaymsg output $monitor_output mode 3440x1440@75.050Hz
+        swaymsg output $monitor_output mode 3440x1440@59.973Hz
         swaymsg output $monitor_output scale 1.0
 
         # Switch audio to monitor BEFORE disabling TV to avoid dummy output
