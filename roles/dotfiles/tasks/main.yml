@@ -139,3 +139,5 @@
   ansible.builtin.import_tasks: qbittorrent.yml
 - name: Import obsidian tasks
   ansible.builtin.import_tasks: obsidian.yml
+- name: Import translate tasks
+  ansible.builtin.import_tasks: translate.yml

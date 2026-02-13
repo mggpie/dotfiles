@@ -56,6 +56,7 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -B 'Yes' 'swaymsg exit'
 bindsym $mod+Escape exec swaylock
 bindsym $mod+grave [app_id="notepad"] scratchpad show
+bindsym $mod+t exec translate
 
 # Focus
 bindsym $mod+$left focus left
