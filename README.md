@@ -25,7 +25,7 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 **File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level - all GitHub repos auto-cloned to the right directory, new repos detected, deleted repos cleaned up, directory moves tracked. Cron auto-migration from Downloads to Inbox. `poweroff` unmounts all USB drives before shutdown.
 
-**Extras:** maza host-level ad blocking (no Pi-hole, no browser extension). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time.
+**Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time.
 
 ## How It's Built
 
