@@ -2,13 +2,18 @@ function radio
     set -l stations \
         "Lofi Hip-Hop"       "https://www.youtube.com/watch?v=jfKfPfyJRdk" \
         "Jarkendar"          "https://www.youtube.com/watch?v=dRnH2cU3_m4" \
-        "Forest sounds"      "https://www.youtube.com/watch?v=OVLIbpPejCU" \
+        "Forest Sounds"      "https://www.youtube.com/watch?v=OVLIbpPejCU" \
         "Life in the Colony" "https://www.youtube.com/watch?v=s0aDp1CFZ7Q" \
         "Swamp Camp"         "https://www.youtube.com/watch?v=EZG7xHVwyXk" \
         "Relaxing Forest"    "https://www.youtube.com/watch?v=td7xQnweIFE" \
         "Gothic OST"         "https://www.youtube.com/watch?v=Q7gVCSu7imE" \
         "Campfire"           "https://www.youtube.com/watch?v=8KrLtLr-Gy8" \
-        "Robin Hood"         "https://www.youtube.com/watch?v=LpuaYBEW0D0"
+        "Robin Hood"         "https://www.youtube.com/watch?v=LpuaYBEW0D0" \
+        "Tavern"             "https://www.youtube.com/watch?v=RUn1dJY6syc" \
+        "Midnight Vale"      "https://www.youtube.com/watch?v=_QqabGYTSpQ" \
+        "No Loop Forest"     "https://www.youtube.com/watch?v=XxP8kxUn5bc" \
+        "Post Apocalyptic"   "https://www.youtube.com/watch?v=i2VjesyosKM" \
+        "Aurora"             "https://www.youtube.com/watch?v=mBrC8EqnmkE"
 
     set -l names
     set -l urls
