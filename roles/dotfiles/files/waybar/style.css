@@ -5,10 +5,6 @@
     min-height: 0;
 }
 
-#custom-radio-toggle {
-    font-family: "Adwaita Sans", "IntoneMono Nerd Font", sans-serif;
-}
-
 window#waybar {
     background: #000000;
     color: #D0CFCC;
