@@ -1,7 +1,3 @@
-/* Subtle baseline nudge for radio label */
-#custom-radio-toggle {
-    padding-top: 1px;
-}
 * {
     font-family: "Adwaita Sans", "IntoneMono Nerd Font", sans-serif;
     font-size: 11px;
