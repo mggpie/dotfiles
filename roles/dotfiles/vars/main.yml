@@ -10,7 +10,6 @@ dotfiles_nix_experimental_flags: "--extra-experimental-features 'nix-command fla
 repos_active:
   - dotfiles
   - mggpie
-  - tubes-cursor
   - homelab-infra
   - void-installer
 
