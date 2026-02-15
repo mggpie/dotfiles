@@ -7,7 +7,6 @@
 
 #custom-radio-toggle {
     font-family: "Adwaita Sans", "IntoneMono Nerd Font", sans-serif;
-    transform: translateY(1px);
 }
 
 window#waybar {
