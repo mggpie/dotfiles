@@ -1023,10 +1023,10 @@
             "stereo-phase": "0"
         },
         "convolver": {
-            "state": "true",
+            "state": "false",
             "input-gain": "-2",
             "output-gain": "0",
-            "kernel-path": "/home/matteo/.config/PulseEffects/irs/Razor Surround ((48k Z-Edition)) 2.Stereo +20 bass.irs",
+            "kernel-path": "",
             "ir-width": "100"
         },
         "crystalizer": {

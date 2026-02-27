@@ -10,11 +10,11 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
         return 1
     end
 
-    # Determine current HDMI sink (monitor or TV) for fallback
+    # Determine current output sink for fallback when disconnecting
     set -l tv_active (swaymsg -t get_outputs -r 2>/dev/null | jq -r '.[] | select(.name == "HDMI-A-2") | .active')
     if test "$tv_active" = "true"
-        set -l fallback_profile "output:hdmi-stereo-extra1"
-        set -l fallback_sink "alsa_output.pci-0000_00_1f.3.hdmi-stereo-extra1"
+        set -l fallback_profile "output:analog-stereo"
+        set -l fallback_sink "alsa_output.pci-0000_00_1f.3.analog-stereo"
     else
         set -l fallback_profile "output:hdmi-stereo"
         set -l fallback_sink "alsa_output.pci-0000_00_1f.3.hdmi-stereo"
@@ -38,7 +38,10 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     end
 
     # --- CONNECT ---
-    echo "🎧 Connecting Bose QC45..."
+    echo "Connecting Bose QC45..."
+
+    # Kill easyeffects - not wanted on headphones
+    pkill -x easyeffects 2>/dev/null
 
     # Power on bluetooth if needed
     if not bluetoothctl show 2>/dev/null | grep -q "Powered: yes"
