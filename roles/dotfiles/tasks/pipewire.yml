@@ -12,6 +12,7 @@
           - libspa-bluetooth
           - fdk-aac  # AAC codec for Bluetooth
           - pavucontrol  # GTK GUI for audio control (works via pipewire-pulse)
+          - easyeffects  # PipeWire audio effects (EQ, compressor, limiter)
         state: present
       become: true
 

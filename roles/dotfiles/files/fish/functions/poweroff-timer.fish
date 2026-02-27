@@ -27,6 +27,6 @@ function poweroff-timer
     # Turn off RGB aura immediately
     openrgb -d 0 --mode off >/dev/null 2>&1
 
-    fish -c "sleep $seconds && openrgb -d 0 --mode rainbow >/dev/null 2>&1 && sleep 2 && $HOME/.local/bin/poweroff" &
+    fish -c "sleep $seconds && smarthome 1 off 2>/dev/null; openrgb -d 0 --mode rainbow >/dev/null 2>&1 && sleep 2 && $HOME/.local/bin/poweroff" &
     echo $last_pid > /tmp/timer.pid
 end

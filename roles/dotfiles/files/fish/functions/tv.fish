@@ -3,7 +3,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
     set -l monitor_output "DP-1"
     set -l tv_output "HDMI-A-2"
     set -l monitor_audio_profile "output:hdmi-stereo"
-    set -l tv_audio_profile "output:hdmi-stereo-extra1"
+    set -l tv_audio_profile "output:analog-stereo"
     set -l audio_card "alsa_card.pci-0000_00_1f.3"
 
     # Check current state by checking if TV is enabled
@@ -12,6 +12,10 @@ function tv --description "Toggle between TV and Monitor with audio switching"
     if test "$tv_active" = "true"
         # TV is currently on, switch to Monitor
         echo "Switching to Monitor..."
+
+        # Kill easyeffects and turn off external speakers
+        pkill -x easyeffects 2>/dev/null
+        smarthome 1 off &
 
         # First, move all workspaces to monitor while both are active
         swaymsg output $monitor_output enable
@@ -25,7 +29,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         swaymsg output $monitor_output mode 3440x1440@59.973Hz
         swaymsg output $monitor_output scale 1.0
 
-        # Switch audio to monitor BEFORE disabling TV to avoid dummy output
+        # Switch audio to monitor HDMI before disabling TV to avoid dummy output
         pactl set-card-profile $audio_card $monitor_audio_profile
         pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
         pactl set-sink-volume @DEFAULT_SINK@ 20%
@@ -34,10 +38,20 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Now disable TV
         swaymsg output $tv_output disable
 
-        echo "✓ Switched to Monitor with audio"
+        echo "Switched to Monitor with audio"
     else
         # Monitor is currently on, switch to TV
         echo "Switching to TV..."
+
+        # Start easyeffects first so EQ/limiter is active before any sound plays
+        if not pgrep -x easyeffects >/dev/null
+            easyeffects --gapplication-service &
+            disown
+            sleep 1
+        end
+
+        # Turn on external speakers
+        smarthome 1 on &
 
         # First, enable and configure TV (4K 60Hz only - TV doesn't display other modes)
         swaymsg output $tv_output enable
@@ -54,12 +68,11 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Now disable monitor
         swaymsg output $monitor_output disable
 
-        # Switch audio to TV HDMI at 50%
+        # Switch audio to analog line-out (external speakers via 3.5mm)
         pactl set-card-profile $audio_card $tv_audio_profile
-        pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo-extra1
+        pactl set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
         pactl set-sink-volume @DEFAULT_SINK@ 50%
 
-        echo "✓ Switched to TV (4K 60Hz) with audio at 50%"
-        echo "💡 Tip: Enable 'Game Mode' or 'PC Mode' on TV to reduce input lag/flickering"
+        echo "Switched to TV (4K 60Hz) with line-out audio at 50%"
     end
 end
