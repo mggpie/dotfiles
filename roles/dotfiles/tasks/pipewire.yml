@@ -78,12 +78,18 @@
 
     - name: Create EasyEffects output preset directory
       ansible.builtin.file:
-        path: "{{ user_home }}/.config/easyeffects/output"
+        path: "{{ user_home }}/.local/share/easyeffects/output"
         state: directory
         mode: "0755"
 
     - name: Deploy EasyEffects presets
       ansible.builtin.copy:
         src: easyeffects/output/
-        dest: "{{ user_home }}/.config/easyeffects/output/"
+        dest: "{{ user_home }}/.local/share/easyeffects/output/"
         mode: "0644"
+
+    # Clean up old location (EasyEffects 8 migrated to XDG data dir)
+    - name: Remove old EasyEffects config preset directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/easyeffects/output"
+        state: absent
