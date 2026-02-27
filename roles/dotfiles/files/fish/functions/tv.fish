@@ -13,7 +13,11 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # TV is currently on, switch to Monitor
         echo "Switching to Monitor..."
 
-        # Kill easyeffects and turn off external speakers
+        # Stop silence stream, kill easyeffects, turn off external speakers
+        if test -f /tmp/silence-stream.pid
+            kill (cat /tmp/silence-stream.pid) 2>/dev/null
+            rm -f /tmp/silence-stream.pid
+        end
         pkill -x easyeffects 2>/dev/null
         smarthome 1 off &
 
@@ -73,6 +77,11 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         pactl set-card-profile $audio_card $tv_audio_profile
         pactl set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
         pactl set-sink-volume @DEFAULT_SINK@ 50%
+
+        # Play silence to keep audio stream active - prevents amp buzzing
+        pw-cat -p --raw --format s16 --rate 48000 --channels 2 /dev/zero &
+        echo $last_pid > /tmp/silence-stream.pid
+        disown $last_pid
 
         echo "Switched to TV (4K 60Hz) with line-out audio at 50%"
     end
