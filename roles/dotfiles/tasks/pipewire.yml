@@ -13,6 +13,7 @@
           - fdk-aac  # AAC codec for Bluetooth
           - pavucontrol  # GTK GUI for audio control (works via pipewire-pulse)
           - easyeffects  # PipeWire audio effects (EQ, compressor, limiter)
+          - lsp-plugins-lv2  # LV2 plugins needed by EasyEffects equalizer
         state: present
       become: true
 
