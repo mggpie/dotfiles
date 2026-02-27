@@ -49,6 +49,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
             disown
             sleep 1
         end
+        easyeffects -l bass
 
         # Turn on external speakers
         smarthome 1 on &

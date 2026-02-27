@@ -75,3 +75,15 @@
         src: pipewire/50-volume-limit.conf
         dest: "{{ user_home }}/.config/wireplumber/wireplumber.conf.d/50-volume-limit.conf"
         mode: "0644"
+
+    - name: Create EasyEffects output preset directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/easyeffects/output"
+        state: directory
+        mode: "0755"
+
+    - name: Deploy EasyEffects presets
+      ansible.builtin.copy:
+        src: easyeffects/output/
+        dest: "{{ user_home }}/.config/easyeffects/output/"
+        mode: "0644"
