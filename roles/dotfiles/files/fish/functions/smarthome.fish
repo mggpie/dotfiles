@@ -3,12 +3,16 @@ function smarthome -d "Control smarthome devices"
 
     if test (count $argv) -eq 1; and test "$argv[1]" = status
         set -l cookie_file (mktemp)
-        # GET login page first - device requires an initial fsession cookie before auth
         curl -s -c $cookie_file "http://$SMARTHOME_HOST/login.csp" >/dev/null
-        curl -s -c $cookie_file -b $cookie_file -X POST "http://$SMARTHOME_HOST/login_auth.csp" \
-            -d "auth_user=$SMARTHOME_USER&auth_passwd=$SMARTHOME_PASS" >/dev/null
+        set -l login_result (curl -s -c $cookie_file -b $cookie_file \
+            "http://$SMARTHOME_HOST/login_auth.csp" \
+            -d "auth_user=$SMARTHOME_USER&auth_passwd=$SMARTHOME_PASS")
+        if not string match -q '*"Status":1*' "$login_result"
+            echo "error: login failed - $login_result" >&2
+            rm -f $cookie_file
+            return 1
+        end
         set -l json (curl -s -b $cookie_file "http://$SMARTHOME_HOST/dev_status.csp")
-        # release server-side session so we don't hit the concurrent session limit
         curl -s -b $cookie_file "http://$SMARTHOME_HOST/logout.csp" >/dev/null
         rm -f $cookie_file
 
@@ -51,15 +55,22 @@ for o in d['OutSwitch']:
             return 1
     end
 
-    # GET login page first - device requires an initial fsession cookie before auth
     set -l cookie_file (mktemp)
     curl -s -c $cookie_file "http://$SMARTHOME_HOST/login.csp" >/dev/null
-    curl -s -c $cookie_file -b $cookie_file -X POST "http://$SMARTHOME_HOST/login_auth.csp" \
-        -d "auth_user=$SMARTHOME_USER&auth_passwd=$SMARTHOME_PASS" >/dev/null
+    set -l login_result (curl -s -c $cookie_file -b $cookie_file \
+        "http://$SMARTHOME_HOST/login_auth.csp" \
+        -d "auth_user=$SMARTHOME_USER&auth_passwd=$SMARTHOME_PASS")
+    if not string match -q '*"Status":1*' "$login_result"
+        echo "error: login failed - $login_result" >&2
+        rm -f $cookie_file
+        return 1
+    end
 
-    set -l fsession (grep fsession $cookie_file | awk '{print $NF}')
+    # field 7 in Netscape cookie format is the value; $NF returns the name when value is empty
+    set -l fsession (grep fsession $cookie_file | awk '{print $7}')
     if test -z "$fsession"
-        echo "error: login failed" >&2
+        echo "error: no session token" >&2
+        curl -s -b $cookie_file "http://$SMARTHOME_HOST/logout.csp" >/dev/null
         rm -f $cookie_file
         return 1
     end
@@ -68,7 +79,6 @@ for o in d['OutSwitch']:
     set -l response (curl -s -b $cookie_file -X POST "http://$SMARTHOME_HOST/dev_ctrl.csp" \
         -d "dev_ctrl=$payload")
 
-    # release server-side session so we don't hit the concurrent session limit
     curl -s -b $cookie_file "http://$SMARTHOME_HOST/logout.csp" >/dev/null
     rm -f $cookie_file
 
