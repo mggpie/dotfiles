@@ -3,9 +3,13 @@ function smarthome -d "Control smarthome devices"
 
     if test (count $argv) -eq 1; and test "$argv[1]" = status
         set -l cookie_file (mktemp)
-        curl -s -c $cookie_file -X POST "http://$SMARTHOME_HOST/login_auth.csp" \
+        # GET login page first - device requires an initial fsession cookie before auth
+        curl -s -c $cookie_file "http://$SMARTHOME_HOST/login.csp" >/dev/null
+        curl -s -c $cookie_file -b $cookie_file -X POST "http://$SMARTHOME_HOST/login_auth.csp" \
             -d "auth_user=$SMARTHOME_USER&auth_passwd=$SMARTHOME_PASS" >/dev/null
         set -l json (curl -s -b $cookie_file "http://$SMARTHOME_HOST/dev_status.csp")
+        # release server-side session so we don't hit the concurrent session limit
+        curl -s -b $cookie_file "http://$SMARTHOME_HOST/logout.csp" >/dev/null
         rm -f $cookie_file
 
         if test -z "$json"
@@ -47,9 +51,10 @@ for o in d['OutSwitch']:
             return 1
     end
 
-    # login, get session cookie
+    # GET login page first - device requires an initial fsession cookie before auth
     set -l cookie_file (mktemp)
-    curl -s -c $cookie_file -X POST "http://$SMARTHOME_HOST/login_auth.csp" \
+    curl -s -c $cookie_file "http://$SMARTHOME_HOST/login.csp" >/dev/null
+    curl -s -c $cookie_file -b $cookie_file -X POST "http://$SMARTHOME_HOST/login_auth.csp" \
         -d "auth_user=$SMARTHOME_USER&auth_passwd=$SMARTHOME_PASS" >/dev/null
 
     set -l fsession (grep fsession $cookie_file | awk '{print $NF}')
@@ -63,6 +68,8 @@ for o in d['OutSwitch']:
     set -l response (curl -s -b $cookie_file -X POST "http://$SMARTHOME_HOST/dev_ctrl.csp" \
         -d "dev_ctrl=$payload")
 
+    # release server-side session so we don't hit the concurrent session limit
+    curl -s -b $cookie_file "http://$SMARTHOME_HOST/logout.csp" >/dev/null
     rm -f $cookie_file
 
     if string match -q '*"Ret":0*' "$response"
