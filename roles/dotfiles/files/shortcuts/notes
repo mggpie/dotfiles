@@ -1,2 +1,2 @@
-#!/bin/sh
-exec obsidian "$@"
+#!/usr/bin/fish
+exec obsidian $argv

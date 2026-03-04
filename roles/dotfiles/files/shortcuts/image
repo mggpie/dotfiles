@@ -1,2 +1,3 @@
-#!/bin/sh
-exec ${IMAGE_VIEWER:-imv} "$@"
+#!/usr/bin/fish
+set -q IMAGE_VIEWER; or set -l IMAGE_VIEWER imv
+exec $IMAGE_VIEWER $argv

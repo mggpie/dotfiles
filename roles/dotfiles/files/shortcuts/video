@@ -1,2 +1,2 @@
-#!/bin/sh
-exec mpv "$@"
+#!/usr/bin/fish
+exec mpv $argv

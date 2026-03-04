@@ -1,2 +1,2 @@
-#!/bin/sh
-exec fish -c bose
+#!/usr/bin/fish
+bose $argv

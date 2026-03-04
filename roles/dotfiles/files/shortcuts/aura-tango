@@ -1,2 +1,2 @@
-#!/bin/sh
+#!/usr/bin/fish
 openrgb -d 0 --mode static --color 3465A4 >/dev/null 2>&1

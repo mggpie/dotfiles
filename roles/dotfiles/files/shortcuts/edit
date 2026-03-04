@@ -1,2 +1,3 @@
-#!/bin/sh
-exec ${EDITOR:-micro} "$@"
+#!/usr/bin/fish
+set -q EDITOR; or set -l EDITOR micro
+exec $EDITOR $argv

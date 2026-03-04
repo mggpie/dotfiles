@@ -1,2 +1,2 @@
-#!/bin/sh
-exec fish -c krita "$@"
+#!/usr/bin/fish
+krita $argv

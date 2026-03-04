@@ -1,2 +1,2 @@
-#!/bin/sh
-exec zathura "$@"
+#!/usr/bin/fish
+exec zathura $argv

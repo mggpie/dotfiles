@@ -1,2 +1,2 @@
-#!/bin/sh
-exec luakit https://www.messenger.com "$@"
+#!/usr/bin/fish
+exec luakit https://www.messenger.com $argv

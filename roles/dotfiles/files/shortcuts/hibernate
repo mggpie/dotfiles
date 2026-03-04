@@ -1,2 +1,2 @@
-#!/bin/sh
+#!/usr/bin/fish
 exec loginctl hibernate

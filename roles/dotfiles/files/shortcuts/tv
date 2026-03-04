@@ -1,2 +1,2 @@
-#!/bin/sh
-exec fish -c tv
+#!/usr/bin/fish
+tv $argv

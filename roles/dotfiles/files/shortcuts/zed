@@ -1,2 +1,2 @@
-#!/bin/sh
-exec ~/.local/zed.app/bin/zed "$@"
+#!/usr/bin/fish
+exec ~/.local/zed.app/bin/zed $argv

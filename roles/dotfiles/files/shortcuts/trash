@@ -1,2 +1,3 @@
-#!/bin/sh
-exec ${FILE_MANAGER:-thunar} ${HOME}/.local/share/Trash/files
+#!/usr/bin/fish
+set -q FILE_MANAGER; or set -l FILE_MANAGER thunar
+exec $FILE_MANAGER $HOME/.local/share/Trash/files

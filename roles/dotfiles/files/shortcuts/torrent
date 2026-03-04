@@ -1,2 +1,2 @@
-#!/bin/sh
-exec qbittorrent "$@"
+#!/usr/bin/fish
+exec qbittorrent $argv
