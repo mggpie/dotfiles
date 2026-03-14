@@ -1,0 +1,13 @@
+---
+- name: LibreOffice
+  tags: [libreoffice]
+  block:
+    - name: Install LibreOffice
+      community.general.xbps:
+        update_cache: false
+        name:
+          - libreoffice
+          - libreoffice-i18n-pl
+          - libreoffice-i18n-en-US
+        state: present
+      become: true
