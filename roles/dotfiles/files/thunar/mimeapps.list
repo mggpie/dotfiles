@@ -37,6 +37,12 @@ image/svg+xml=imv.desktop
 # PDF
 application/pdf=org.pwmt.zathura.desktop
 
+# Spreadsheets
+text/csv=libreoffice-calc.desktop
+application/vnd.ms-excel=libreoffice-calc.desktop
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=libreoffice-calc.desktop
+application/vnd.oasis.opendocument.spreadsheet=libreoffice-calc.desktop
+
 # Text
 text/plain=micro.desktop
 
