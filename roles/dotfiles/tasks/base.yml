@@ -74,10 +74,14 @@
     - name: Configure auto-login on TTY1
       ansible.builtin.copy:
         content: |
-          #!/bin/sh
-          exec /sbin/agetty --autologin {{ username }} --noclear tty1 linux
-        dest: /etc/sv/agetty-tty1/run
-        mode: "0755"
+          if [ -x /sbin/agetty -o -x /bin/agetty ]; then
+                  GETTY_ARGS="--autologin {{ username }} --noclear"
+          fi
+
+          BAUD_RATE=38400
+          TERM_NAME=linux
+        dest: /etc/sv/agetty-tty1/conf
+        mode: "0644"
 
     - name: Disable TTY 3-6
       ansible.builtin.file:
