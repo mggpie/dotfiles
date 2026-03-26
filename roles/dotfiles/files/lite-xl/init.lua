@@ -22,14 +22,19 @@ config.animate_drag_scroll = true
 config.scroll_past_end = true
 
 -- ── Fonts ────────────────────────────────────────────────────────
+-- Grayscale antialiasing avoids subpixel color fringing when zooming
+local font_opts = { antialiasing = "grayscale", hinting = "full" }
 style.font = renderer.font.load(
-  "/usr/share/fonts/TTF/inter/Inter-Regular.ttf", 13 * SCALE
+  "/usr/share/fonts/TTF/inter/Inter-Regular.ttf", 13 * SCALE, font_opts
 )
 style.code_font = renderer.font.load(
-  "/usr/share/fonts/NerdFonts/ttf/IntoneMonoNerdFont-Regular.ttf", 13 * SCALE
+  "/usr/share/fonts/NerdFonts/ttf/IntoneMonoNerdFont-Regular.ttf", 13 * SCALE, font_opts
 )
 
 -- ── Plugins ──────────────────────────────────────────────────────
+-- Word wrap
+config.plugins.linewrapping = { mode = "word", guide = false }
+
 -- Smooth floating cursor
 config.plugins.smoothcaret = { rate = 0.55 }
 
