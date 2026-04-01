@@ -1,0 +1,40 @@
+---
+# Logitech device manager - configures scroll behavior, button mappings, DPI, etc.
+# via HID++ protocol. Requires the mouse to be connected for settings to apply.
+
+- name: Solaar
+  tags: [solaar, notest]
+  block:
+    - name: Install Solaar
+      community.general.xbps:
+        update_cache: false
+        name: Solaar
+        state: present
+      become: true
+
+    # solaar needs write access to /dev/uinput for button remapping and
+    # rule-based input simulation under wayland
+    - name: Ensure uinput module loads on boot
+      ansible.builtin.copy:
+        content: "uinput\n"
+        dest: /etc/modules-load.d/uinput.conf
+        mode: "0644"
+      become: true
+
+    - name: Load uinput module now
+      community.general.modprobe:
+        name: uinput
+        state: present
+      become: true
+
+    - name: Create solaar config directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/solaar"
+        state: directory
+        mode: "0755"
+
+    - name: Deploy solaar config
+      ansible.builtin.copy:
+        src: solaar/config.yaml
+        dest: "{{ user_home }}/.config/solaar/config.yaml"
+        mode: "0644"

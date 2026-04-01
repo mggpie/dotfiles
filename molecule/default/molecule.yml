@@ -26,7 +26,7 @@ provisioner:
     # Skip tags that require hardware, runit, GUI, or network-heavy installs
     skip-tags: >-
       notest,
-      intel-graphics,graphics,gaming,grub,bluetooth,tlp,wifi,openrgb,
+      intel-graphics,graphics,gaming,grub,bluetooth,solaar,tlp,wifi,openrgb,
       sway,swaylock,waybar,kanshi,bemenu,mako,pipewire,
       foot,wezterm,
       theme,fonts,
