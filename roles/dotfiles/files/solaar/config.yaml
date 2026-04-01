@@ -7,14 +7,14 @@
     haptic-play, sidetone, equalizer, adc_power_management]
   _battery: 4100
   _modelId: B02D00000000
-  _sensitive: {hires-scroll-mode: ignore, hires-smooth-invert: ignore, hires-smooth-resolution: ignore}
+  _sensitive: {hires-smooth-invert: ignore, hires-smooth-resolution: ignore}
   _serial: 9FC8649B
   _unitId: 9FC8649B
   _wpid: B02D
   change-host: null
-  divert-keys: {82: 0, 83: 0, 86: 0, 196: 0}
+  divert-keys: {82: 0, 83: 1, 86: 1, 196: 1}
   dpi: 1000
-  hires-scroll-mode: false
+  hires-scroll-mode: true
   hires-smooth-invert: false
   hires-smooth-resolution: false
   reprogrammable-keys: {80: 80, 81: 81, 82: 82, 83: 83, 86: 86, 196: 82}

@@ -38,3 +38,9 @@
         src: solaar/config.yaml
         dest: "{{ user_home }}/.config/solaar/config.yaml"
         mode: "0644"
+
+    - name: Deploy solaar rules
+      ansible.builtin.copy:
+        src: solaar/rules.yaml
+        dest: "{{ user_home }}/.config/solaar/rules.yaml"
+        mode: "0644"
