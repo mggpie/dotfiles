@@ -33,14 +33,21 @@
         state: directory
         mode: "0755"
 
+    - name: Stop solaar before config deploy
+      ansible.builtin.command: pkill -f solaar
+      changed_when: false
+      failed_when: false
+
     - name: Deploy solaar config
       ansible.builtin.copy:
         src: solaar/config.yaml
         dest: "{{ user_home }}/.config/solaar/config.yaml"
         mode: "0644"
+      notify: Restart solaar
 
     - name: Deploy solaar rules
       ansible.builtin.copy:
         src: solaar/rules.yaml
         dest: "{{ user_home }}/.config/solaar/rules.yaml"
         mode: "0644"
+      notify: Restart solaar
