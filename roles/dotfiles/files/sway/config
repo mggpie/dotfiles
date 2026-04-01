@@ -48,6 +48,12 @@ input "1118:2048:Microsoft_Microsoft___Nano_Transceiver_v2.0_Mouse" {
     natural_scroll enabled
 }
 
+# 4000 DPI for precision, flat profile with -0.75 to keep same cursor speed as 1000 DPI
+input "1133:50504:Logitech_USB_Receiver_Mouse" {
+    accel_profile flat
+    pointer_accel -0.75
+}
+
 ### Key bindings
 bindsym $mod+Return exec $term
 bindsym $mod+d exec $menu
