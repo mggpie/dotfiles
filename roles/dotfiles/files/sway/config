@@ -175,7 +175,6 @@ for_window [app_id="notepad"] floating enable, resize set width 35ppt height 80p
 for_window [title="radio-stream"] move to workspace 10
 exec openrgb -d 0 --mode rainbow
 exec solaar --window=hide
-exec fish -c 'while not curl -sf https://www.youtube.com >/dev/null 2>&1; sleep 2; end; radio start'
 exec fish -c startup
 
 include /etc/sway/config.d/*
