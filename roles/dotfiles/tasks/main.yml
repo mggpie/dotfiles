@@ -29,7 +29,6 @@
   ansible.builtin.import_tasks: performance.yml
 - name: Import tlp tasks
   ansible.builtin.import_tasks: tlp.yml
-  tags: [tlp, never]
 - name: Import virtualization tasks
   ansible.builtin.import_tasks: virtualization.yml
 - name: Import fonts tasks
@@ -74,14 +73,12 @@
   ansible.builtin.import_tasks: waybar.yml
 - name: Import kanshi tasks
   ansible.builtin.import_tasks: kanshi.yml
-  tags: [kanshi, never]
 - name: Import bemenu tasks
   ansible.builtin.import_tasks: bemenu.yml
 - name: Import shortcuts tasks
   ansible.builtin.import_tasks: shortcuts.yml
 - name: Import mako tasks
   ansible.builtin.import_tasks: mako.yml
-  tags: [mako, never]
 - name: Import pipewire tasks
   ansible.builtin.import_tasks: pipewire.yml
 
