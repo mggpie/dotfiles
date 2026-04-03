@@ -5,6 +5,14 @@ function screenshot --description "Take screenshot - select area, save to Pictur
     # Generate filename with timestamp
     set filename $HOME/Pictures/Screenshots/(date +%Y%m%d-%H%M%S).png
 
-    # Take screenshot of selected area, save to file and copy to clipboard
-    grim -g (slurp) - | tee $filename | wl-copy
+    # Freeze compositor output so videos/animations don't change during area selection
+    wayfreeze &
+    set freeze_pid $last_pid
+    set geom (slurp 2>/dev/null)
+    kill $freeze_pid 2>/dev/null
+
+    # slurp exits non-zero when user cancels - only capture if selection was made
+    if test -n "$geom"
+        grim -g $geom - | tee $filename | wl-copy
+    end
 end

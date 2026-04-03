@@ -16,6 +16,29 @@
         state: present
       become: true
 
+    - name: Install or upgrade wayfreeze from Nix
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+wayfreeze$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        has_flake=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+wayfreeze$/{found=1; next} found && /^Name:/{found=0} found && /^Original flake URL:/{print "yes"; found=0}')
+        if [ -z "$before" ]; then
+          nix profile install nixpkgs#wayfreeze
+        elif [ -z "$has_flake" ]; then
+          nix profile remove wayfreeze
+          nix profile install nixpkgs#wayfreeze
+        else
+          nix profile upgrade wayfreeze
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+wayfreeze$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_wayfreeze_install
+      changed_when: "'UNCHANGED' not in dotfiles_wayfreeze_install.stdout"
+      failed_when: dotfiles_wayfreeze_install.rc != 0
+      tags: [notest]
+
     - name: Create sway config directory
       ansible.builtin.file:
         path: "{{ user_home }}/.config/sway"
