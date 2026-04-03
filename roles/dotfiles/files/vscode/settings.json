@@ -28,5 +28,12 @@
     "files.insertFinalNewline": true,
 
     "telemetry.telemetryLevel": "off",
-    "update.mode": "none"
+    "update.mode": "none",
+
+    // Auto-approve all Copilot agent tool calls (terminal, fetch, MCP) without confirmation prompts.
+    // Without this, every tool use pops a dialog requiring manual approval.
+    "chat.tools.global.autoApprove": true,
+    // Don't steal window focus or show a notification when Copilot is waiting for input.
+    // Default "windowNotFocused" causes a popup if you switch away while the agent is running.
+    "chat.notifyWindowOnConfirmation": "off"
 }
