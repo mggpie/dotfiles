@@ -9,11 +9,11 @@
         before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+vscode$/{found=1} found && /^Store paths:/{print $NF; found=0}')
         has_flake=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+vscode$/{found=1; next} found && /^Name:/{found=0} found && /^Original flake URL:/{print "yes"; found=0}')
         if [ -z "$before" ]; then
-          nix profile install nixpkgs#vscode
+          NIXPKGS_ALLOW_UNFREE=1 nix profile install nixpkgs#vscode --impure
         elif [ -z "$has_flake" ]; then
           # Installed without flake metadata - migrate so future upgrades work
           nix profile remove vscode
-          nix profile install nixpkgs#vscode
+          NIXPKGS_ALLOW_UNFREE=1 nix profile install nixpkgs#vscode --impure
         else
           nix profile upgrade vscode
           after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+vscode$/{found=1} found && /^Store paths:/{print $NF; found=0}')
