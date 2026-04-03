@@ -25,12 +25,12 @@
 - MouseClick: [middle, 1]
 ...
 ---
-# back -> workspace prev
+# back -> workspace next (physical button position is reversed vs solaar labels)
 - Key: [Back Button, pressed]
-- Execute: [swaymsg, workspace, prev]
+- Execute: [swaymsg, workspace, next]
 ...
 ---
-# forward -> workspace next
+# forward -> workspace prev (physical button position is reversed vs solaar labels)
 - Key: [Forward Button, pressed]
-- Execute: [swaymsg, workspace, next]
+- Execute: [swaymsg, workspace, prev]
 ...
