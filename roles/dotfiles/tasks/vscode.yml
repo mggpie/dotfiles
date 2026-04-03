@@ -2,20 +2,23 @@
 - name: Vscode
   tags: [vscode]
   block:
-    - name: Install VSCode via Nix
+    - name: Install or upgrade VSCode via Nix
       ansible.builtin.shell: |
         set -o pipefail
         . ~/.nix-profile/etc/profile.d/nix.sh
-        if nix profile list | grep -q vscode; then
-          echo "ALREADY_INSTALLED"
-        else
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+vscode$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
           nix profile install nixpkgs#vscode
+        else
+          nix profile upgrade vscode
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+vscode$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
         fi
       args:
         executable: /bin/bash
       register: dotfiles_vscode_install
-      changed_when: "'ALREADY_INSTALLED' not in dotfiles_vscode_install.stdout"
-      failed_when: dotfiles_vscode_install.rc != 0 and 'ALREADY_INSTALLED' not in dotfiles_vscode_install.stdout
+      changed_when: "'UNCHANGED' not in dotfiles_vscode_install.stdout"
+      failed_when: dotfiles_vscode_install.rc != 0
 
     - name: Create VSCode config directory
       ansible.builtin.file:

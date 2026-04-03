@@ -12,12 +12,23 @@
         state: present
       become: true
 
-    - name: Install capitaine-cursors via Nix
-      ansible.builtin.command:
-        cmd: nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#capitaine-cursors
-      register: dotfiles_nix_install_result
-      changed_when: "'already installed' not in dotfiles_nix_install_result.stderr"
-      failed_when: dotfiles_nix_install_result.rc != 0 and 'already installed' not in dotfiles_nix_install_result.stderr
+    - name: Install or upgrade capitaine-cursors via Nix
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+capitaine-cursors$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#capitaine-cursors
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade capitaine-cursors
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+capitaine-cursors$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_capitaine_install
+      changed_when: "'UNCHANGED' not in dotfiles_capitaine_install.stdout"
+      failed_when: dotfiles_capitaine_install.rc != 0
 
     # GTK 3 configuration
     - name: Create GTK-3.0 config directory

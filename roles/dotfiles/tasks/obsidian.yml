@@ -2,25 +2,43 @@
 - name: Obsidian
   tags: [obsidian]
   block:
-    - name: Install nixGL for OpenGL support
-      ansible.builtin.command:
-        cmd: >-
-          nix profile install github:nix-community/nixGL
-          {{ dotfiles_nix_experimental_flags }} --impure
+    - name: Install or upgrade nixGL for OpenGL support
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixGL$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install github:nix-community/nixGL --impure
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade nixGL --impure
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixGL$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
       register: dotfiles_nixgl_install
-      changed_when: "'already installed' not in dotfiles_nixgl_install.stderr"
-      failed_when: dotfiles_nixgl_install.rc != 0 and 'already installed' not in dotfiles_nixgl_install.stderr
+      changed_when: "'UNCHANGED' not in dotfiles_nixgl_install.stdout"
+      failed_when: dotfiles_nixgl_install.rc != 0
 
-    - name: Install obsidian from nix unstable
-      ansible.builtin.command:
-        cmd: >-
-          nix profile install nixpkgs#obsidian
-          {{ dotfiles_nix_experimental_flags }} --impure
+    - name: Install or upgrade Obsidian from Nix
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+obsidian$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#obsidian --impure
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade obsidian
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+obsidian$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
       environment:
         NIXPKGS_ALLOW_UNFREE: "1"
       register: dotfiles_obsidian_install
-      changed_when: "'already installed' not in dotfiles_obsidian_install.stderr"
-      failed_when: dotfiles_obsidian_install.rc != 0 and 'already installed' not in dotfiles_obsidian_install.stderr
+      changed_when: "'UNCHANGED' not in dotfiles_obsidian_install.stdout"
+      failed_when: dotfiles_obsidian_install.rc != 0
 
     - name: Create .local/bin directory
       ansible.builtin.file:

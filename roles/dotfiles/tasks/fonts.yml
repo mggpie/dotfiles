@@ -15,13 +15,23 @@
         state: present
       become: true
 
-    - name: Install Intel One Mono from nix
+    - name: Install or upgrade Intel One Mono from Nix
       ansible.builtin.shell: |
+        set -o pipefail
         . ~/.nix-profile/etc/profile.d/nix.sh
-        nix profile install nixpkgs#intel-one-mono
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+intel-one-mono$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix profile install nixpkgs#intel-one-mono
+        else
+          nix profile upgrade intel-one-mono
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+intel-one-mono$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
       args:
         executable: /bin/bash
-        creates: "{{ user_home }}/.nix-profile/share/fonts/truetype/IntelOneMono-*.ttf"
+      register: dotfiles_intel_mono_install
+      changed_when: "'UNCHANGED' not in dotfiles_intel_mono_install.stdout"
+      failed_when: dotfiles_intel_mono_install.rc != 0
 
     - name: Create fontconfig directory
       ansible.builtin.file:
