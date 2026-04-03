@@ -45,8 +45,8 @@ input type:touchpad {
 }
 
 # 3-finger swipe left/right to switch workspaces
-bindgesture swipe:3:right workspace prev
-bindgesture swipe:3:left workspace next
+bindgesture swipe:3:right workspace next
+bindgesture swipe:3:left workspace prev
 
 input "1118:2048:Microsoft_Microsoft___Nano_Transceiver_v2.0_Mouse" {
     natural_scroll enabled
