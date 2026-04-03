@@ -25,7 +25,7 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 **File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level - all GitHub repos auto-cloned to the right directory, new repos detected, deleted repos cleaned up, directory moves tracked. Cron auto-migration from Downloads to Inbox. `poweroff` unmounts all USB drives before shutdown.
 
-**Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time.
+**Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time. Solaar manages the Logitech MX Anywhere 3 - Smart Shift + Back + Forward fires `tv`, Smart Shift + scroll controls volume, Back/Forward alone switch Sway workspaces, Smart Shift alone emits middle click.
 
 ## How It's Built
 
@@ -171,6 +171,7 @@ ansible-playbook playbook.yml --list-tags       # Show all tags
 | `vlc` | Media player |
 | `deadbeef` | Music player |
 | `para` | PARA workspace directories |
+| `solaar` | Logitech MX Anywhere 3 - button remapping + scroll rules |
 
 </details>
 
