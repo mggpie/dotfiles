@@ -20,7 +20,12 @@
         set -o pipefail
         . ~/.nix-profile/etc/profile.d/nix.sh
         before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+intel-one-mono$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        has_flake=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+intel-one-mono$/{found=1} found && /^Original flake URL:/{print "yes"; found=0}')
         if [ -z "$before" ]; then
+          nix profile install nixpkgs#intel-one-mono
+        elif [ -z "$has_flake" ]; then
+          # Installed without flake metadata - migrate so future upgrades work
+          nix profile remove intel-one-mono
           nix profile install nixpkgs#intel-one-mono
         else
           nix profile upgrade intel-one-mono
