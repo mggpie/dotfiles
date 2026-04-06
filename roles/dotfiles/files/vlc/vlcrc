@@ -24,7 +24,7 @@ one-instance-when-started-from-file=1
 playlist-enqueue=1
 play-and-exit=0
 video-on-top=0
-snapshot-path=/home/me/Pictures
+snapshot-path=/home/me/3-Resources/pics
 snapshot-format=png
 
 # Recent files

@@ -23,7 +23,7 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 **Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). YouTube radio via mpv (audio only) - prev/next and station name in Waybar, click to toggle, resumes the same station after stop. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
 
-**File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level - all GitHub repos auto-cloned to the right directory, new repos detected, deleted repos cleaned up, directory moves tracked. Cron auto-migration from Downloads to Inbox. `poweroff` unmounts all USB drives before shutdown.
+**File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level (`~/0-Inbox`, `~/1-Projects`, `~/2-Areas`, `~/3-Resources`, `~/4-Archives`) - all GitHub repos auto-cloned to the right directory, new repos detected, deleted repos cleaned up, directory moves tracked. `poweroff` unmounts all USB drives before shutdown.
 
 **Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time. Solaar manages the Logitech MX Anywhere 3 - Smart Shift + Back + Forward fires `tv`, Smart Shift + scroll controls volume, Smart Shift alone emits middle click, Back/Forward alone switch Sway workspaces.
 
@@ -185,15 +185,13 @@ upall status    # Last run timestamp
 upall logs      # Full log
 ```
 
-RGB LEDs flash red during maintenance, rainbow when done. Errors saved to `~/Downloads/upall-error.txt`.
+RGB LEDs flash red during maintenance, rainbow when done. Errors saved to `~/0-Inbox/upall-error.txt`.
 
 **`repos-sync`** - syncs local PARA directories with GitHub (runs automatically via `@reboot` cron):
 
 - New repos on GitHub -> cloned to `1-Projects` or `4-Archives` based on `repos_active`
 - Repos deleted from GitHub -> local clone removed
 - Repos moved between PARA dirs -> `vars/main.yml` updated, committed and pushed automatically
-
-**`move-downloads`** - moves files older than 30 min from `~/Downloads` to `~/Desktop/0-Inbox` (PARA methodology).
 
 ## Secrets
 
