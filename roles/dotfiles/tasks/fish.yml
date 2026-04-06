@@ -33,6 +33,11 @@
         dest: "{{ user_home }}/.config/fish/functions/"
         mode: "0644"
 
+    - name: Remove obsolete move-downloads function
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/fish/functions/move-downloads.fish"
+        state: absent
+
     - name: Deploy fish conf.d (excluding env.fish - rendered separately)
       ansible.builtin.copy:
         src: "{{ item }}"

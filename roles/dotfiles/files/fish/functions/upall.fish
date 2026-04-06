@@ -1,6 +1,6 @@
 function upall
     set -l log_file ~/.local/state/upall.log
-    set -l error_file ~/Downloads/upall-error.txt
+    set -l error_file ~/0-Inbox/upall-error.txt
 
     # Handle 'logs' argument
     if test "$argv[1]" = "logs"
@@ -124,7 +124,7 @@ function upall
         rm -f $error_file
     else
         echo "Status: FAILED (check log for details)" | tee -a $log_file
-        # Create error file in Downloads
+        # Create error file in Inbox so it's visible
         echo "=== UPALL MAINTENANCE FAILED ===" > $error_file
         echo "Date: $timestamp" >> $error_file
         echo "" >> $error_file

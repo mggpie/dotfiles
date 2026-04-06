@@ -16,7 +16,7 @@ c.url.start_pages = ["about:blank"]
 c.url.default_page = "about:blank"
 
 # Downloads
-c.downloads.location.directory = "~/Downloads"
+c.downloads.location.directory = "~/0-Inbox"
 c.downloads.location.prompt = False
 c.downloads.remove_finished = 5000
 

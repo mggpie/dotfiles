@@ -91,11 +91,11 @@ map n search-next
 map N search-prev
 
 # Quick navigation
-map gd cd ~/Downloads
-map gD cd ~/Documents
-map gp cd ~/Pictures
-map gv cd ~/Videos
-map gm cd ~/Music
+map gd cd ~/0-Inbox
+map gD cd ~/3-Resources
+map gp cd ~/3-Resources/pics
+map gv cd ~/3-Resources/videos
+map gm cd ~/3-Resources/music
 map gc cd ~/.config
 map gl cd ~/.local
 map gn cd ~/me

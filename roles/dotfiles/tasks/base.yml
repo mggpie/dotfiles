@@ -48,18 +48,17 @@
         state: present
       become: true
 
-    - name: Create XDG directories
-      ansible.builtin.file:
-        path: "{{ user_home }}/{{ item }}"
-        state: directory
-        mode: "0755"
-      loop:
-        - Desktop
-        - Downloads
-        - Documents
-        - Music
-        - Pictures
-        - Videos
+    - name: Deploy XDG user-dirs config
+      ansible.builtin.copy:
+        src: xdg/user-dirs.dirs
+        dest: "{{ user_home }}/.config/user-dirs.dirs"
+        mode: "0644"
+
+    - name: Prevent xdg-user-dirs-update from overwriting config
+      ansible.builtin.copy:
+        content: "enabled=False\n"
+        dest: "{{ user_home }}/.config/user-dirs.conf"
+        mode: "0644"
 
 - name: Base notest
   tags: [base, notest]

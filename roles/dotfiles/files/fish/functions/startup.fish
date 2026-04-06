@@ -26,5 +26,5 @@ function startup
     swaymsg '[app_id="org.wezfurlong.wezterm"] resize set width 20 ppt'
 
     # Scratchpad notepad (floating, hidden until Super+`)
-    swaymsg 'exec wezterm start --class notepad -- micro ~/Desktop/0-Inbox/notepad.md'
+    swaymsg 'exec wezterm start --class notepad -- micro ~/0-Inbox/notepad.md'
 end

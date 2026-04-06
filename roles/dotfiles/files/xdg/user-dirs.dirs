@@ -1,0 +1,11 @@
+# XDG user directories mapped to PARA structure
+# Managed by ansible - do not edit manually
+
+XDG_DESKTOP_DIR="$HOME/0-Inbox"
+XDG_DOWNLOAD_DIR="$HOME/0-Inbox"
+XDG_DOCUMENTS_DIR="$HOME/3-Resources"
+XDG_MUSIC_DIR="$HOME/3-Resources/music"
+XDG_PICTURES_DIR="$HOME/3-Resources/pics"
+XDG_VIDEOS_DIR="$HOME/3-Resources/videos"
+XDG_TEMPLATES_DIR="$HOME/3-Resources"
+XDG_PUBLICSHARE_DIR="$HOME/3-Resources"

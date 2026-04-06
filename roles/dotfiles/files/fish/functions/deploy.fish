@@ -14,12 +14,12 @@ function deploy
 
     # Find dotfiles directory
     set dotfiles_dir ""
-    if test -d ~/Desktop/1-Projects/dotfiles
-        set dotfiles_dir ~/Desktop/1-Projects/dotfiles
-    else if test -d ~/Desktop/2-Areas/dotfiles
-        set dotfiles_dir ~/Desktop/2-Areas/dotfiles
+    if test -d ~/1-Projects/dotfiles
+        set dotfiles_dir ~/1-Projects/dotfiles
+    else if test -d ~/2-Areas/dotfiles
+        set dotfiles_dir ~/2-Areas/dotfiles
     else
-        echo "❌ Error: dotfiles repository not found in 1-Projects or 2-Areas"
+        echo "Error: dotfiles repository not found in 1-Projects or 2-Areas"
         return 1
     end
 

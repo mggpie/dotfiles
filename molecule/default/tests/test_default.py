@@ -38,16 +38,23 @@ def test_nonfree_repo_enabled(host):
 # ---------- XDG & PARA directories ----------
 
 
-def test_xdg_directories(host):
-    """Standard XDG user directories must exist."""
-    for d in ["Desktop", "Downloads", "Documents", "Music", "Pictures", "Videos"]:
+def test_para_directories(host):
+    """PARA workspace directories must exist at ~ with correct names."""
+    for d in ["0-Inbox", "1-Projects", "2-Areas", "3-Resources", "4-Archives"]:
         assert host.file(f"/root/{d}").is_directory
 
 
-def test_para_directories(host):
-    """PARA workspace directories must exist with correct names."""
-    for d in ["0-Inbox", "1-Projects", "2-Areas", "3-Resources", "4-Archives"]:
-        assert host.file(f"/root/Desktop/{d}").is_directory
+def test_para_media_subdirs(host):
+    """Media subdirectories must exist under 3-Resources."""
+    for d in ["music", "pics", "videos"]:
+        assert host.file(f"/root/3-Resources/{d}").is_directory
+
+
+def test_xdg_user_dirs_config(host):
+    """XDG user-dirs.dirs must map to PARA structure."""
+    f = host.file("/root/.config/user-dirs.dirs")
+    assert f.exists
+    assert 'XDG_DOWNLOAD_DIR="$HOME/0-Inbox"' in f.content_string
 
 
 # ---------- Fish: config deployed ----------
@@ -114,13 +121,4 @@ def test_lf_config(host):
 def test_fastfetch_config(host):
     """fastfetch config must be deployed."""
     assert host.file("/root/.config/fastfetch/config.jsonc").exists
-
-
-# ---------- Crontab ----------
-
-
-def test_crontab_has_move_downloads(host):
-    """move-downloads must be in crontab for PARA inbox flow."""
-    cron = host.run("crontab -l")
-    assert "move-downloads" in cron.stdout
 

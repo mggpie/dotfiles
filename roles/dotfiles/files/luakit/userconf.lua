@@ -69,7 +69,7 @@ settings.window.default_search_engine = "google"
 
 -- ── Downloads ────────────────────────────────────────────────────
 local downloads = require "downloads"
-downloads.default_dir = os.getenv("HOME") .. "/Downloads"
+downloads.default_dir = os.getenv("HOME") .. "/0-Inbox"
 
 -- ── Firefox-like keybindings (normal mode) ───────────────────────
 modes.add_binds("normal", {

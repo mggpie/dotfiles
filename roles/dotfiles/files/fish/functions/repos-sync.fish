@@ -3,9 +3,9 @@ function repos-sync
     # Clones new repos, removes deleted repos, updates vars/main.yml.
     # Runs on every boot via cron + can be called manually. Idempotent.
 
-    set -l dotfiles $HOME/Desktop/1-Projects/dotfiles
+    set -l dotfiles $HOME/1-Projects/dotfiles
     set -l vars_file $dotfiles/roles/dotfiles/vars/main.yml
-    set -l para_base $HOME/Desktop
+    set -l para_base $HOME
     set -l para_dirs 1-Projects 2-Areas 3-Resources 4-Archives
 
     # Read repos_active from vars/main.yml

@@ -4,7 +4,7 @@ function inbox --description "Create a new markdown file in PARA inbox"
         return 1
     end
 
-    set -l inbox_dir ~/Desktop/0-Inbox
+    set -l inbox_dir ~/0-Inbox
     set -l timestamp (date +"%Y-%m-%d-%H%M%S")
     set -l filename "$inbox_dir/$timestamp.md"
 

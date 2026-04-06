@@ -1,10 +1,10 @@
-function screenshot --description "Take screenshot - select area, save to Pictures/Screenshots, copy to clipboard"
+function screenshot --description "Take screenshot - select area, save to ~/3-Resources/pics/screenshots, copy to clipboard"
     # Guard against concurrent invocations from key repeat or rapid presses
     if pgrep -x slurp > /dev/null
         return
     end
 
-    mkdir -p $HOME/Pictures/Screenshots
+    mkdir -p $HOME/3-Resources/pics/screenshots
 
     # Named pipe lets us block until slurp finishes inside wayfreeze's after-freeze-cmd.
     # --after-freeze-cmd runs slurp only after the compositor is fully frozen, so there's
@@ -20,7 +20,7 @@ function screenshot --description "Take screenshot - select area, save to Pictur
     kill $freeze_pid 2>/dev/null
 
     if test -n "$geom"
-        set filename $HOME/Pictures/Screenshots/(date +%Y%m%d-%H%M%S).png
+        set filename $HOME/3-Resources/pics/screenshots/(date +%Y%m%d-%H%M%S).png
         grim -g $geom - | tee $filename | wl-copy
     end
 end
