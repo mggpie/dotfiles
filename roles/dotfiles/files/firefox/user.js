@@ -68,3 +68,9 @@ user_pref("media.videocontrols.picture-in-picture.video-toggle.enabled", false);
 user_pref("extensions.autoDisableScopes", 14);
 user_pref("extensions.enabledScopes", 15);
 user_pref("xpinstall.signatures.required", false);
+
+// Downloads - use 0-Inbox as per PARA structure (XDG_DOWNLOAD_DIR maps here)
+// folderList=2 means custom dir, not XDG default or Desktop
+user_pref("browser.download.dir", "/home/me/0-Inbox");
+user_pref("browser.download.folderList", 2);
+user_pref("browser.download.useDownloadDir", true);
