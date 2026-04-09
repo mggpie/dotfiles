@@ -21,6 +21,6 @@ function screenshot --description "Take screenshot - select area, save to ~/3-Re
 
     if test -n "$geom"
         set filename $HOME/3-Resources/pics/screenshots/(date +%Y%m%d-%H%M%S).png
-        grim -g $geom - | tee $filename | wl-copy
+        grim -g $geom - | tee $filename | wl-copy --type image/png
     end
 end
