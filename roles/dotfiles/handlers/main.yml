@@ -15,7 +15,10 @@
   become: true
 
 # solaar overwrites config.yaml on exit, so we must kill it before deploy
-# and let sway's exec restart it with the new config
+# and restart it explicitly - sway's exec only runs once at login
 - name: Restart solaar
-  ansible.builtin.shell: pkill -f solaar; sleep 1; solaar --window=hide &
+  ansible.builtin.shell: |
+    pkill -f solaar || true
+    sleep 1
+    nohup solaar --window=hide >/dev/null 2>&1 &
   changed_when: true
