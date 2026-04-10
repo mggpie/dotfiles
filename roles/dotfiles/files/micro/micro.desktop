@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Micro
+GenericName=Text Editor
+Comment=Edit text files in Micro using WezTerm
+Icon=micro
+Type=Application
+Categories=Utility;TextEditor;Development;
+Keywords=text;editor;syntax;terminal;
+
+Exec=wezterm start -- micro %F
+StartupNotify=false
+Terminal=false
+MimeType=text/plain;text/markdown;text/x-markdown;

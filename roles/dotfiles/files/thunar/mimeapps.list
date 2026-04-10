@@ -45,6 +45,8 @@ application/vnd.oasis.opendocument.spreadsheet=libreoffice-calc.desktop
 
 # Text
 text/plain=micro.desktop
+text/markdown=micro.desktop
+text/x-markdown=micro.desktop
 
 # Torrents
 application/x-bittorrent=org.qbittorrent.qBittorrent.desktop

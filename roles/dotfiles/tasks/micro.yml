@@ -26,3 +26,15 @@
         src: micro/bindings.json
         dest: "{{ user_home }}/.config/micro/bindings.json"
         mode: "0644"
+
+    - name: Create local applications directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/share/applications"
+        state: directory
+        mode: "0755"
+
+    - name: Deploy micro desktop override
+      ansible.builtin.copy:
+        src: micro/micro.desktop
+        dest: "{{ user_home }}/.local/share/applications/micro.desktop"
+        mode: "0644"
