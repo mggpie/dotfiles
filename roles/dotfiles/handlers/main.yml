@@ -14,11 +14,10 @@
   changed_when: true
   become: true
 
-# solaar overwrites config.yaml on exit, so we must kill it before deploy
-# and restart it explicitly - sway's exec only runs once at login
+# solaar overwrites config.yaml on exit, so we must kill it before deploy.
+# the watchdog (fish -c solaar-watch) keeps respawning it - we just kill solaar
+# and the watchdog will restart it 2s later with the new config
 - name: Restart solaar
-  ansible.builtin.shell: |
-    pkill -f solaar || true
-    sleep 1
-    nohup solaar --window=hide >/dev/null 2>&1 &
+  ansible.builtin.command: pkill -f "solaar --window"
   changed_when: true
+  failed_when: false

@@ -34,7 +34,9 @@
         mode: "0755"
 
     - name: Stop solaar before config deploy
-      ansible.builtin.command: pkill -f solaar
+      # Kill only the solaar process, not the fish watchdog (solaar-watch).
+      # The watchdog will restart solaar after deploy with the fresh config.
+      ansible.builtin.command: pkill -f "solaar --window"
       changed_when: false
       failed_when: false
 
