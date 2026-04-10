@@ -8,6 +8,7 @@
         name:
           - Thunar                          # główny file manager
           - thunar-archive-plugin           # rozpakowywanie/pakowanie archiwów
+          - file-roller                     # darmowy backend (GUI) dla thunara do archiwów
           - thunar-media-tags-plugin        # tagi dla plików muzycznych/wideo
           - thunar-volman                   # automatyczne montowanie dysków/USB
           - tumbler                         # generowanie miniaturek

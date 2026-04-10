@@ -5,7 +5,9 @@
     - name: Install pcmanfm
       community.general.xbps:
         update_cache: false
-        name: pcmanfm
+        name:
+          - pcmanfm
+          - file-roller
         state: present
       become: true
 
