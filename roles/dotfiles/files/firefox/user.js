@@ -35,7 +35,10 @@ user_pref("services.sync.engine.tabs", false);
 user_pref("identity.fxaccounts.toolbar.enabled", false);
 
 // Performance
-user_pref("gfx.webrender.all", true);
+user_pref("gfx.webrender.all", false);  // Do not force WebRender globally; let Firefox pick the safe path for current driver/runtime.
+user_pref("media.ffmpeg.vaapi.enabled", true);  // Keep Linux hardware decode path enabled.
+user_pref("media.hardware-video-decoding.enabled", true);  // Explicitly keep video HW decoding enabled.
+user_pref("media.av1.enabled", false);  // Prefer VP9/H264 on YouTube to avoid AV1 software decode regressions.
 
 // New tab - blank page
 user_pref("browser.newtabpage.activity-stream.showSponsored", false);
