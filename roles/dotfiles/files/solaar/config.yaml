@@ -14,10 +14,11 @@
   change-host: null
   divert-keys: {82: 0, 83: 1, 86: 1, 196: 1}
   dpi: 1000
-  hires-scroll-mode: true
+  hires-scroll-mode: false
   hires-smooth-invert: false
   hires-smooth-resolution: false
   reprogrammable-keys: {80: 80, 81: 81, 82: 82, 83: 83, 86: 86, 196: 82}
   scroll-ratchet: 1
-  scroll-ratchet-torque: 20
+  scroll-ratchet-torque: 15
   smart-shift: 1
+  scroll-ratcheted: true
