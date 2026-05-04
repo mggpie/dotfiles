@@ -15,7 +15,7 @@
     "workbench.startupEditor": "none",
     "workbench.activityBar.location": "top",
 
-    "window.titleBarStyle": "native",
+    "window.titleBarStyle": "custom",
     "window.zoomLevel": -1,
     "window.menuBarVisibility": "toggle",
 
