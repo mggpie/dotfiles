@@ -28,7 +28,7 @@ window#waybar {
     background: transparent;
 }
 
-#clock, #battery, #custom-weather, #custom-radio-toggle, #pulseaudio {
+#custom-calendar, #battery, #custom-weather, #custom-radio-toggle, #pulseaudio {
     padding: 0 8px;
 }
 

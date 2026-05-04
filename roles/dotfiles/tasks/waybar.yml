@@ -26,3 +26,4 @@
       loop:
         - config
         - style.css
+        - waybar_calendar.py

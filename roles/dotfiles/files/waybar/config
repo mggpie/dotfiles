@@ -4,16 +4,17 @@
     "height": 22,
     "spacing": 0,
     "modules-left": ["sway/workspaces"],
-    "modules-center": ["clock"],
+    "modules-center": ["custom/calendar"],
     "modules-right": ["custom/radio-prev", "custom/radio-next", "custom/radio-toggle", "pulseaudio", "custom/weather", "battery"],
 
     "sway/workspaces": {
         "disable-scroll": true,
         "format": "{name}"
     },
-    "clock": {
-        "format": "{:%a, %d %b  %H:%M}",
-        "tooltip-format": "{:%Y-%m-%d}"
+    "custom/calendar": {
+        "exec": "fish -c calendar",
+        "return-type": "json",
+        "interval": 30
     },
     "battery": {
         "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{capacity}%</span>",
