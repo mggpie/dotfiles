@@ -1,0 +1,11 @@
+# aider global config
+# https://aider.chat/docs/config/aider_conf.html
+#
+# Architect mode splits planning from code generation:
+# - model (architect) uses V4-Pro for reasoning and planning
+# - editor-model uses V4-Flash for fast, cheap code edits
+#
+# DEEPSEEK_API_KEY is injected via env.fish from vault.
+model: deepseek/deepseek-v4-pro
+architect: true
+editor-model: deepseek/deepseek-v4-flash

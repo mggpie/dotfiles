@@ -110,6 +110,8 @@ ansible-playbook playbook.yml --list-tags       # Show all tags
 | `vscode` | Visual Studio Code (via Nix) |
 | `zed` | Zed editor |
 | `lite-xl` | Lite XL editor |
+| `aider` | Aider AI coding assistant (DeepSeek V4 via Nix) |
+| `opencode` | OpenCode AI coding agent (DeepSeek V4 via Nix) |
 
 </details>
 

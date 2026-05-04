@@ -61,6 +61,10 @@
   ansible.builtin.import_tasks: zed.yml
 - name: Import lite-xl tasks
   ansible.builtin.import_tasks: lite-xl.yml
+- name: Import aider tasks
+  ansible.builtin.import_tasks: aider.yml
+- name: Import opencode tasks
+  ansible.builtin.import_tasks: opencode.yml
 
 # === Desktop Environment ===
 - name: Import theme tasks

@@ -42,6 +42,9 @@ set -gx XCURSOR_PATH $HOME/.nix-profile/share/icons:$HOME/.local/share/icons:/us
 # Bluetooth devices (from secrets.yml)
 set -gx BOSE_QC45_MAC "{{ bose_mac }}"
 
+# AI coding assistants (from secrets.yml)
+set -gx DEEPSEEK_API_KEY "{{ deepseek_api_key }}"
+
 # Smarthome control (from secrets.yml)
 set -gx SMARTHOME_HOST "{{ smarthome_host }}"
 set -gx SMARTHOME_USER "{{ smarthome_user }}"

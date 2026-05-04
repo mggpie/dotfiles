@@ -1,0 +1,28 @@
+---
+- name: Aider
+  tags: [aider]
+  block:
+    - name: Install or upgrade aider-chat from Nix
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+aider-chat$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#aider-chat
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade aider-chat
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+aider-chat$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_aider_install
+      changed_when: "'UNCHANGED' not in dotfiles_aider_install.stdout"
+      failed_when: dotfiles_aider_install.rc != 0
+
+    # ~/.aider.conf.yml is the global config aider loads from $HOME
+    - name: Deploy aider config
+      ansible.builtin.copy:
+        src: aider/aider.conf.yml
+        dest: "{{ user_home }}/.aider.conf.yml"
+        mode: "0644"

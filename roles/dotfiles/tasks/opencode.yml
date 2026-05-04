@@ -1,0 +1,34 @@
+---
+- name: OpenCode
+  tags: [opencode]
+  block:
+    - name: Install or upgrade opencode from Nix
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+opencode$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#opencode
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade opencode
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+opencode$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_opencode_install
+      changed_when: "'UNCHANGED' not in dotfiles_opencode_install.stdout"
+      failed_when: dotfiles_opencode_install.rc != 0
+
+    - name: Create opencode config directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/opencode"
+        state: directory
+        mode: "0755"
+
+    # apiKey uses {env:DEEPSEEK_API_KEY} so the key never sits in plaintext on disk
+    - name: Deploy opencode config
+      ansible.builtin.copy:
+        src: opencode/opencode.json
+        dest: "{{ user_home }}/.config/opencode/opencode.json"
+        mode: "0644"
