@@ -22,6 +22,8 @@ function fixaudio --description "Restart PipeWire audio stack"
 
     echo "Verifying..."
     if pactl info >/dev/null 2>&1
+        lineout-keepalive sync
+
         echo "✓ Audio stack restarted successfully"
     else
         echo "✗ Something went wrong, check 'pactl info'"

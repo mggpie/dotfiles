@@ -29,6 +29,7 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
         pactl set-card-profile $hdmi_card $fallback_profile 2>/dev/null
         pactl set-default-sink $fallback_sink 2>/dev/null
         sleep 0.2
+        lineout-keepalive sync
 
         bluetoothctl disconnect $mac 2>/dev/null
 
@@ -42,6 +43,7 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
 
     # Kill easyeffects - not wanted on headphones
     pkill -x easyeffects 2>/dev/null
+    lineout-keepalive stop
 
     # Power on bluetooth if needed
     if not bluetoothctl show 2>/dev/null | grep -q "Powered: yes"

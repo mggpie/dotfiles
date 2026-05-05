@@ -17,7 +17,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         echo "Switching to Monitor..."
 
         # Stop silence stream, kill easyeffects, turn off external speakers
-        pkill -f 'paplay --raw.*/dev/zero' 2>/dev/null
+        lineout-keepalive stop
         pkill -x easyeffects 2>/dev/null
         smarthome 1 off &
 
@@ -100,9 +100,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         pactl set-sink-volume @DEFAULT_SINK@ 50%
 
         # Play silence to keep audio stream active - prevents amp buzzing
-        pkill -f 'paplay --raw.*/dev/zero' 2>/dev/null
-        paplay --raw --format=s16le --rate=48000 --channels=2 /dev/zero &
-        disown $last_pid
+        lineout-keepalive start
 
         # Restore the workspace that was focused before the switch
         swaymsg workspace $current_ws
