@@ -3,28 +3,46 @@ function startup
     pkill -x wezterm-gui 2>/dev/null
     pkill -x firefox 2>/dev/null
 
-    # Workspace 1: Firefox (left) + VSCode (middle) + WezTerm (right)
-    # Wait for each window before launching the next to guarantee tiling order
-    swaymsg 'workspace number 1'
-
-    swaymsg 'exec firefox'
-    while not swaymsg -t get_tree | grep -q '"app_id": "Firefox"'
-        sleep 0.1
+    if not test -S "$SWAYSOCK"
+        exit 1
     end
 
-    swaymsg 'exec code'
-    while not swaymsg -t get_tree | grep -q '"name": "Visual Studio Code"'
-        sleep 0.1
+    if not swaymsg 'workspace number 1' 2>/dev/null
+        exit 1
     end
 
-    swaymsg 'exec wezterm start -- fish -c notepad'
-    while not swaymsg -t get_tree | grep -q '"app_id": "org.wezfurlong.wezterm"'
-        sleep 0.1
+    swaymsg 'exec firefox' 2>/dev/null
+    set -l waited 0
+    while test $waited -lt 60
+        if swaymsg -t get_tree 2>/dev/null | grep -q '"app_id": "Firefox"'
+            break
+        end
+        sleep 0.5
+        set waited (math $waited + 1)
     end
 
-    swaymsg '[app_id="Firefox"] resize set width 40 ppt'
-    swaymsg '[app_id="org.wezfurlong.wezterm"] resize set width 20 ppt'
+    swaymsg 'exec code' 2>/dev/null
+    set waited 0
+    while test $waited -lt 60
+        if swaymsg -t get_tree 2>/dev/null | grep -q '"name": "Visual Studio Code"'
+            break
+        end
+        sleep 0.5
+        set waited (math $waited + 1)
+    end
 
-    # Scratchpad notepad (floating, hidden until Super+`)
-    swaymsg 'exec wezterm start --class notepad -- micro ~/0-Inbox/notepad.md'
+    swaymsg 'exec wezterm start -- fish -c notepad' 2>/dev/null
+    set waited 0
+    while test $waited -lt 60
+        if swaymsg -t get_tree 2>/dev/null | grep -q '"app_id": "org.wezfurlong.wezterm"'
+            break
+        end
+        sleep 0.5
+        set waited (math $waited + 1)
+    end
+
+    swaymsg '[app_id="Firefox"] resize set width 40 ppt' 2>/dev/null
+    swaymsg '[app_id="org.wezfurlong.wezterm"] resize set width 20 ppt' 2>/dev/null
+
+    swaymsg 'exec wezterm start --class notepad -- micro ~/0-Inbox/notepad.md' 2>/dev/null
 end

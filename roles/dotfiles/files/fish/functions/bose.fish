@@ -1,8 +1,12 @@
 function bose --description "Toggle Bose QC45 connection with audio switching"
+    set -l repair_mode false
+    if contains -- --repair $argv
+        set repair_mode true
+    end
+
     set -l mac "$BOSE_QC45_MAC"
     set -l mac_underscore (string replace -a ':' '_' $mac)
     set -l bt_card "bluez_card.$mac_underscore"
-    set -l bt_sink "bluez_output.$mac_underscore.1"
     set -l hdmi_card "alsa_card.pci-0000_00_1f.3"
 
     if test -z "$mac"
@@ -11,13 +15,15 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     end
 
     # Determine current output sink for fallback when disconnecting
+    set -l fallback_profile ""
+    set -l fallback_sink ""
     set -l tv_active (swaymsg -t get_outputs -r 2>/dev/null | jq -r '.[] | select(.name == "HDMI-A-2") | .active')
     if test "$tv_active" = "true"
-        set -l fallback_profile "output:analog-stereo"
-        set -l fallback_sink "alsa_output.pci-0000_00_1f.3.analog-stereo"
+        set fallback_profile "output:analog-stereo"
+        set fallback_sink "alsa_output.pci-0000_00_1f.3.analog-stereo"
     else
-        set -l fallback_profile "output:hdmi-stereo"
-        set -l fallback_sink "alsa_output.pci-0000_00_1f.3.hdmi-stereo"
+        set fallback_profile "output:hdmi-stereo"
+        set fallback_sink "alsa_output.pci-0000_00_1f.3.hdmi-stereo"
     end
 
     # Check if already connected
@@ -58,10 +64,25 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     end
 
     set -l connected false
+    set -l connect_error ""
+
+    if test "$repair_mode" = "true"
+        echo "Resetting stored Bose pairing..."
+        bluetoothctl disconnect $mac 2>/dev/null
+        bluetoothctl remove $mac 2>/dev/null
+        set is_paired false
+    end
 
     if test "$is_paired" = "true"
         # Already paired - try direct connect from PC
-        bluetoothctl connect $mac 2>/dev/null &
+        set -l connect_output (bluetoothctl connect $mac 2>&1)
+        if test (count $connect_output) -gt 0
+            printf '%s\n' $connect_output
+        end
+
+        if string match -rq 'br-connection-key-missing' -- $connect_output
+            set connect_error "stale-bond"
+        end
 
         for i in (seq 8)
             if bluetoothctl info $mac 2>/dev/null | grep -q "Connected: yes"
@@ -72,9 +93,19 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
         end
     end
 
+    if test "$connect_error" = "stale-bond"
+        echo "Stored Bose pairing is stale - removing old bond"
+        bluetoothctl disconnect $mac 2>/dev/null
+        bluetoothctl remove $mac 2>/dev/null
+        set is_paired false
+        set connected false
+    end
+
     # Not paired or direct connect failed - scan, pair, and connect
     if test "$connected" != "true"
-        if test "$is_paired" = "true"
+        if test "$connect_error" = "stale-bond"
+            echo "⏳ Old pairing removed - put Bose QC45 in pairing mode..."
+        else if test "$is_paired" = "true"
             echo "⏳ Direct connect failed - scanning..."
         else
             echo "⏳ Not paired yet - scanning..."
@@ -94,13 +125,31 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
 
         # Pair if needed
         if test "$is_paired" != "true"
-            bluetoothctl pair $mac 2>/dev/null
+            set -l pair_output (bluetoothctl pair $mac 2>&1)
+            if test (count $pair_output) -gt 0
+                printf '%s\n' $pair_output
+            end
+
+            if not bluetoothctl info $mac 2>/dev/null | grep -q "Paired: yes"
+                bluetoothctl discoverable off 2>/dev/null
+                bluetoothctl scan off 2>/dev/null
+                echo "❌ Pairing failed - hold the power slider until the LED blinks blue and retry"
+                return 1
+            end
+
             sleep 2
         end
 
         # Trust + connect
         bluetoothctl trust $mac 2>/dev/null
-        bluetoothctl connect $mac 2>/dev/null
+        set -l connect_output (bluetoothctl connect $mac 2>&1)
+        if test (count $connect_output) -gt 0
+            printf '%s\n' $connect_output
+        end
+
+        if string match -rq 'br-connection-key-missing' -- $connect_output
+            set connect_error "stale-bond"
+        end
 
         for i in (seq 10)
             if bluetoothctl info $mac 2>/dev/null | grep -q "Connected: yes"
@@ -122,11 +171,36 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     # Trust for future auto-reconnects
     bluetoothctl trust $mac 2>/dev/null
 
-    # Wait for PipeWire to register the bluetooth device
+    # Wait for PipeWire to register the bluetooth card first.
     echo "⏳ Setting up audio..."
-    set -l sink_ready false
+    set -l card_ready false
     for i in (seq 10)
-        if pactl list sinks short 2>/dev/null | grep -q $bt_sink
+        if pactl list cards short 2>/dev/null | grep -Fq $bt_card
+            set card_ready true
+            break
+        end
+        sleep 0.5
+    end
+
+    if test "$card_ready" != "true"
+        if test "$connect_error" = "stale-bond"
+            echo "⚠️  Bluetooth connected without an audio card"
+            echo "    Old pairing was removed. Put Bose QC45 in pairing mode and run: bose --repair"
+        else
+            echo "⚠️  Connected but PipeWire didn't register bluetooth card"
+            echo "    Try: bluetoothctl info $mac"
+        end
+        return 1
+    end
+
+    pactl set-card-profile $bt_card a2dp-sink 2>/dev/null
+    sleep 0.5
+
+    set -l sink_ready false
+    set -l bt_sink ""
+    for i in (seq 10)
+        set bt_sink (pactl list sinks short 2>/dev/null | grep -F "bluez_output.$mac_underscore" | awk 'NR == 1 { print $2 }')
+        if test -n "$bt_sink"
             set sink_ready true
             break
         end
@@ -139,9 +213,6 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
         return 1
     end
 
-    # Set high quality profile and switch output
-    pactl set-card-profile $bt_card a2dp-sink 2>/dev/null
-    sleep 0.5
     pactl set-default-sink $bt_sink 2>/dev/null
 
     echo "✅ Connected - audio on Bose QC45 (AAC)"
