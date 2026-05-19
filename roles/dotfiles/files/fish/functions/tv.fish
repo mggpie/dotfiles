@@ -83,7 +83,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         end
 
         swaymsg output $tv_output mode 3840x2160@60.000Hz
-        swaymsg output $tv_output scale 3.0
+        swaymsg output $tv_output scale 2.0
 
         # Move all workspaces to TV while both are active
         for workspace in (seq 1 10)
@@ -105,6 +105,6 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Restore the workspace that was focused before the switch
         swaymsg workspace $current_ws
 
-        echo "Switched to TV (4K 60Hz) with line-out audio at 50%"
+        echo "Switched to TV (4K 60Hz, scale 2.0) with line-out audio at 50%"
     end
 end
