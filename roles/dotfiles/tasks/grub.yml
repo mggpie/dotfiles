@@ -9,13 +9,17 @@
       ansible.builtin.lineinfile:
         path: /etc/default/grub
         regexp: '^GRUB_TIMEOUT='
-        line: 'GRUB_TIMEOUT=5'
+        line: 'GRUB_TIMEOUT=0'
         backup: true
       notify: Regenerate GRUB config
 
     # WARNING: mitigations=off disables CPU vulnerability mitigations (Spectre/Meltdown/etc.)
     # for performance. NEVER do this on a production or multi-user machine.
     # This is a deliberate tradeoff for a single-user desktop.
+    #
+    # xe driver replaces i915 on Rocket Lake (4c8a) - fixes periodic HDMI blink
+    # that i915 had on this hardware. force_probe is required because xe support
+    # for gen12 RKL is still gated behind that flag upstream.
     - name: Configure GRUB command line parameters
       ansible.builtin.lineinfile:
         path: /etc/default/grub
@@ -26,33 +30,13 @@
           msr.allow_writes=on pcie_aspm=off module.sig_unenforce
           intel_iommu=on iommu=pt no_timer_check noreplace-smp
           page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable
-          i915.enable_guc=3 i915.fastboot=0 i915.enable_fbc=0
-          i915.enable_psr=0 drm_kms_helper.poll=N
+          i915.modeset=0 xe.force_probe=4c8a drm_kms_helper.poll=N
           split_lock_detect=off intel_pstate=active"
         backup: true
       notify: Regenerate GRUB config
 
-    # Alternate boot entry forcing xe driver instead of i915 for Rocket Lake.
-    # Lets us fall back to i915 from the GRUB menu if xe fails to bring up display.
-    - name: Add custom GRUB entry for xe driver
-      ansible.builtin.copy:
-        dest: /etc/grub.d/40_custom
-        mode: '0755'
-        content: |
-          #!/bin/sh
-          exec tail -n +3 $0
-          # This file provides an easy way to add custom menu entries.
-          menuentry 'Void Linux (xe driver test)' --class void --class gnu-linux --class gnu --class os {
-              load_video
-              insmod gzio
-              insmod part_gpt
-              insmod cryptodisk
-              insmod luks
-              insmod ext2
-              search --no-floppy --fs-uuid --set=root 89f2cf98-410e-4e8e-a3f5-bb1db0a5d2b4
-              echo 'Loading Linux 6.18.32_1 (xe driver) ...'
-              linux /vmlinuz-6.18.32_1 root=UUID=0de017c3-d3aa-4214-a436-3e290c77e06b ro rd.luks.uuid=6772f902-3eb3-4958-9878-d67799fea8d2 rd.lvm=0 quiet loglevel=0 udev.log_level=0 vt.global_cursor_default=0 mitigations=off nowatchdog msr.allow_writes=on pcie_aspm=off module.sig_unenforce intel_iommu=on iommu=pt no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable i915.modeset=0 xe.force_probe=4c8a drm_kms_helper.poll=N split_lock_detect=off intel_pstate=active
-              echo 'Loading initial ramdisk ...'
-              initrd /initramfs-6.18.32_1.img
-          }
+    - name: Remove custom xe GRUB entry (xe is now the default)
+      ansible.builtin.file:
+        path: /etc/grub.d/40_custom
+        state: absent
       notify: Regenerate GRUB config
