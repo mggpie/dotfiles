@@ -2,24 +2,6 @@
 - name: Obsidian
   tags: [obsidian]
   block:
-    - name: Install or upgrade nixGL for OpenGL support
-      ansible.builtin.shell: |
-        set -o pipefail
-        . ~/.nix-profile/etc/profile.d/nix.sh
-        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixGL$/{found=1} found && /^Store paths:/{print $NF; found=0}')
-        if [ -z "$before" ]; then
-          nix {{ dotfiles_nix_experimental_flags }} profile install github:nix-community/nixGL --impure
-        else
-          nix {{ dotfiles_nix_experimental_flags }} profile upgrade nixGL --impure
-          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixGL$/{found=1} found && /^Store paths:/{print $NF; found=0}')
-          [ "$before" = "$after" ] && echo "UNCHANGED"
-        fi
-      args:
-        executable: /bin/bash
-      register: dotfiles_nixgl_install
-      changed_when: "'UNCHANGED' not in dotfiles_nixgl_install.stdout"
-      failed_when: dotfiles_nixgl_install.rc != 0
-
     - name: Install or upgrade Obsidian from Nix
       ansible.builtin.shell: |
         set -o pipefail

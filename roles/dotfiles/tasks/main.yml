@@ -91,6 +91,8 @@
   ansible.builtin.import_tasks: fish.yml
 - name: Import foot tasks
   ansible.builtin.import_tasks: foot.yml
+- name: Import nixgl tasks
+  ansible.builtin.import_tasks: nixgl.yml
 - name: Import wezterm tasks
   ansible.builtin.import_tasks: wezterm.yml
 
