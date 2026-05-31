@@ -83,8 +83,7 @@ config.window_padding = {
 }
 
 -- Behavior
--- Void's packaged WezTerm currently crashes in wl_shm under Sway, so use XWayland.
-config.enable_wayland = false
+config.enable_wayland = true
 config.scrollback_lines = 10000
 config.audible_bell = 'Disabled'
 

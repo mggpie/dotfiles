@@ -2,12 +2,74 @@
 - name: Wezterm
   tags: [wezterm]
   block:
-    - name: Install wezterm
+    - name: Remove broken Void wezterm packages
       community.general.xbps:
         update_cache: false
-        name: wezterm
-        state: present
+        name:
+          - wezterm
+          - wezterm-terminfo
+        state: absent
       become: true
+
+    - name: Install or upgrade nixGL for Wezterm
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixGL$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install github:nix-community/nixGL --impure
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade nixGL --impure
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixGL$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_wezterm_nixgl_install
+      changed_when: "'UNCHANGED' not in dotfiles_wezterm_nixgl_install.stdout"
+      failed_when: dotfiles_wezterm_nixgl_install.rc != 0
+
+    - name: Install or upgrade Wezterm from Nix
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+wezterm$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#wezterm
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade wezterm
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+wezterm$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_wezterm_install
+      changed_when: "'UNCHANGED' not in dotfiles_wezterm_install.stdout"
+      failed_when: dotfiles_wezterm_install.rc != 0
+
+    - name: Create fish functions directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/fish/functions"
+        state: directory
+        mode: "0755"
+
+    - name: Deploy wezterm launcher fish function
+      ansible.builtin.copy:
+        src: fish/functions/wezterm-bin.fish
+        dest: "{{ user_home }}/.config/fish/functions/wezterm-bin.fish"
+        mode: "0644"
+
+    - name: Create local bin directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/bin"
+        state: directory
+        mode: "0755"
+
+    - name: Deploy wezterm launcher wrapper
+      ansible.builtin.copy:
+        src: shortcuts/wezterm
+        dest: "{{ user_home }}/.local/bin/wezterm"
+        mode: "0755"
 
     - name: Create wezterm config directory
       ansible.builtin.file:
