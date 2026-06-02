@@ -57,3 +57,14 @@
       ansible.builtin.file:
         path: /var/service/wpa_supplicant
         state: absent
+
+    - name: Override DHCP-provided DNS with reliable public resolvers
+      # Router DNS (192.168.0.1) does not respond to DNS queries,
+      # causing multi-second hangs on every DNS lookup without this override.
+      ansible.builtin.lineinfile:
+        path: /etc/dhcpcd.conf
+        line: "static domain_name_servers=8.8.8.8 1.1.1.1 8.8.4.4"
+        regexp: "^static domain_name_servers="
+        state: present
+      become: true
+      notify: Restart dhcpcd
