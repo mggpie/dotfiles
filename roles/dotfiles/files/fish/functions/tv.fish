@@ -97,7 +97,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Switch audio to analog line-out (external speakers via 3.5mm)
         pactl set-card-profile $audio_card $tv_audio_profile
         pactl set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
-        pactl set-sink-volume @DEFAULT_SINK@ 50%
+        pactl set-sink-volume @DEFAULT_SINK@ 60%
 
         # Play silence to keep audio stream active - prevents amp buzzing
         lineout-keepalive start
