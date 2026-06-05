@@ -36,7 +36,7 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         # Switch audio to monitor HDMI before disabling TV to avoid dummy output
         pactl set-card-profile $audio_card $monitor_audio_profile
         pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
-        pactl set-sink-volume @DEFAULT_SINK@ 20%
+        pactl set-sink-volume @DEFAULT_SINK@ 35%
         sleep 0.1
 
         # Now disable TV
