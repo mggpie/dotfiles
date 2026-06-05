@@ -49,11 +49,6 @@ input "1118:2048:Microsoft_Microsoft___Nano_Transceiver_v2.0_Mouse" {
     natural_scroll enabled
 }
 
-# hires-smooth-resolution sends far more scroll events - factor < 1.0 compensates
-input "1133:50504:Logitech_USB_Receiver_Mouse" {
-    scroll_factor 0.5
-}
-
 ### Key bindings
 bindsym $mod+Return exec $term
 bindsym $mod+d exec $menu
