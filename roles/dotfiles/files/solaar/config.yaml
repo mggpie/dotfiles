@@ -7,7 +7,7 @@
     haptic-play, sidetone, equalizer, adc_power_management]
   _battery: 4100
   _modelId: B02D00000000
-  _sensitive: {hires-smooth-invert: ignore, hires-smooth-resolution: ignore}
+  _sensitive: {hires-smooth-invert: ignore}
   _serial: 9FC8649B
   _unitId: 9FC8649B
   _wpid: B02D
