@@ -26,7 +26,7 @@
 - Key: [Smart Shift, pressed]
 - Rule:
   - Setting: [null, scroll-ratchet, Freespinning]
-  - Set: [null, scroll-ratchet, Ratchet]
+  - Set: [null, scroll-ratchet, Ratcheted]
 - Rule:
   - Set: [null, scroll-ratchet, Freespinning]
 ...
