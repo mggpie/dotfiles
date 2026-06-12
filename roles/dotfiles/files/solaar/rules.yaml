@@ -9,7 +9,7 @@
 ---
 # back button + scroll -> volume
 - Feature: HIRES WHEEL
-- KeyIsDown: Back Button
+- KeyIsDown: Forward Button
 - Rule: [Test: hires_wheel_up, KeyPress: XF86_AudioRaiseVolume]
 - Rule: [Test: hires_wheel_down, KeyPress: XF86_AudioLowerVolume]
 ...
@@ -22,7 +22,7 @@
 ---
 # forward button (held) + smart shift -> toggle scroll ratchet mode
 # hold forward first, then press smart shift; side effect: workspace prev also fires on forward press
-- KeyIsDown: Forward Button
+- KeyIsDown: Back Button
 - Key: [Smart Shift, pressed]
 - Rule:
   - Setting: [null, scroll-ratchet, Freespinning]
