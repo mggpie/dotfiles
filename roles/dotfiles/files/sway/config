@@ -161,7 +161,7 @@ exec dbus-daemon --session --address=unix:path=$XDG_RUNTIME_DIR/bus
 exec_always sh -c 'pkill -x pipewire || true; sleep 0.1; pipewire'
 exec_always sh -c 'pkill -x wireplumber || true; sleep 0.1; wireplumber'
 exec_always sh -c 'pkill -x pipewire-pulse || true; sleep 0.1; pipewire-pulse'
-exec_always sh -c 'sleep 3; pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo; pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo; pactl set-sink-volume @DEFAULT_SINK@ 20%'
+exec_always sh -c 'sleep 3; pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo; pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo; pactl set-sink-volume @DEFAULT_SINK@ 35%'
 exec_always sh -c 'sleep 4; fish -c "lineout-keepalive sync"'
 exec_always sh -c 'pkill -x wl-clip-persist || true; sleep 0.1; wl-clip-persist --clipboard regular'
 exec swayidle -w \
