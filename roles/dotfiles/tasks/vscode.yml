@@ -15,7 +15,7 @@
           nix profile remove vscode
           NIXPKGS_ALLOW_UNFREE=1 nix profile install nixpkgs#vscode --impure
         else
-          nix profile upgrade vscode
+          NIXPKGS_ALLOW_UNFREE=1 nix profile upgrade vscode --impure
           after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+vscode$/{found=1} found && /^Store paths:/{print $NF; found=0}')
           [ "$before" = "$after" ] && echo "UNCHANGED"
         fi
