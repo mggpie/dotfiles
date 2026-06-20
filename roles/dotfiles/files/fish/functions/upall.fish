@@ -46,43 +46,43 @@ function upall
     echo "Free space before: $disk_before" | tee -a $log_file
 
     # 1. Trim SSD
-    echo -e "\n[1/10] Trimming SSD..." | tee -a $log_file
+    echo -e "\n[1/11] Trimming SSD..." | tee -a $log_file
     if not doas fstrim -av 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 2. Remove orphaned packages
-    echo -e "\n[2/10] Removing orphaned packages..." | tee -a $log_file
+    echo -e "\n[2/11] Removing orphaned packages..." | tee -a $log_file
     if not doas xbps-remove -yO 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 3. Remove old kernels
-    echo -e "\n[3/10] Removing old kernels..." | tee -a $log_file
+    echo -e "\n[3/11] Removing old kernels..." | tee -a $log_file
     if not doas vkpurge rm all 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 4. Update system packages
-    echo -e "\n[4/10] Updating system packages..." | tee -a $log_file
+    echo -e "\n[4/11] Updating system packages..." | tee -a $log_file
     if not doas xbps-install -Syu 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 5. Clean package cache
-    echo -e "\n[5/10] Cleaning package cache..." | tee -a $log_file
+    echo -e "\n[5/11] Cleaning package cache..." | tee -a $log_file
     if not doas xbps-remove -O 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 6. Update maza ad blocking
-    echo -e "\n[6/10] Updating maza ad blocking..." | tee -a $log_file
+    echo -e "\n[6/11] Updating maza ad blocking..." | tee -a $log_file
     if not doas maza update 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 7. Update Nix packages
-    echo -e "\n[7/10] Updating Nix packages..." | tee -a $log_file
+    echo -e "\n[7/11] Updating Nix packages..." | tee -a $log_file
     if not nix-channel --update 2>&1 | tee -a $log_file
         set has_errors 1
     end
@@ -91,19 +91,45 @@ function upall
     end
 
     # 8. Clean Nix garbage
-    echo -e "\n[8/10] Cleaning Nix garbage..." | tee -a $log_file
+    echo -e "\n[8/11] Cleaning Nix garbage..." | tee -a $log_file
     if not nix-collect-garbage -d 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
     # 9. Deduplicate Nix store
-    echo -e "\n[9/10] Deduplicating Nix store..." | tee -a $log_file
+    echo -e "\n[9/11] Deduplicating Nix store..." | tee -a $log_file
     if not nix store optimise 2>&1 | tee -a $log_file
         set has_errors 1
     end
 
-    # 10. Empty trash
-    echo -e "\n[10/10] Emptying trash..." | tee -a $log_file
+    # 10. Update opencode-desktop AppImage
+    echo -e "\n[10/11] Updating opencode-desktop..." | tee -a $log_file
+    set -l oc_version_file ~/.local/share/opencode-desktop/version
+    set -l oc_appimage ~/.local/bin/opencode-desktop
+    set -l oc_latest (curl -sf "https://api.github.com/repos/anomalyco/opencode/releases/latest" | grep '"tag_name"' | string replace -r '.*"([^"]+)"[^"]*$' '$1')
+    if test -n "$oc_latest"
+        set -l oc_current ""
+        if test -f $oc_version_file
+            set oc_current (string trim (cat $oc_version_file))
+        end
+        if test "$oc_current" != "$oc_latest"
+            echo "Updating opencode-desktop $oc_current -> $oc_latest" | tee -a $log_file
+            if curl -fL "https://github.com/anomalyco/opencode/releases/download/$oc_latest/opencode-desktop-linux-x86_64.AppImage" -o $oc_appimage 2>&1 | tee -a $log_file
+                chmod +x $oc_appimage
+                echo $oc_latest > $oc_version_file
+                echo "opencode-desktop updated to $oc_latest" | tee -a $log_file
+            else
+                set has_errors 1
+            end
+        else
+            echo "opencode-desktop already up to date ($oc_current)" | tee -a $log_file
+        end
+    else
+        echo "Could not fetch opencode-desktop release info (offline?)" | tee -a $log_file
+    end
+
+    # 11. Empty trash
+    echo -e "\n[11/11] Emptying trash..." | tee -a $log_file
     if test -d ~/.local/share/Trash/files
         set trash_size (du -sh ~/.local/share/Trash/ 2>/dev/null | cut -f1)
         echo "Trash size: $trash_size" | tee -a $log_file
