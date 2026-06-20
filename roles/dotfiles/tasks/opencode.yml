@@ -73,7 +73,7 @@
         dest: "{{ user_home }}/.local/bin/opencode-desktop"
         mode: "0755"
       when: >
-        dotfiles_opencode_desktop_current.failed or
+        dotfiles_opencode_desktop_current.content is not defined or
         (dotfiles_opencode_desktop_current.content | b64decode | trim) != dotfiles_opencode_desktop_version
       tags: [notest]
 
@@ -83,7 +83,7 @@
         dest: "{{ user_home }}/.local/share/opencode-desktop/version"
         mode: "0644"
       when: >
-        dotfiles_opencode_desktop_current.failed or
+        dotfiles_opencode_desktop_current.content is not defined or
         (dotfiles_opencode_desktop_current.content | b64decode | trim) != dotfiles_opencode_desktop_version
       tags: [notest]
 
