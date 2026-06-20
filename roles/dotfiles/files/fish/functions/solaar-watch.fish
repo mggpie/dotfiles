@@ -6,3 +6,4 @@ function solaar-watch
         sleep 2
     end
 end
+tg

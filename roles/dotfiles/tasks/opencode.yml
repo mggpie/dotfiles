@@ -32,3 +32,76 @@
         src: opencode/opencode.json
         dest: "{{ user_home }}/.config/opencode/opencode.json"
         mode: "0644"
+
+    # Desktop GUI app - AppImage is the only distro-agnostic format; no deb/rpm on Void
+    - name: Get latest opencode-desktop release tag
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/anomalyco/opencode/releases/latest
+        return_content: true
+      register: dotfiles_opencode_desktop_release
+      tags: [notest]
+
+    - name: Set opencode-desktop version fact
+      ansible.builtin.set_fact:
+        dotfiles_opencode_desktop_version: "{{ dotfiles_opencode_desktop_release.json.tag_name }}"
+      tags: [notest]
+
+    - name: Read installed opencode-desktop version
+      ansible.builtin.slurp:
+        src: "{{ user_home }}/.local/share/opencode-desktop/version"
+      register: dotfiles_opencode_desktop_current
+      failed_when: false
+      tags: [notest]
+
+    - name: Create opencode-desktop data directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/share/opencode-desktop"
+        state: directory
+        mode: "0755"
+      tags: [notest]
+
+    - name: Create .local/bin directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/bin"
+        state: directory
+        mode: "0755"
+      tags: [notest]
+
+    - name: Download opencode-desktop AppImage
+      ansible.builtin.get_url:
+        url: "https://github.com/anomalyco/opencode/releases/download/{{ dotfiles_opencode_desktop_version }}/opencode-desktop-linux-x86_64.AppImage"
+        dest: "{{ user_home }}/.local/bin/opencode-desktop"
+        mode: "0755"
+      when: >
+        dotfiles_opencode_desktop_current.failed or
+        (dotfiles_opencode_desktop_current.content | b64decode | trim) != dotfiles_opencode_desktop_version
+      tags: [notest]
+
+    - name: Write installed opencode-desktop version
+      ansible.builtin.copy:
+        content: "{{ dotfiles_opencode_desktop_version }}\n"
+        dest: "{{ user_home }}/.local/share/opencode-desktop/version"
+        mode: "0644"
+      when: >
+        dotfiles_opencode_desktop_current.failed or
+        (dotfiles_opencode_desktop_current.content | b64decode | trim) != dotfiles_opencode_desktop_version
+      tags: [notest]
+
+    - name: Create .local/share/applications directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/share/applications"
+        state: directory
+        mode: "0755"
+
+    - name: Create opencode-desktop .desktop file
+      ansible.builtin.copy:
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=OpenCode Desktop
+          Exec={{ user_home }}/.local/bin/opencode-desktop %U
+          Icon=opencode-desktop
+          Terminal=false
+          Categories=Development;
+        dest: "{{ user_home }}/.local/share/applications/opencode-desktop.desktop"
+        mode: "0644"
