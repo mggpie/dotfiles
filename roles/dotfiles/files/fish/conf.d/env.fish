@@ -44,6 +44,7 @@ set -gx BOSE_QC45_MAC "{{ bose_mac }}"
 
 # AI coding assistants (from secrets.yml)
 set -gx DEEPSEEK_API_KEY "{{ deepseek_api_key }}"
+set -gx OPENROUTER_API_KEY "{{ openrouter_api_key }}"
 
 # Smarthome control (from secrets.yml)
 set -gx SMARTHOME_HOST "{{ smarthome_host }}"

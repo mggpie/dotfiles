@@ -1,0 +1,84 @@
+---
+# OpenCode multi-agent "swarm" layer (coordinator + workers + review gate).
+# Runs on top of the base opencode install (see opencode.yml). Deploys the
+# agent/command/knowledge/skills tree, the swarm plugin (Void-adapted paths),
+# installs bun (the swarm CLI runtime) and the local node deps that provide the
+# `swarm` binary. API keys come from the environment (env.fish ← secrets.yml),
+# never plaintext on disk.
+- name: OpenCode swarm
+  tags: [opencode, opencode-swarm]
+  block:
+    - name: Ensure opencode config directory exists
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/opencode"
+        state: directory
+        mode: "0755"
+
+    # apiKey fields use {env:DEEPSEEK_API_KEY}/{env:OPENROUTER_API_KEY} so keys
+    # never sit in plaintext on disk (env.fish injects them from secrets.yml).
+    - name: Deploy opencode config (models, providers, permissions)
+      ansible.builtin.copy:
+        src: opencode/opencode.json
+        dest: "{{ user_home }}/.config/opencode/opencode.json"
+        mode: "0644"
+
+    - name: Install or upgrade bun from Nix (swarm CLI runtime)
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+bun$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install nixpkgs#bun
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade bun
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+bun$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_bun_install
+      changed_when: "'UNCHANGED' not in dotfiles_bun_install.stdout"
+      failed_when: dotfiles_bun_install.rc != 0
+
+    - name: Deploy swarm config trees (agents, commands, knowledge, skills)
+      ansible.builtin.copy:
+        src: "opencode/{{ item }}"
+        dest: "{{ user_home }}/.config/opencode/"
+        mode: "0644"
+        directory_mode: "0755"
+      loop:
+        - agent
+        - command
+        - knowledge
+        - skills
+
+    - name: Deploy swarm top-level files (AGENTS.md, package.json, README)
+      ansible.builtin.copy:
+        src: "opencode/{{ item }}"
+        dest: "{{ user_home }}/.config/opencode/{{ item }}"
+        mode: "0644"
+      loop:
+        - AGENTS.md
+        - package.json
+        - README.md
+
+    - name: Ensure opencode plugin directory exists
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/opencode/plugin"
+        state: directory
+        mode: "0755"
+
+    - name: Deploy swarm plugin (Void-adapted spawn paths)
+      ansible.builtin.copy:
+        src: opencode/plugin/swarm.ts
+        dest: "{{ user_home }}/.config/opencode/plugin/swarm.ts"
+        mode: "0644"
+
+    # Local install gives the `swarm` CLI at node_modules/.bin/swarm, which the
+    # plugin shells out to. npm is the system xbps one; bun is only the runtime.
+    - name: Install swarm plugin node deps (provides the swarm CLI)
+      ansible.builtin.command:
+        cmd: npm install --no-audit --no-fund --no-progress
+        chdir: "{{ user_home }}/.config/opencode"
+      register: dotfiles_opencode_npm
+      changed_when: "'up to date' not in dotfiles_opencode_npm.stdout"
