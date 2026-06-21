@@ -51,6 +51,15 @@ set -gx SMARTHOME_HOST "{{ smarthome_host }}"
 set -gx SMARTHOME_USER "{{ smarthome_user }}"
 set -gx SMARTHOME_PASS "{{ smarthome_pass }}"
 
+# Nix uses its own glibc linker which doesn't fall back to /usr/lib, so
+# libffi.so.7 (GC'd from the nix store) must be bridged via a minimal shim dir.
+# Only libffi.so.7 lives in that dir, so no other system libs can bleed in.
+if test -d $HOME/.local/share/nix-compat
+    if not contains $HOME/.local/share/nix-compat $LD_LIBRARY_PATH
+        set -gx LD_LIBRARY_PATH $HOME/.local/share/nix-compat $LD_LIBRARY_PATH
+    end
+end
+
 # D-Bus session (fix "disabled:" issue)
 if test "$DBUS_SESSION_BUS_ADDRESS" = "disabled:"
     set -e DBUS_SESSION_BUS_ADDRESS

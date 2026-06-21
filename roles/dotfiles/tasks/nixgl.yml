@@ -16,6 +16,8 @@
         fi
       args:
         executable: /bin/bash
+      environment:
+        LD_LIBRARY_PATH: "{{ user_home }}/.local/share/nix-compat"
       register: dotfiles_nixgl_install
       changed_when: "'UNCHANGED' not in dotfiles_nixgl_install.stdout"
       failed_when: dotfiles_nixgl_install.rc != 0
