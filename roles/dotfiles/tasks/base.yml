@@ -104,12 +104,12 @@
         regexp: '^#?HandlePowerKey='
         line: 'HandlePowerKey=ignore'
 
-    - name: SSH only on VMs
+    - name: Enable sshd service
       ansible.builtin.file:
         path: /var/service/sshd
-        state: "{{ 'link' if ansible_facts.virtualization_role == 'guest' else 'absent' }}"
-        src: "{{ '/etc/sv/sshd' if ansible_facts.virtualization_role == 'guest' else omit }}"
-        mode: "{{ '0777' if ansible_facts.virtualization_role == 'guest' else omit }}"
+        state: link
+        src: /etc/sv/sshd
+        mode: "0777"
 
 # Nix package manager
 
