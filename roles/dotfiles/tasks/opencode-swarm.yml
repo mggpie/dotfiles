@@ -36,6 +36,8 @@
         fi
       args:
         executable: /bin/bash
+      environment:
+        LD_LIBRARY_PATH: "{{ user_home }}/.local/share/nix-compat"
       register: dotfiles_bun_install
       changed_when: "'UNCHANGED' not in dotfiles_bun_install.stdout"
       failed_when: dotfiles_bun_install.rc != 0

@@ -2,6 +2,20 @@
 - name: OpenCode
   tags: [opencode]
   block:
+    # libffi.so.7 was GC'd from the nix store; create a shim dir so the nix
+    # linker can find the system copy without pulling in other system libs.
+    - name: Create nix libffi compat shim directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/share/nix-compat"
+        state: directory
+        mode: "0755"
+
+    - name: Symlink system libffi.so.7 into nix compat shim
+      ansible.builtin.file:
+        src: /usr/lib/libffi.so.7
+        dest: "{{ user_home }}/.local/share/nix-compat/libffi.so.7"
+        state: link
+
     - name: Install or upgrade opencode from Nix
       ansible.builtin.shell: |
         set -o pipefail
@@ -16,6 +30,8 @@
         fi
       args:
         executable: /bin/bash
+      environment:
+        LD_LIBRARY_PATH: "{{ user_home }}/.local/share/nix-compat"
       register: dotfiles_opencode_install
       changed_when: "'UNCHANGED' not in dotfiles_opencode_install.stdout"
       failed_when: dotfiles_opencode_install.rc != 0

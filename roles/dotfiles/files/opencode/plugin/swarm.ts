@@ -616,6 +616,9 @@ async function execTool(
         env: {
           ...process.env as any,
           PATH: `/home/me/.nix-profile/bin:/usr/bin:/usr/local/bin:${process.env.PATH || ""}`,
+          // libffi.so.7 was GC'd from the nix store; shim dir contains only that one symlink
+          // so it can't pollute other nix-linked libs with incompatible system versions.
+          LD_LIBRARY_PATH: `/home/me/.local/share/nix-compat:${process.env.LD_LIBRARY_PATH || ""}`,
           OPENCODE_SESSION_ID: ctx.sessionID,
           OPENCODE_MESSAGE_ID: ctx.messageID,
           OPENCODE_AGENT: ctx.agent,
@@ -1810,6 +1813,7 @@ async function bashSpawn(
     env: {
       ...process.env,
       PATH: `/home/me/.nix-profile/bin:/usr/bin:/usr/local/bin:${process.env.PATH || ""}`,
+      LD_LIBRARY_PATH: `/home/me/.local/share/nix-compat:${process.env.LD_LIBRARY_PATH || ""}`,
       ...opts.env,
     },
   });
