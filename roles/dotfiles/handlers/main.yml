@@ -20,9 +20,15 @@
   become: true
 
 - name: Restart sshd
+  # sv restart fails if runit hasn't created supervise/control yet (new service).
+  # Retry until runsvdir picks up the new symlink and runsv is ready.
   ansible.builtin.command: sv restart sshd
   changed_when: true
   become: true
+  register: sshd_restart
+  until: sshd_restart.rc == 0
+  retries: 5
+  delay: 2
 
 # solaar overwrites config.yaml on exit, so we must kill it before deploy.
 # the watchdog (fish -c solaar-watch) keeps respawning it - we just kill solaar
