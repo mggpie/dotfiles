@@ -95,7 +95,7 @@ swarmmail_init(project_path="$PWD", task_description="Swarm: <task>")
 swarm_get_strategy_insights()                      # which strategies worked here before
 hivemind_find(query="<task keywords>", limit=5)    # past decisions / gotchas
 skills_list()                                      # available skills
-# optional, if the CASS backend is installed: cass_search(query="<task>", limit=5)
+cass_search(query="<task>", limit=5)               # mandatory cross-session check; "Previously solved" warning if found
 ```
 Synthesize findings into a `shared_context` string for workers.
 
@@ -138,16 +138,15 @@ Task(subagent_type="<role-agent>", prompt="<prompt from swarm_spawn_subtask>")
 Do this every time. Never batch.
 ```
 swarmmail_inbox()                                  # did the worker message you?
+# SPAWN BOTH IN PARALLEL (single message):
 swarm_review(project_key, epic_id, task_id, files_touched)
-```
-Then unleash the adversary:
-```
 Task(subagent_type="demon", prompt="Try to BREAK the changes in <files>. Report holes with repro + fix.")
-# or directly: swarm_adversarial_review(<files/epic>)
+# or: swarm_adversarial_review(<files/epic>)
+# Await both. Then evaluate:
 ```
 Decide with `swarm_review_feedback(...)`:
-- **approved** → close the cell, spawn the next worker.
-- **needs_changes** → take the returned `retry_context`, call `swarm_spawn_retry(...)`,
+- **Both approve** → close the cell, spawn the next worker.
+- **Either flags** → that agent's issues control; use their retry_context, call `swarm_spawn_retry(...)`,
   spawn a NEW worker. Max 3 attempts, then mark blocked + escalate to the human.
 
 ### Phase 7 — Integrate + ship

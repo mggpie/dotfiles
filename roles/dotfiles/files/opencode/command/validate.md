@@ -97,7 +97,15 @@ Synthesize into `1-validation.md`:
 - GO: **graduate** — move `~/Desktop/1-Projects/_ideas/<slug>/` to
   `~/Desktop/1-Projects/<slug>/` (now a real project). Tell the founder: review
   `2-plan.md`, then run `/swarm "<from 2-plan.md>"` inside that project / the code
-  repo to build the wedge.
+  repo to build the wedge. Then append a founder-fit profile entry to
+  `~/Desktop/3-Resources/profile/founder-fit.md`:
+
+  ```markdown
+  ## Project: <slug> (<date>)
+  - What worked: <pattern from the validation>
+  - Energy check: <energizing/draining based on the process>
+  - New capability: <what was learned>
+  ```
 
 ## Rules
 
