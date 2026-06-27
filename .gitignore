@@ -9,6 +9,9 @@
 *.old
 *~
 
+# Hive issues database (local tracking state)
+.hive/
+
 # Python
 __pycache__/
 *.py[cod]

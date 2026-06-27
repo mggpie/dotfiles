@@ -17,7 +17,7 @@ permission:
     cat *: allow
     head *: allow
     tail *: allow
-    "/opt/homebrew/bin/bash /opt/homebrew/bin/ubs*": allow
+    "/bin/bash /home/me/.nix-profile/bin/ubs*": allow
     "*": deny
 ---
 
@@ -29,7 +29,7 @@ right?" — you ask "how do I make this blow up in production?"
 
 1. `swarm_adversarial_review` on the changed files / epic for the structured pass.
 2. Bug scanner (UBS), fast and merciless:
-   `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs --format=json <files>`
+   `/bin/bash /home/me/.nix-profile/bin/ubs --format=json <files>`
    (parse `.totals.critical` / `.totals.warning`).
 
 Then go deeper by hand — the real holes are usually the ones a scanner can't see.

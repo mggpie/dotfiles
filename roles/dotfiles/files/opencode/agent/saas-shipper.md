@@ -14,7 +14,7 @@ permission:
     npx *: allow
     rg *: allow
     ls *: allow
-    "/opt/homebrew/bin/bash /opt/homebrew/bin/ubs*": allow
+    "/bin/bash /home/me/.nix-profile/bin/ubs*": allow
     "*": deny
 ---
 
@@ -26,7 +26,7 @@ You are a SaaS shipper. You integrate the results from all workers, run final ve
 3. Run linter (biome check / eslint)
 4. Run test suite
 5. Run the bug scanner (UBS) on the changed files:
-   `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs --format=json <changed files or dir>`
+   `/bin/bash /home/me/.nix-profile/bin/ubs --format=json <changed files or dir>`
    Parse `.totals.critical` / `.totals.warning`. Any critical = NOT ship-ready.
 6. Report results: pass/fail with details (include UBS critical/warning counts)
 

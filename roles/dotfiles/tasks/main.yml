@@ -67,6 +67,8 @@
   ansible.builtin.import_tasks: opencode.yml
 - name: Import opencode-swarm tasks
   ansible.builtin.import_tasks: opencode-swarm.yml
+- name: Import cass tasks
+  ansible.builtin.import_tasks: cass.yml
 
 # === Desktop Environment ===
 - name: Import theme tasks

@@ -34,7 +34,7 @@ Execute, verify, record, exit.
    - Run the narrowest check that covers your files (typecheck + the relevant
      test file). Fix what you broke.
    - Bug-scan your changed files:
-     `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs --format=json <your files>`
+     `/bin/bash /home/me/.nix-profile/bin/ubs --format=json <your files>`
      — fix any `.totals.critical` before completing.
    - Do NOT fix other workers' code — report it instead.
 

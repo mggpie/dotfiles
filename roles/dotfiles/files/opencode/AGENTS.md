@@ -67,8 +67,8 @@ Reading manifests for structure is fine.
 
 - **UBS (bug scanner)** — fast static analysis for the bugs AI generates (null
   deref, missing await, injection, XSS, hardcoded secrets, leaks). UBS needs
-  bash ≥ 4, so call it explicitly under Homebrew bash (GUI-safe, PATH-independent):
-  `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs --format=json <paths>`
+  bash ≥ 4, so call it explicitly (GUI-safe, PATH-independent):
+  `/bin/bash /home/me/.nix-profile/bin/ubs --format=json <paths>`
   Parse `.totals.critical` / `.totals.warning`; add `--fail-on-warning` for a hard gate.
   Used in the worker `verify` step, the reviewer/`demon` passes, and the shipper.
 - **CASS (cross-session search)** — before solving something non-trivial, check if
@@ -96,7 +96,7 @@ Reading manifests for structure is fine.
 - Config sources merge (not replace). Project `opencode.json[c]` overrides global.
 - Permissions use allow/ask/deny; last matching rule wins. `.env` reads are guarded.
 - **GUI (OpenChamber)**: there is no shell PATH/env. The swarm plugin already calls
-  the CLIs by absolute path (`/opt/homebrew/bin/swarm`, `/opt/homebrew/bin/opencode`).
+  the CLIs by absolute path (`~/.config/opencode/node_modules/.bin/swarm`, `~/.nix-profile/bin/opencode`).
   Do not rely on env vars for behavior that must work in the GUI.
 
 ## Knowledge files (load on demand)

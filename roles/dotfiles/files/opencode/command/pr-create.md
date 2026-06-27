@@ -14,7 +14,7 @@ Open a PR for the current branch. No force pushes, no PRs that fail the gate.
 2. **Sync**: is `git status` clean and are there commits ahead of the base?
    If uncommitted changes remain, run `/commit` first.
 3. **Final gate**: typecheck + lint + full test suite +
-   `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs --format=json .` (no criticals).
+   `/bin/bash /home/me/.nix-profile/bin/ubs --format=json .` (no criticals).
 4. **Push**: `git push -u origin <branch>`.
    Never `--force`. Use `--force-with-lease` only if you understand the history
    and the branch is yours.

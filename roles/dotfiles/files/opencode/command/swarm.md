@@ -45,7 +45,7 @@ Reading `package.json` / manifests / `tsconfig` for STRUCTURE is fine. Implement
 ## ✅ The swarm tools ARE installed (do not doubt this)
 
 `swarmmail_*`, `swarm_*`, and `hivemind_*` are loaded and verified in THIS setup
-(self-contained `plugin/swarm.ts` → `/opt/homebrew/bin/swarm`). They are **task-agnostic**:
+(self-contained `plugin/swarm.ts` → `~/.config/opencode/node_modules/.bin/swarm`). They are **task-agnostic**:
 they coordinate writing, research, and analysis just as well as code.
 
 - **Phase 1 MUST begin with a real `swarmmail_init(...)` call** — that is your proof-of-life, and it WILL succeed.

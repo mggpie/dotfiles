@@ -1,0 +1,69 @@
+---
+# CASS (Cross-Agent Session Search) - search across all AI coding agent histories.
+# Installs the prebuilt binary from GitHub releases to ~/.local/bin/cass.
+
+- name: CASS install
+  tags: [cass, notest]
+  block:
+    - name: Check if CASS is installed
+      ansible.builtin.stat:
+        path: "{{ user_home }}/.local/bin/cass"
+      register: dotfiles_cass_installed
+
+    - name: Ensure ~/.local/bin exists
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/bin"
+        state: directory
+        mode: "0755"
+      when: not dotfiles_cass_installed.stat.exists
+
+    - name: Download CASS tarball
+      ansible.builtin.get_url:
+        url: "https://github.com/Dicklesworthstone/coding_agent_session_search/releases/download/v0.6.19/cass-linux-amd64.tar.gz"
+        dest: /tmp/cass-linux-amd64.tar.gz
+        checksum: "sha256:c8bab78fb236ee7566d362525f92648427125ad77137845e3dfe28e6bf99b211"
+        mode: "0644"
+      when: not dotfiles_cass_installed.stat.exists
+      register: dotfiles_cass_downloaded
+
+    - name: Extract and install CASS binary
+      ansible.builtin.shell: |
+        set -o pipefail
+        tar -xzf /tmp/cass-linux-amd64.tar.gz -C /tmp/
+        mv /tmp/cass "{{ user_home }}/.local/bin/cass"
+        chmod +x "{{ user_home }}/.local/bin/cass"
+      args:
+        executable: /bin/bash
+      when: dotfiles_cass_downloaded.changed
+
+    - name: Clean up downloaded tarball
+      ansible.builtin.file:
+        path: /tmp/cass-linux-amd64.tar.gz
+        state: absent
+
+    - name: Build initial CASS search index
+      ansible.builtin.shell: |
+        "{{ user_home }}/.local/bin/cass" index 2>&1
+      args:
+        executable: /bin/bash
+      when: dotfiles_cass_downloaded.changed
+      changed_when: true
+      ignore_errors: true
+
+    - name: Verify CASS installation
+      ansible.builtin.shell: |
+        "{{ user_home }}/.local/bin/cass" --version
+      args:
+        executable: /bin/bash
+      register: dotfiles_cass_version
+      changed_when: false
+
+- name: CASS config
+  tags: [cass]
+  block:
+    - name: Note on CASS indexing
+      ansible.builtin.debug:
+        msg: >
+          CASS installed at {{ user_home }}/.local/bin/cass.
+          Run 'cass index --full' to build a more complete search index
+          of all coding agent sessions.

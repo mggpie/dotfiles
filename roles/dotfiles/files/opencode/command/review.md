@@ -8,7 +8,7 @@ Review uncommitted / changed work without modifying it.
 
 1. Identify the diff: `git status` + `git diff` (structure only).
 2. **Automated bug scan (UBS)** on the changed files:
-   `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs --format=json <files>`
+   `/bin/bash /home/me/.nix-profile/bin/ubs --format=json <files>`
    (parse `.totals.critical` / `.totals.warning`).
 3. **Correctness pass**:
    `Task(subagent_type="saas-reviewer", prompt="Review <files>: bugs, regressions, security, missing tests")`.

@@ -15,7 +15,7 @@ Create a well-formed commit for the current changes. Verify BEFORE committing.
 3. **Quality gate** (must pass before committing):
    - Typecheck + lint + the relevant tests.
    - Bug scan the changed files:
-     `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs --format=json <files>`
+     `/bin/bash /home/me/.nix-profile/bin/ubs --format=json <files>`
      — any `.totals.critical` blocks the commit.
    - Confirm NO secrets / `.env` / API keys / tokens are staged.
 4. **Stage intentionally**: `git add <specific paths>`. Avoid blanket `git add -A`

@@ -493,8 +493,8 @@ Różnica od skilli: knowledge = **referencja** dociągana świadomie; skille =
 ```
 
 **Dlaczego absolutne ścieżki w pluginie?** OpenChamber (GUI) startuje bez shellowego
-PATH. Plugin woła CLI po pełnej ścieżce (`/opt/homebrew/bin/swarm`,
-`/opt/homebrew/bin/opencode`) i prependuje `/opt/homebrew/bin` do PATH przy spawn —
+PATH. Plugin woła CLI po pełnej ścieżce (`~/.config/opencode/node_modules/.bin/swarm`,
+`~/.nix-profile/bin/opencode`) i prependuje `/home/me/.nix-profile/bin` do PATH przy spawn —
 żeby w GUI znaleźć `cass`/`ubs`/`ollama`/`bash5`.
 
 ---
@@ -589,7 +589,7 @@ cass search "stripe webhook idempotency" --robot --limit 5
 > **UBS w `swarm doctor` pokazuje „not found"** — to **fałszywy alarm**. `swarm
 > doctor` woła `ubs` przez `/usr/bin/env bash`, który w Twoim PATH trafia na
 > macOS bash 3.2 (UBS wymaga ≥4). Agenci wołają UBS poprawnie przez
-> `/opt/homebrew/bin/bash /opt/homebrew/bin/ubs` i **działa** (zweryfikowane —
+> `/bin/bash /home/me/.nix-profile/bin/ubs` i **działa** (zweryfikowane —
 > łapie błędy). Czysto kosmetyczne.
 
 ---
