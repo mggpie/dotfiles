@@ -21,8 +21,16 @@ function lineout-keepalive --description "Keep analog line-out active to prevent
                 return 0
             end
 
-            paplay --raw --format=s16le --rate=48000 --channels=2 /dev/zero >/dev/null 2>&1 &
-            disown $last_pid
+            # Retry: paplay fails instantly if PipeWire is not ready yet at boot
+            for i in (seq 5)
+                paplay --raw --format=s16le --rate=48000 --channels=2 /dev/zero >/dev/null 2>&1 &
+                set -l pid $last_pid
+                sleep 0.3
+                if kill -0 $pid 2>/dev/null
+                    disown $pid
+                    return 0
+                end
+            end
         case '*'
             echo "Usage: lineout-keepalive [start|stop|restart|sync]"
             return 1
