@@ -1,7 +1,7 @@
 # 🐝 OpenCode Swarm — pełny przewodnik
 
 Multi-agentowy system do **wymyślania, walidacji i budowy** produktów/SaaS-ów w
-**OpenCode 1.17.7 + OpenChamber** (GUI) na MacBooku Air M2.
+**OpenCode 1.17.7 + OpenChamber** (GUI) na Void Linux workstation.
 
 > **Jedno zdanie:** drogi model **myśli i ocenia**, tanie modele **wykonują**,
 > a twarda **bramka jakości + pamięć** sprawiają, że tanie modele dają dobry wynik.
@@ -126,6 +126,10 @@ złe rynki — dlatego anti-fit jest kluczowy. To founder-market-fit, nie terapi
 
 Odpalasz raz: `/profile`. Odświeżasz, gdy zmieni się sytuacja życiowa.
 
+### Ewolucja founder-fit
+
+Po przejściu `/validate` z werdyktem `GO`, system auto-dopisuje do `profile/founder-fit.md` co zadziałało w tym pomysle: które atuty zostały potwierdzone, jakie nowe kanały dystrybucji odkryte, co mówi o Twoim founder-market-fit. Founder-fit ewoluuje z każdą walidacją — nie jest statycznym snapshotem.
+
 ---
 
 ## 🧠 Jak to działa — model myślowy
@@ -183,6 +187,7 @@ Pięć warstw. Wszystko żyje w `~/.config/opencode/`.
 | **3. Silnik (toole)** | Plugin swarma daje toole, których agenci używają | `plugin/swarm.ts` → CLI `swarm` |
 | **4. Bramka jakości** | Review + adwersarz + skaner błędów | reviewer/demon + UBS |
 | **5. Pamięć** | Uczenie się między sesjami | hivemind (Ollama), learning loop, CASS |
+| **6. CI/CD** | GitHub Actions: ansible-lint na PR, molecule na merge do main | `.github/workflows/swarm.yml` |
 
 **Kluczowy insight:** wszystkie „super-funkcje" (epiki, rezerwacje plików, pamięć
 semantyczna, adversarial review, learning loop, worktrees) to **natywne toole
@@ -245,7 +250,7 @@ pod SaaS), plus 4 pomocnicze.
 |---|---|---|
 | `saas-backend` | DeepSeek Flash `max` | API, serwisy, logika serwerowa, integracje, webhooki. |
 | `saas-frontend` | DeepSeek Flash `max` | UI, formularze, dashboardy, stan kliencki. |
-| `saas-test` | DeepSeek Flash `max` | **Tylko** testy (`*.test.*`, `*.spec.*`) — uprawnienia ograniczone do plików testowych. |
+| `saas-test` | DeepSeek Flash `max` | **Tylko** testy (`*.test.*`, `*.spec.*`) — uprawnienia ograniczone do plików testowych. Flaga `--integration` włącza testy DB-backed API (wymaga lokalnej bazy). |
 | `swarm-worker` | DeepSeek Flash `max` | Generyczny wykonawca subtaska (cokolwiek poza powyższymi). |
 | `refactorer` | DeepSeek Flash `max` | Mechaniczna migracja wzorca po wielu plikach, zachowuje zachowanie. |
 | `swarm-researcher` | DeepSeek Flash `max` | Read-only research dokumentacji/API w jednorazowym kontekście; zapisuje do hivemind, zwraca skrót. |
@@ -318,7 +323,7 @@ Gdy wpisujesz `/swarm "zadanie"`, koordynator przechodzi przez fazy:
 | Faza | Co się dzieje | Toole |
 |---|---|---|
 | **0. Sokratejskie pytania** | Dopytuje o zakres/strategię, JEDNO pytanie naraz z opcjami. Pomijane przez `--fast`/`--auto`. | — |
-| **1. Init + pamięć** | Dołącza do swarma, sprawdza co już wiadomo (poprzednie decyzje, które strategie działały). | `swarmmail_init`, `swarm_get_strategy_insights`, `hivemind_find` |
+| **1. Init + pamięć** | Dołącza do swarma, sprawdza co już wiadomo (poprzednie decyzje, które strategie działały). **CASS pre-flight:** auto-przeszukuje historię AI — jeśli problem był już rozwiązany w sesji X, wyświetla ostrzeżenie „Previously solved in session X" i czeka na potwierdzenie. | `swarmmail_init`, `swarm_get_strategy_insights`, `hivemind_find`, `cass_search` |
 | **1.5. Research** | Tylko dla nieznanej technologii: spawnuje researchera w jednorazowym kontekście. | `Task(swarm-researcher)` |
 | **2. Dekompozycja** | Wybiera strategię, dzieli na 2-7 subtasków z **nienakładającymi się** plikami. | `swarm_select_strategy`, `swarm_plan_prompt`, `swarm_validate_decomposition` |
 | **3. Epic** | Tworzy epic + subtaski (śledzenie backed gitem). | `hive_create_epic` |
@@ -348,6 +353,8 @@ Trzy niezależne pasy, każdy łapie co innego:
    niebezpieczne".
 3. **UBS** — mechaniczny skaner: brak `await`, null-deref, XSS, wstrzyknięcia,
    hardcoded secrets, wycieki zasobów. **Każdy `critical` blokuje.**
+
+Reviewer i demon działają **równolegle** (nie sekwencyjnie) — skraca czas bramki z ~4 min do ~2 min. Oba pasy są niezależne, więc nie ma ryzyka wzajemnego wpływu.
 
 Bramka działa **po każdym workerze** (nie zbiorczo na końcu) — błąd łapany od razu,
 zanim się rozleje. Werdykt: `approved` / `needs_changes` (retry, max 3×) /
@@ -382,6 +389,16 @@ Przeszukuje sesje **wszystkich** agentów (Claude Code, Codex, Cursor, OpenCode�
 Zanim rozwiążesz problem od zera: `cass search "..." --robot` sprawdza, czy już
 go rozwiązałeś gdzieś indziej.
 
+### 4. Production Bug Webhook — automatyczne wciąganie błędów
+
+Serwer Bun (`scripts/prod-webhook.ts`) nasłuchuje na porcie `:4097` na raporty
+błędów z Sentry/LogRocket. Każdy zgłoszony błąd automatycznie trafia do hivemind
+jako learning (z kontekstem: stack trace, środowisko, wersja). Efekt: system
+**uczy się na produkcji** — następnym razem ten sam wzorzec błędu zostanie
+rozpoznany zanim go popełnisz.
+
+Uruchomienie: `bun run scripts/prod-webhook.ts` (lub jako usługa systemd/runit).
+
 ---
 
 ## 🎛️ Komendy
@@ -409,6 +426,7 @@ Wpisujesz je w OpenCode (TUI/OpenChamber). Definicje w `command/*.md`.
 | `/parallel "a" "b"` | Znane, niezależne taski równolegle (gdy sam znasz podział). |
 | `/worktree-task "..."` | Ryzykowna/równoległa robota w izolowanym git worktree. |
 | `/retro` | Po swarmie: czego się nauczył system, anti-patterny, sync. |
+| `/costs` | Panel kosztów ostatniej sesji swarm: tokeny we/wy per model, koszt USD, porównanie z budżetem. Zawiera tabelkę z aktualnymi cenami modeli. |
 | `/commit` | Bramka (typecheck+lint+testy+UBS, brak sekretów) → czysty Conventional Commit. |
 | `/pr-create` | Push + PR ze strukturalnym opisem (przez `gh`; bez `gh` daje compare-URL). |
 
