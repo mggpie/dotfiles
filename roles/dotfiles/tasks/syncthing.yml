@@ -52,6 +52,10 @@
           id: "para-{{ item.folder }}"
           path: "{{ ansible_user_dir }}/{{ item.folder }}"
           type: "sendreceive"
+          versioning:
+            type: "staggered"
+            params:
+              maxAge: "2592000"
         body_format: json
         status_code: [200, 201]
       loop:
