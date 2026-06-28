@@ -35,7 +35,7 @@ provisioner:
       telegram,qbittorrent,obsidian,
       vscode,zed,lite-xl,
       virtualization,qemu,kvm,docker,
-      nix,repos,maza,dev,gh,ssh,cass,prod-webhook,ollama,ubs
+      nix,repos,maza,dev,gh,ssh,cass,opencode-swarm
   config_options:
     defaults:
       interpreter_python: /usr/bin/python3

@@ -67,14 +67,8 @@
   ansible.builtin.import_tasks: opencode.yml
 - name: Import opencode-swarm tasks
   ansible.builtin.import_tasks: opencode-swarm.yml
-- name: Import prod-webhook tasks
-  ansible.builtin.import_tasks: prod-webhook.yml
 - name: Import cass tasks
   ansible.builtin.import_tasks: cass.yml
-- name: Import ollama tasks
-  ansible.builtin.import_tasks: ollama.yml
-- name: Import ubs tasks
-  ansible.builtin.import_tasks: ubs.yml
 
 # === Desktop Environment ===
 - name: Import theme tasks
