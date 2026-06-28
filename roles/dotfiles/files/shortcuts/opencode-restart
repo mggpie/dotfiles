@@ -1,0 +1,2 @@
+#!/usr/bin/fish
+opencode-restart $argv
