@@ -43,6 +43,8 @@
   ansible.builtin.import_tasks: openrgb.yml
 - name: Import wifi tasks
   ansible.builtin.import_tasks: wifi.yml
+- name: Import tailscale tasks
+  ansible.builtin.import_tasks: tailscale.yml
 - name: Import gaming tasks
   ansible.builtin.import_tasks: gaming.yml
 
