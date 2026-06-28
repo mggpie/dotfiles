@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: mggpie
+  description: macOS workstation role for dotfiles project
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: macOS
+      versions:
+        - all
+  galaxy_tags:
+    - macos
+    - dotfiles
+
+dependencies: []

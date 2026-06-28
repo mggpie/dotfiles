@@ -1,0 +1,16 @@
+---
+- name: Tailscale (macOS)
+  tags: [tailscale]
+  block:
+    - name: Ensure tailscale is installed via Homebrew
+      community.general.homebrew:
+        name: tailscale
+        state: present
+      # tailscale is already in the homebrew bulk install list, but this
+      # ensures it is present even if homebrew.yml tags are not selected.
+
+    - name: Start tailscale as launchd service
+      ansible.builtin.command:
+        cmd: brew services start tailscale
+      register: tailscale_service
+      changed_when: "'already started' not in tailscale_service.stdout"

@@ -1,0 +1,16 @@
+---
+- name: Syncthing (macOS)
+  tags: [syncthing]
+  block:
+    - name: Ensure syncthing is installed via Homebrew
+      community.general.homebrew:
+        name: syncthing
+        state: present
+      # syncthing is already in the homebrew bulk install list, but this
+      # ensures it is present even if homebrew.yml tags are not selected.
+
+    - name: Start syncthing as launchd service
+      ansible.builtin.command:
+        cmd: brew services start syncthing
+      register: syncthing_service
+      changed_when: "'already started' not in syncthing_service.stdout"

@@ -1,0 +1,7 @@
+---
+- name: macOS workstation
+  hosts: localhost
+  connection: local
+  roles:
+    - macos
+    - dotfiles  # for opencode, fish, git, vscode that work cross-platform

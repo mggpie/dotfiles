@@ -1,0 +1,53 @@
+---
+- name: macOS system defaults
+  tags: [macos-defaults]
+  block:
+    # === Keyboard ===
+    - name: Set fast key repeat rate
+      ansible.builtin.command:
+        cmd: defaults write -g InitialKeyRepeat -int 15
+      changed_when: false
+
+    - name: Set key repeat rate
+      ansible.builtin.command:
+        cmd: defaults write -g KeyRepeat -int 2
+      changed_when: false
+
+    # === Dock ===
+    - name: Enable dock auto-hide
+      ansible.builtin.command:
+        cmd: defaults write com.apple.dock autohide -bool true
+      changed_when: false
+
+    - name: Disable dock auto-hide delay
+      ansible.builtin.command:
+        cmd: defaults write com.apple.dock autohide-delay -float 0
+      changed_when: false
+
+    # === Finder ===
+    - name: Show Finder path bar
+      ansible.builtin.command:
+        cmd: defaults write com.apple.finder ShowPathbar -bool true
+      changed_when: false
+
+    - name: Show Finder status bar
+      ansible.builtin.command:
+        cmd: defaults write com.apple.finder ShowStatusBar -bool true
+      changed_when: false
+
+    - name: Show all filename extensions in Finder
+      ansible.builtin.command:
+        cmd: defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+      changed_when: false
+
+    # === Trackpad ===
+    - name: Enable tap to click on trackpad
+      ansible.builtin.command:
+        cmd: defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+      changed_when: false
+
+    # === .DS_Store ===
+    - name: Prevent .DS_Store creation on network volumes
+      ansible.builtin.command:
+        cmd: defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+      changed_when: false

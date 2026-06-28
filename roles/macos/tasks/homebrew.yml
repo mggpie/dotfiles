@@ -1,0 +1,34 @@
+---
+- name: Homebrew packages
+  tags: [homebrew]
+  block:
+    - name: Check if Homebrew is installed
+      ansible.builtin.command:
+        cmd: which brew
+      register: brew_check
+      changed_when: false
+      failed_when: false
+
+    - name: Install Homebrew if missing
+      ansible.builtin.shell:
+        cmd: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      when: brew_check.rc != 0
+      args:
+        creates: /opt/homebrew/bin/brew
+
+    - name: Install Homebrew packages
+      community.general.homebrew:
+        name:
+          - syncthing
+          - tailscale
+          - fish
+          - git
+          - wezterm
+          - ripgrep
+          - fd
+          - fzf
+          - jq
+          - yq
+          - aerospace
+        state: present
+        update_homebrew: false
