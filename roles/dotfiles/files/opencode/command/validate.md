@@ -22,7 +22,7 @@ Default = full quality path.
 | Role | Model | Family |
 |---|---|---|
 | Coordinator (you) | deepseek/deepseek-v4-pro (max) | DeepSeek |
-| biz-strategist, biz-cfo, biz-pm | deepseek/deepseek-v4-flash (max) | DeepSeek |
+| biz-strategist, biz-cfo, biz-pm | deepseek/deepseek-v4-pro (max) | DeepSeek |
 | biz-researcher (+web) | deepseek/deepseek-v4-flash (max) | DeepSeek |
 | biz-demon (adversary) | openrouter/z-ai/glm-5.2 | GLM |
 

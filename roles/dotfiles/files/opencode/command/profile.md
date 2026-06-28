@@ -18,7 +18,7 @@ You do not generate ideas (that's `/ideate`). You produce the lens.
 | Role | Model |
 |---|---|
 | Coordinator (you) | deepseek/deepseek-v4-pro (max) |
-| psyche-profiler (reads the whole bundle) | deepseek/deepseek-v4-flash (max) |
+| psyche-profiler (reads the whole bundle) | deepseek/deepseek-v4-pro (max) |
 
 ## Profile source (in your PARA system)
 
