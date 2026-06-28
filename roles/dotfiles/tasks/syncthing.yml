@@ -18,3 +18,62 @@
       ansible.builtin.command:
         cmd: syncthing generate
         creates: "{{ ansible_user_dir }}/.local/state/syncthing/cert.pem"
+
+    - name: Start syncthing daemon temporarily for API configuration
+      ansible.builtin.shell:
+        cmd: STNOUPGRADE=1 STNORESTART=1 nohup syncthing serve --no-browser > /dev/null 2>&1 & echo $!
+      register: syncthing_pid
+
+    - name: Wait for syncthing API to be ready
+      ansible.builtin.wait_for:
+        port: 8384
+        host: 127.0.0.1
+        state: started
+        delay: 3
+        timeout: 30
+
+    - name: Extract syncthing API key from config.xml
+      ansible.builtin.shell:
+        cmd: awk -F'[<>]' '/<apikey>/{print $3}' "{{ ansible_user_dir }}/.local/state/syncthing/config.xml"
+      register: syncthing_api_key_result
+
+    - name: Set syncthing API key fact
+      ansible.builtin.set_fact:
+        syncthing_api_key: "{{ syncthing_api_key_result.stdout }}"
+
+    - name: Ensure PARA directories exist for syncthing
+      ansible.builtin.file:
+        path: "{{ ansible_user_dir }}/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - 0-Inbox
+        - 1-Projects
+        - 2-Areas
+        - 3-Resources
+        - 4-Archives
+
+    - name: Configure syncthing folder for each PARA folder
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:8384/rest/config/folders"
+        method: PUT
+        headers:
+          X-API-Key: "{{ syncthing_api_key }}"
+        body:
+          id: "para-{{ item.folder }}"
+          path: "{{ ansible_user_dir }}/{{ item.folder }}"
+          type: "sendreceive"
+        body_format: json
+        status_code: [200, 201]
+      loop:
+        - { folder: "0-Inbox" }
+        - { folder: "1-Projects" }
+        - { folder: "2-Areas" }
+        - { folder: "3-Resources" }
+        - { folder: "4-Archives" }
+      ignore_errors: true
+
+    - name: Stop temporary syncthing daemon
+      ansible.builtin.shell:
+        cmd: kill {{ syncthing_pid.stdout }} 2>/dev/null || true
+      changed_when: false
