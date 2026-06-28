@@ -1,0 +1,20 @@
+---
+- name: Syncthing
+  tags: [syncthing, notest]
+  block:
+    - name: Install syncthing
+      community.general.xbps:
+        name: syncthing
+        state: present
+      become: true
+
+    - name: Ensure syncthing config directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_user_dir }}/.local/state/syncthing"
+        state: directory
+        mode: '0700'
+
+    - name: Generate syncthing keys if not present
+      ansible.builtin.command:
+        cmd: syncthing generate
+        creates: "{{ ansible_user_dir }}/.local/state/syncthing/cert.pem"
