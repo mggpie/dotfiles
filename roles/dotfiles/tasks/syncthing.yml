@@ -41,18 +41,7 @@
       ansible.builtin.set_fact:
         syncthing_api_key: "{{ syncthing_api_key_result.stdout }}"
 
-    - name: Ensure PARA directories exist for syncthing
-      ansible.builtin.file:
-        path: "{{ ansible_user_dir }}/{{ item }}"
-        state: directory
-        mode: '0755'
-      loop:
-        - 0-Inbox
-        - 1-Projects
-        - 2-Areas
-        - 3-Resources
-        - 4-Archives
-
+    # PARA directories are created by para.yml — no need to duplicate here.
     - name: Configure syncthing folder for each PARA folder
       ansible.builtin.uri:
         url: "http://127.0.0.1:8384/rest/config/folders"
