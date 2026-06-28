@@ -27,6 +27,8 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 **Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time. Solaar manages the Logitech MX Anywhere 3 - Smart Shift + Back + Forward fires `tv`, Smart Shift + scroll controls volume, Smart Shift alone emits middle click, Back/Forward alone switch Sway workspaces.
 
+**OpenCode:** [OpenCode Swarm](roles/dotfiles/files/opencode/README.md) — multi-agent AI coding with DeepSeek V4, RTK token compression, deployed via `opencode-swarm` tag.
+
 ## How It's Built
 
 > **WARNING:** `secrets.yml` is publicly committed and Ansible Vault-encrypted. This is intentional for a personal, non-production machine. Secrets contain only GitHub tokens (regularly rotated) and Bluetooth MAC addresses (public by design, no security risk if exposed). The vault password is 40 characters. Never replicate this pattern for production infrastructure or shared systems.
@@ -194,10 +196,6 @@ RGB LEDs flash red during maintenance, rainbow when done. Errors saved to `~/0-I
 - New repos on GitHub -> cloned to `1-Projects` or `4-Archives` based on `repos_active`
 - Repos deleted from GitHub -> local clone removed
 - Repos moved between PARA dirs -> `vars/main.yml` updated, committed and pushed automatically
-
-## OpenCode Swarm
-
-OpenCode is the AI coding assistant (DeepSeek V4 via Nix). OpenChamber is the VSCode plugin that provides its GUI. Together they form a multi-agent swarm — DeepSeek V4 Pro handles planning and review, Flash handles execution. Everything is deployed by the `opencode-swarm` ansible tag: plugin, agents, commands, knowledge, configs. Command output flows through RTK (Rust Token Killer), a compression proxy that strips redundant output saving 60-90% tokens. See `roles/dotfiles/files/opencode/README.md` for the full guide.
 
 ## Secrets
 

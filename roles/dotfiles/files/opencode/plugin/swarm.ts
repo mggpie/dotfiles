@@ -633,6 +633,8 @@ async function execTool(
           OPENCODE_MESSAGE_ID: ctx.messageID,
           OPENCODE_AGENT: ctx.agent,
           SWARM_PROJECT_DIR: projectDirectory,
+          OLLAMA_HOST: "http://127.0.0.1:11434",
+          OLLAMA_MODEL: "nomic-embed-text",
         },
       },
     });

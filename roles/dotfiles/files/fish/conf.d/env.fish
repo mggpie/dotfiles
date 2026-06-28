@@ -46,6 +46,10 @@ set -gx BOSE_QC45_MAC "{{ bose_mac }}"
 set -gx DEEPSEEK_API_KEY "{{ deepseek_api_key }}"
 set -gx OPENROUTER_API_KEY "{{ openrouter_api_key }}"
 
+# Ollama for hivemind semantic search embeddings
+set -gx OLLAMA_HOST http://127.0.0.1:11434
+set -gx OLLAMA_MODEL nomic-embed-text
+
 # Smarthome control (from secrets.yml)
 set -gx SMARTHOME_HOST "{{ smarthome_host }}"
 set -gx SMARTHOME_USER "{{ smarthome_user }}"
