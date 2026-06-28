@@ -1,0 +1,2 @@
+#!/bin/sh
+exec chpst -u {{ username }}:{{ username }} {{ user_home }}/.nix-profile/bin/bun run {{ user_home }}/.config/opencode/scripts/prod-webhook.ts 2>&1

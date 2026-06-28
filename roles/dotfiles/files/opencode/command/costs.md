@@ -49,10 +49,25 @@ Session: swarm-abcd1234
 ```
 
 Records are written by `scripts/cost-tracker.ts`, which hooks into API
-responses and logs every agent call. Run it standalone to aggregate:
+responses and logs every agent call. Costs are tracked per-swarm-session —
+each swarm run produces one cost file at `~/.config/opencode/costs/<session-id>.json`.
+
+Run it standalone to aggregate:
 
 ```bash
 bun run ~/.config/opencode/scripts/cost-tracker.ts summary <session-id>
+```
+
+Manually record a single API call (useful when the automated hook isn't wired):
+
+```bash
+bun run ~/.config/opencode/scripts/cost-tracker.ts record <session-id> <model> <input-tokens> <output-tokens>
+```
+
+Example:
+
+```bash
+bun run ~/.config/opencode/scripts/cost-tracker.ts record swarm-abc123 deepseek/deepseek-v4-flash 15000 3200
 ```
 
 ## Files

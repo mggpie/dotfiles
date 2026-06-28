@@ -580,6 +580,19 @@ let sdkClient: any = null;
  * Passes session context via environment variables.
  * 
  * IMPORTANT: Runs in projectDirectory (set by OpenCode) not process.cwd()
+ * 
+ * TODO: Cost tracking — when the OpenCode SDK exposes per-call token counts
+ * (input tokens + output tokens per agent invocation), add a call to
+ * cost-tracker.ts record here. Something like:
+ *
+ *   const costTracker = "~/.config/opencode/scripts/cost-tracker.ts";
+ *   Bun.spawn(["bun", "run", costTracker, "record",
+ *     ctx.sessionID, model, String(inputTokens), String(outputTokens)]);
+ *
+ * The model name is available from the agent config (ctx.agent maps to a model
+ * in opencode.json). Token counts would come from the SDK response metadata.
+ * Until then, costs are recorded manually or at swarm end via:
+ *   bun run ~/.config/opencode/scripts/cost-tracker.ts summary $OPENCODE_SESSION_ID
  */
 async function execTool(
   name: string,

@@ -1,0 +1,33 @@
+---
+# UBS (Ultimate Bug Scanner) - fast static analysis for AI-generated bugs.
+# Pure bash script (needs bash >= 4, python3, jq).
+# Installed via the RogerNavelsaker nix flake which wraps with runtime deps.
+
+- name: UBS install
+  tags: [ubs, notest]
+  block:
+    - name: Install or upgrade UBS from Nix flake
+      ansible.builtin.shell: |
+        set -o pipefail
+        . ~/.nix-profile/etc/profile.d/nix.sh
+        before=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixpkg-ultimate-bug-scanner$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+        if [ -z "$before" ]; then
+          nix {{ dotfiles_nix_experimental_flags }} profile install github:RogerNavelsaker/nixpkg-ultimate-bug-scanner
+        else
+          nix {{ dotfiles_nix_experimental_flags }} profile upgrade nixpkg-ultimate-bug-scanner
+          after=$(nix profile list 2>/dev/null | awk '/^Name:[[:space:]]+nixpkg-ultimate-bug-scanner$/{found=1} found && /^Store paths:/{print $NF; found=0}')
+          [ "$before" = "$after" ] && echo "UNCHANGED"
+        fi
+      args:
+        executable: /bin/bash
+      register: dotfiles_ubs_install
+      changed_when: "'UNCHANGED' not in dotfiles_ubs_install.stdout"
+      failed_when: dotfiles_ubs_install.rc != 0
+
+    - name: Verify UBS installation
+      ansible.builtin.shell: |
+        "{{ user_home }}/.nix-profile/bin/ubs" --version
+      args:
+        executable: /bin/bash
+      register: dotfiles_ubs_version
+      changed_when: false

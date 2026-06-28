@@ -26,16 +26,33 @@ function deploy
     # Go to dotfiles directory
     cd $dotfiles_dir
 
-    # Check if there are changes to commit
-    if git status --porcelain | grep -q .
-        echo "📝 Committing changes..."
-        git add .
-        git commit -m "Auto-update $tags_readable configuration"
+    # Stage only tracked/modified files, never untracked
+    # Prevents accidentally committing secrets or garbage files
+    git add -u
 
-        echo "⬆️  Pushing to GitHub..."
-        git push
+    if not git diff --cached --quiet
+        echo "Changes staged for commit:"
+        git diff --cached --stat
+        echo ""
+        read -P "Proceed with commit? [Y/n] " -l confirm
+        if test -z "$confirm"; or string match -qri "y" $confirm
+            # Build commit message with changed files and tags
+            set changed_files (git diff --cached --name-only | string join ", ")
+            set commit_msg "deploy $tags_readable: $changed_files"
+            if test (string length "$commit_msg") -gt 200
+                set file_count (git diff --cached --name-only | wc -l | string trim)
+                set commit_msg "deploy $tags_readable: $file_count files"
+            end
+            git commit -m "$commit_msg"
+
+            echo "Pushing to GitHub..."
+            git push
+        else
+            echo "Commit skipped. Unstaging changes..."
+            git reset HEAD >/dev/null 2>&1
+        end
     else
-        echo "✓ No changes to commit"
+        echo "No tracked changes to commit"
     end
 
     # Deploy with ansible

@@ -156,13 +156,22 @@ After all cells pass review:
 Task(subagent_type="saas-shipper", prompt="Run typecheck + lint + full test suite. Report SHIP READY or the exact failures.")
 ```
 
-### Phase 8 — Record + sync
+### Phase 8 — Record costs + sync
 ```
 hive_sync()                                        # sync cells / epic to git
+
+# Record costs if cost-tracker is available:
+bun run ~/.config/opencode/scripts/cost-tracker.ts summary $OPENCODE_SESSION_ID
 ```
 Workers already called `swarm_complete` (records outcomes → learning loop). The
 fast/slow + success/error signals promote good patterns and auto-invert
 (>60% failure) bad ones into anti-patterns for next time.
+
+Costs are recorded per-swarm-session. The `summary` command reads the session's
+cost records (written by `cost-tracker.ts record` calls). If no granular records
+exist yet (the plugin doesn't have SDK token counts), the summary will be empty
+— that's expected until the SDK exposes per-call token data. See `/costs` for
+manual recording.
 
 ---
 
