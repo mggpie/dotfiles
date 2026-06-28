@@ -52,6 +52,7 @@
         - knowledge
         - skills
         - scripts
+        - plugins
 
     - name: Deploy swarm top-level files (AGENTS.md, package.json, README)
       ansible.builtin.copy:
@@ -159,6 +160,34 @@
       args:
         executable: /bin/bash
       register: dotfiles_ubs_version
+      changed_when: false
+
+    # ------------------------------------------------------------
+    # RTK (Rust Token Killer) - CLI proxy for token-efficient output
+    # ------------------------------------------------------------
+    - name: Install or upgrade RTK binary
+      ansible.builtin.shell: |
+        set -o pipefail
+        INSTALLER=$(mktemp)
+        curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh -o "$INSTALLER"
+        chmod +x "$INSTALLER"
+        sh "$INSTALLER"
+        rm -f "$INSTALLER"
+      args:
+        executable: /bin/bash
+        creates: "{{ user_home }}/.local/bin/rtk"
+      register: dotfiles_rtk_install
+
+    - name: Activate RTK OpenCode plugin
+      ansible.builtin.command:
+        cmd: "{{ user_home }}/.local/bin/rtk init -g --opencode"
+        creates: "{{ user_home }}/.config/opencode/plugins/rtk.ts"
+      register: dotfiles_rtk_init
+
+    - name: Verify RTK installation
+      ansible.builtin.command:
+        cmd: "{{ user_home }}/.local/bin/rtk --version"
+      register: dotfiles_rtk_version
       changed_when: false
 
     # ------------------------------------------------------------
