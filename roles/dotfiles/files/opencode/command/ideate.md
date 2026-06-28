@@ -20,9 +20,9 @@ engage it ONLY if the user literally typed it; never self-select it. Default = f
 | Role | Model |
 |---|---|
 | Coordinator (you) | deepseek/deepseek-v4-pro (max) |
-| psyche-profiler, psyche-synthesizer | openrouter/moonshotai/kimi-k2-thinking |
+| psyche-profiler, psyche-synthesizer | deepseek/deepseek-v4-flash (max) |
 | psyche-scout | deepseek/deepseek-v4-flash (+ web) |
-| psyche-critic (fit adversary) | openrouter/minimax/minimax-m2.7 |
+| psyche-critic (fit adversary) | openrouter/z-ai/glm-5.2 |
 
 ## Workspace & artifact
 

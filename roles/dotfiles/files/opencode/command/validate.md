@@ -17,17 +17,17 @@ ONLY if the user literally typed them, never self-select): `--fast` (skip
 questions), `--brutal` (raise the kill bar — demon + CFO run an extra round).
 Default = full quality path.
 
-## Model routing (3 Chinese families = max adversary diversity, all cheap)
+## Model routing (DeepSeek workhorses + diverse adversary)
 
 | Role | Model | Family |
 |---|---|---|
 | Coordinator (you) | deepseek/deepseek-v4-pro (max) | DeepSeek |
-| biz-strategist, biz-cfo, biz-pm | openrouter/moonshotai/kimi-k2-thinking | Moonshot |
-| biz-researcher (+web) | deepseek/deepseek-v4-flash | DeepSeek |
-| biz-demon (adversary) | openrouter/minimax/minimax-m2.7 | MiniMax |
+| biz-strategist, biz-cfo, biz-pm | deepseek/deepseek-v4-flash (max) | DeepSeek |
+| biz-researcher (+web) | deepseek/deepseek-v4-flash (max) | DeepSeek |
+| biz-demon (adversary) | openrouter/z-ai/glm-5.2 | GLM |
 
-> Swap any analyst/demon to a stronger model (e.g. `openrouter/z-ai/glm-5.2`) in the
-> agent file for a high-stakes idea. Default stays cheap because most ideas should die.
+> Swap the demon to an even stronger model (e.g. `openrouter/minimax/minimax-m2.7`) in the
+> agent file for a high-stakes idea. GLM is the default because it's diverse from DeepSeek.
 
 ## Workspace & artifact
 
