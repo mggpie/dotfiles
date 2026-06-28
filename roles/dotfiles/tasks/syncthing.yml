@@ -70,3 +70,26 @@
       ansible.builtin.shell:
         cmd: kill {{ syncthing_pid.stdout }} 2>/dev/null || true
       changed_when: false
+
+    # Runit service - start syncthing on boot, independent of terminal sessions.
+    # ----------------------------------------------------------------------
+    - name: Ensure runit service directory exists
+      ansible.builtin.file:
+        path: /etc/sv/syncthing
+        state: directory
+        mode: "0755"
+      become: true
+
+    - name: Deploy syncthing run script
+      ansible.builtin.template:
+        src: "{{ role_path }}/files/runit/syncthing/run"
+        dest: /etc/sv/syncthing/run
+        mode: "0755"
+      become: true
+
+    - name: Enable syncthing runit service
+      ansible.builtin.file:
+        src: /etc/sv/syncthing
+        dest: /var/service/syncthing
+        state: link
+      become: true
