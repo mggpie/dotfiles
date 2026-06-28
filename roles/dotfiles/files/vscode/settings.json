@@ -11,7 +11,7 @@
     "editor.smoothScrolling": true,
     "editor.bracketPairColorization.enabled": true,
 
-    "workbench.colorTheme": "Monokai Pro Light",
+    "workbench.colorTheme": "Monokai Pro Light (Filter Sun)",
     "workbench.startupEditor": "none",
     "workbench.activityBar.location": "top",
 

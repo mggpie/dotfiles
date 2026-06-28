@@ -1,491 +1,491 @@
-# 🐝 OpenCode Swarm — pełny przewodnik
+# 🐝 OpenCode Swarm — complete guide
 
-Multi-agentowy system do **wymyślania, walidacji i budowy** produktów/SaaS-ów w
-**OpenCode 1.17.7 + OpenChamber** (GUI) na Void Linux workstation.
+Multi-agent system for **ideating, validating, and building** products/SaaS in
+**OpenCode 1.17.7 + OpenChamber** (GUI) on Void Linux workstation.
 
-> **Jedno zdanie:** drogi model **myśli i ocenia**, tanie modele **wykonują**,
-> a twarda **bramka jakości + pamięć** sprawiają, że tanie modele dają dobry wynik.
+> **One sentence:** expensive model **thinks and evaluates**, cheap models **execute**,
+> and a hard **quality gate + memory** ensure cheap models deliver good results.
 
-> **Trzy warstwy:** `/ideate` (jaki pomysł pasuje do mnie?) → `/validate` (czy ktoś
-> za to zapłaci?) → `/swarm` (zbuduj to). Ten sam silnik, inne klocki. Bramka
-> ludzka między warstwami. Przed nimi **Warstwa 0** (`/profile`) wciąga Twój
-> **pełny profil** i destyluje go w soczewkę founder-fit.
-
----
-
-## 📖 Spis treści
-
-1. [Dlaczego to powstało](#-dlaczego-to-powstało)
-2. [Pipeline: od pomysłu do kodu (3 warstwy)](#-pipeline-od-pomysłu-do-kodu-3-warstwy)
-3. [Jak to działa — model myślowy](#-jak-to-działa--model-myślowy)
-4. [Architektura — z czego się składa](#-architektura--z-czego-się-składa)
-5. [Agenci (25) — kto jest kim](#-agenci-25--kto-jest-kim)
-6. [Dobór modeli — i dlaczego tak](#-dobór-modeli--i-dlaczego-tak)
-7. [Przepływ `/swarm` krok po kroku](#-przepływ-swarm-krok-po-kroku)
-8. [Bramka jakości](#-bramka-jakości)
-9. [Pamięć i uczenie się](#-pamięć-i-uczenie-się)
-10. [Komendy](#-komendy)
-11. [Narzędzia (silnik)](#-narzędzia-silnik)
-12. [Skille](#-skille-wiedza-na-żądanie)
-13. [Pliki wiedzy](#-pliki-wiedzy-knowledge)
-14. [Struktura plików](#-struktura-plików)
-15. [Git / GitHub](#-git--github-skonfigurowane)
-16. [Przepisy — typowe sytuacje](#-przepisy--typowe-sytuacje)
-17. [Diagnostyka](#-diagnostyka)
-18. [Czego NIE robić](#-czego-nie-robić)
-19. [Słownik pojęć](#-słownik-pojęć)
+> **Three layers:** `/ideate` (which idea fits me?) → `/validate` (will anyone pay
+> for it?) → `/swarm` (build it). Same engine, different building blocks. Human
+> gate between layers. Before them, **Layer 0** (`/profile`) pulls your
+> **full profile** and distills it into a founder-fit lens.
 
 ---
 
-## 🎯 Dlaczego to powstało
+## 📖 Table of Contents
 
-**Problem.** Pojedynczy model AI piszący cały SaaS ma trzy wady:
-- **Drogi**, jeśli mocny — albo **słaby**, jeśli tani.
-- Traci kontekst przy dużych zadaniach (jeden wątek = jedno okno kontekstu).
-- Nikt nie sprawdza jego pracy poza Tobą.
-
-**Teza tego setupu.** Rozdziel **myślenie** od **wykonania**:
-- Zero drogich modeli US (żadnego Opus/GPT). Same tanie chińskie modele — a bramkę
-  review zróżnicuj: workerzy DeepSeek, reviewer Kimi, adwersarz GLM (inne rodziny =
-  inne ślepe plamy).
-- Tanie modele (DeepSeek V4) robią właściwą robotę — ale **na max thinkingu** i
-  na **wąskim tasku**. Worker nie musi rozumieć całego repo, tylko swój kawałek.
-- **Bramka jakości** (review + adwersarz + skaner błędów) wyłapuje to, czego tani
-  model nie dopilnuje.
-- **Pamięć między sesjami** sprawia, że system **uczy się** — kolejne zadania są
-  lepsze, bo zna wcześniejsze decyzje i błędy.
-
-**Efekt.** Koszt drogiego modelu tylko tam, gdzie się opłaca; jakość mimo tanich
-wykonawców; izolacja workerów (brak konfliktów); i system, który z czasem mądrzeje.
+1. [Why This Exists](#-why-this-exists)
+2. [Pipeline: From Idea to Code (3 Layers)](#-pipeline-from-idea-to-code-3-layers)
+3. [How It Works — Mental Model](#-how-it-works--mental-model)
+4. [Architecture — What It's Made Of](#-architecture--what-its-made-of)
+5. [Agents (25) — Who's Who](#-agents-25--whos-who)
+6. [Model Selection — and Why](#-model-selection--and-why)
+7. [/swarm Flow Step by Step](#-swarm-flow-step-by-step)
+8. [Quality Gate](#-quality-gate)
+9. [Memory and Learning](#-memory-and-learning)
+10. [Commands](#-commands)
+11. [Tools (Engine)](#-tools-engine)
+12. [Skills (Knowledge on Demand)](#-skills-knowledge-on-demand)
+13. [Knowledge Files](#-knowledge-files)
+14. [File Structure](#-file-structure)
+15. [Git / GitHub (Configured)](#-git--github-configured)
+16. [Recipes — Common Scenarios](#-recipes--common-scenarios)
+17. [Diagnostics](#-diagnostics)
+18. [What NOT to Do](#-what-not-to-do)
+19. [Glossary](#-glossary)
 
 ---
 
-## 🧭 Pipeline: od pomysłu do kodu (3 warstwy)
+## 🎯 Why This Exists
 
-Code-swarm świetnie buduje **zdefiniowany** problem („napisz webhooki Stripe"), ale
-nie wymyśli za Ciebie biznesu ani nie powie, że **nikt za to nie zapłaci**. Więc ten
-sam silnik (orkiestracja, hive, swarmmail, hivemind, learning loop, adwersarz)
-został przepięty **w górę** — do pomysłów i walidacji. Trzy warstwy, sekwencyjnie,
-z **bramką ludzką** między każdą:
+**Problem.** A single AI model writing an entire SaaS has three flaws:
+- **Expensive** if powerful — or **weak** if cheap.
+- Loses context on large tasks (one thread = one context window).
+- Nobody reviews its work except you.
 
-```  WARSTWA 0 (Profil)
-  /profile  →  profile/founder-fit.md      (wciąga CAŁY Twój bundle z PARA)
+**Thesis of this setup.** Separate **thinking** from **execution**:
+- Zero expensive US models (no Opus/GPT). Only cheap Chinese models — but diversify
+  the review gate: DeepSeek workers, Kimi reviewer, GLM adversary (different families =
+  different blind spots).
+- Cheap models (DeepSeek V4) do the actual work — but **on max thinking** and
+  on a **narrow task**. A worker doesn't need to understand the whole repo, just its piece.
+- **Quality gate** (review + adversary + bug scanner) catches what the cheap
+  model misses.
+- **Cross-session memory** means the system **learns** — subsequent tasks are
+  better, because it knows past decisions and mistakes.
+
+**Result.** Cost of expensive model only where it pays off; quality despite cheap
+executors; worker isolation (no conflicts); and a system that gets smarter over time.
+
+---
+
+## 🧭 Pipeline: From Idea to Code (3 Layers)
+
+Code-swarm is great at building a **defined** problem ("write Stripe webhooks"), but
+it won't come up with a business for you or tell you that **nobody will pay for it**.
+So the same engine (orchestration, hive, swarmmail, hivemind, learning loop, adversary)
+has been extended **upward** — to ideas and validation. Three layers, sequentially,
+with a **human gate** between each:
+
+```  LAYER 0 (Profile)
+  /profile  →  profile/founder-fit.md      (pulls your ENTIRE PARA bundle)
        │
-       ▼  zasila ↓  WARSTWA 3 (Psyche)        WARSTWA 2 (BizDev)         WARSTWA 1 (Code)
-  /ideate              →    /validate             →    /swarm   (istniało)
-  „który pomysł pasuje       „czy ktoś za to             „zbuduj zaakceptowany
-   do mnie i mojego           zapłaci? zabij              wedge"
-   unfair advantage?"        albo wyostrz"
+       ▼  feeds into ↓  LAYER 3 (Psyche)        LAYER 2 (BizDev)         LAYER 1 (Code)
+  /ideate              →    /validate             →    /swarm   (pre-existing)
+  "which idea fits            "will anyone pay            "build the accepted
+   me and my unfair           for it? kill or              wedge"
+   advantage?"               sharpen"
        │                          │                           │
        ▼                          ▼                           ▼
-  0-opportunity.md   →      1-validation.md      →      2-plan.md  →  kod + PR
+  0-opportunity.md   →      1-validation.md      →      2-plan.md  →  code + PR
        │                          │                           │
-       └── Ty akceptujesz ────────┴── Ty akceptujesz ─────────┘
+       └── You accept ────────────┴── You accept ─────────────┘
 ```
 
-**Dlaczego osobne warstwy, nie jeden mega-swarm:** czyste role (koordynator się nie
-rozdmuchuje), inne modele per warstwa (koszt), i — kluczowe — **Ty akceptujesz
-przejście**. Pomysł musi przejść Twój accept, zanim pójdzie dalej. Artefakt (`.md`) +
-hivemind = handoff. Każda warstwa zasila pamięć → kolejne przedsięwzięcia dziedziczą
-co zadziałało (i co zabiło poprzednie pomysły).
+**Why separate layers instead of one mega-swarm:** clean roles (coordinator doesn't
+bloat), different models per layer (cost), and — key — **you approve the
+transition**. An idea must pass your accept before moving forward. Artifact (`.md`) +
+hivemind = handoff. Each layer feeds memory → future ventures inherit
+what worked (and what killed previous ideas).
 
-### Trzy tryby śmierci, trzej adwersarze
+### Three Death Modes, Three Adversaries
 
-Pomysł musi przeżyć **trzech różnych adwersarzy**, żeby stać się płatnym produktem:
+An idea must survive **three different adversaries** to become a paid product:
 
-| Warstwa | Adwersarz | Zabija pomysł, gdy… |
+| Layer | Adversary | Kills the idea when… |
 |---|---|---|
-| Psyche | `psyche-critic` | **brak founder-fit** — każdy mógłby to zbudować, walczy z Twoją naturą, brak moatu z **Twojego** edge'a |
-| BizDev | `biz-demon` | **brak biznesu** — brak rynku, CAC > LTV, COGS zjada marżę, incumbent miażdży, churn, founder burnout |
-| Code | `demon` | **zła implementacja** — edge case'y, race conditions, OWASP |
+| Psyche | `psyche-critic` | **no founder-fit** — anyone could build it, fights your nature, no moat from **your** edge |
+| BizDev | `biz-demon` | **no business** — no market, CAC > LTV, COGS eats margin, incumbent crushes, churn, founder burnout |
+| Code | `demon` | **bad implementation** — edge cases, race conditions, OWASP |
 
-### Mina: AI to potakiwacz
-Świadomie wbudowane kontry (w promptach adwersarzy): domyślna postawa „to **upadnie**"
-(pass wymaga realnej, nieudanej próby zabicia); każdy atak musi cytować **realne dane**
-(researcherzy mają web), nie wiedzę ogólną sprzed roku; **twardy gate**: jeśli
-COGS ≥ cena → `needs_changes`. Oczekiwany wysoki kill-rate — jeśli adwersarz łatwo
-przepuszcza, jest miękki → `/validate --brutal`.
+### Trap: AI is a Yes-Man
+Deliberately built-in counters (in adversary prompts): default stance is "it **will fail**"
+(pass requires a real, failed attempt to kill it); each attack must cite **real data**
+(researchers have web access), not general knowledge from a year ago; **hard gate**: if
+COGS ≥ price → `needs_changes`. Expected high kill-rate — if the adversary easily
+passes things through, it's too soft → `/validate --brutal`.
 
-### Warstwa 0: Twój profil (przed Psyche)
-Twój **pełny profil** żyje w Twoim systemie **PARA** — pipeline czyta go **wprost**
-(bez kopii, bez symlinka):
-`~/Desktop/3-Resources/profile/jakub/` — bogaty RAG-bundle
-(`knowledge-base.md` → `timeline.md` → `canonical.md`). To źródło prawdy.
+### Layer 0: Your Profile (Before Psyche)
+Your **full profile** lives in your **PARA** system — the pipeline reads it **directly**
+(no copy, no symlink):
+`~/Desktop/3-Resources/profile/jakub/` — a rich RAG bundle
+(`knowledge-base.md` → `timeline.md` → `canonical.md`). This is the source of truth.
 
-Komenda **`/profile`** (warstwa 0) wciąga **CAŁY** ten bundle i destyluje go w
-`~/Desktop/3-Resources/profile/founder-fit.md` — soczewkę biznesową: unfair
-advantages, energy map, anti-fit, kanały dystrybucji, produktyzowalne assety.
-Dopytuje tylko o realne luki biznesowe (kanały, co Cię wypala w *prowadzeniu*
-biznesu) — resztę bierze z profilu. `/ideate` czyta potem **i bundle, i founder-fit.md**.
+The **`/profile`** command (layer 0) pulls the **entire** bundle and distills it into
+`~/Desktop/3-Resources/profile/founder-fit.md` — a business lens: unfair
+advantages, energy map, anti-fit, distribution channels, productizable assets.
+It only asks about real business gaps (channels, what burns you out in *running*
+a business) — the rest comes from the profile. `/ideate` then reads **both the bundle and founder-fit.md**.
 
-Bundle jest psychologiczny; `founder-fit.md` to jego **biznesowe tłumaczenie**.
-Pipeline nigdy nie kopiuje wrażliwych szczegółów do artefaktów — tłumaczy je na
-sygnał biznesowy (wartości typu autonomia finansowa / spokój / niski people-overhead
-→ jakie modele biznesowe **wykluczają**). Founder churn zabija więcej startupów niż
-złe rynki — dlatego anti-fit jest kluczowy. To founder-market-fit, nie terapia.
+The bundle is psychological; `founder-fit.md` is its **business translation**.
+The pipeline never copies sensitive details into artifacts — it translates them into
+business signals (values like financial autonomy / peace / low people-overhead
+→ which business models are **excluded**). Founder churn kills more startups than
+bad markets — that's why anti-fit is critical. It's founder-market-fit, not therapy.
 
-Odpalasz raz: `/profile`. Odświeżasz, gdy zmieni się sytuacja życiowa.
+Run once: `/profile`. Refresh when your life situation changes.
 
-### Ewolucja founder-fit
+### Founder-Fit Evolution
 
-Po przejściu `/validate` z werdyktem `GO`, system auto-dopisuje do `profile/founder-fit.md` co zadziałało w tym pomysle: które atuty zostały potwierdzone, jakie nowe kanały dystrybucji odkryte, co mówi o Twoim founder-market-fit. Founder-fit ewoluuje z każdą walidacją — nie jest statycznym snapshotem.
+After `/validate` returns a `GO` verdict, the system auto-appends to `profile/founder-fit.md` what worked for this idea: which strengths were confirmed, what new distribution channels were discovered, what it says about your founder-market-fit. Founder-fit evolves with each validation — it's not a static snapshot.
 
 ---
 
-## 🧠 Jak to działa — model myślowy
+## 🧠 How It Works — Mental Model
 
-**Mózg vs ręce.** Koordynator to mózg: orkiestruje, **nigdy nie pisze kodu**.
-Workerzy to ręce: dostają wąski task w jednorazowym kontekście, robią, znikają.
+**Brain vs hands.** The coordinator is the brain: orchestrates, **never writes code**.
+Workers are the hands: get a narrow task in a one-shot context, do it, disappear.
 
 ```
             ┌──────────────────────────────────────────────┐
-   TY ─────▶│  KOORDYNATOR (mózg, DeepSeek V4 Pro · max)    │
-  /swarm    │  • pyta o zakres   • dekomponuje na subtaski  │
-            │  • spawnuje        • monitoruje   • decyduje  │
-            │  • NIGDY nie edytuje kodu                     │
+   YOU ────▶│  COORDINATOR (brain, DeepSeek V4 Pro · max)   │
+  /swarm    │  • asks scope   • decomposes into subtasks    │
+            │  • spawns       • monitors    • decides       │
+            │  • NEVER edits code                           │
             └───────────────┬──────────────────────────────┘
-                            │ spawnuje równolegle/sekwencyjnie
+                            │ spawns parallel/sequential
         ┌───────────────────┼───────────────────┐
         ▼                   ▼                   ▼
   ┌───────────┐       ┌───────────┐       ┌───────────┐
-  │ WORKER A  │       │ WORKER B  │       │ WORKER C  │   ← jednorazowy kontekst
-  │ rezerwuje │       │ rezerwuje │       │ rezerwuje │   ← swarmmail_reserve
-  │ pliki,    │       │ pliki,    │       │ pliki,    │   ← brak konfliktów
-  │ pisze,    │       │ pisze,    │       │ pisze,    │
-  │ testuje   │       │ testuje   │       │ testuje   │
+  │ WORKER A  │       │ WORKER B  │       │ WORKER C  │   ← one-shot context
+  │ reserves  │       │ reserves  │       │ reserves  │   ← swarmmail_reserve
+  │ files,    │       │ files,    │       │ files,    │   ← no conflicts
+  │ writes,   │       │ writes,   │       │ writes,   │
+  │ tests     │       │ tests     │       │ tests     │
   └─────┬─────┘       └─────┬─────┘       └─────┬─────┘
         └───────────────────┼───────────────────┘
                             ▼
             ┌──────────────────────────────────────────────┐
-            │  BRAMKA JAKOŚCI (po KAŻDYM workerze)          │
+            │  QUALITY GATE (after EACH worker)             │
             │  reviewer (Kimi) + demon (GLM) + UBS scan     │
-            │  approved? → dalej   needs_changes? → retry   │
+            │  approved? → proceed   needs_changes? → retry │
             └───────────────┬──────────────────────────────┘
                             ▼
             ┌──────────────────────────────────────────────┐
-            │  SHIPPER → typecheck + lint + testy + UBS     │
-            │  → hive_sync (zapis do gita)                  │
-            │  → learning loop (zapamiętaj co zadziałało)   │
+            │  SHIPPER → typecheck + lint + tests + UBS     │
+            │  → hive_sync (save to git)                    │
+            │  → learning loop (remember what worked)       │
             └──────────────────────────────────────────────┘
 ```
 
-**Dlaczego workerzy mają jednorazowy kontekst?** Bo równoległa praca nie może
-zapchać jednego okna kontekstu. Każdy worker dostaje czysty, wąski kontekst →
-tańszy, szybszy, mniej się myli. Koordynator zachowuje czysty, długowieczny
-kontekst tylko na orkiestrację.
+**Why workers have one-shot context?** Because parallel work can't
+clog a single context window. Each worker gets a clean, narrow context →
+cheaper, faster, less error-prone. The coordinator keeps a clean, long-lived
+context for orchestration only.
 
 ---
 
-## 🏗️ Architektura — z czego się składa
+## 🏗️ Architecture — What It's Made Of
 
-Pięć warstw. Wszystko żyje w `~/.config/opencode/`.
+Five layers. Everything lives in `~/.config/opencode/`.
 
-| Warstwa | Co to | Pliki / mechanizm |
+| Layer | What it is | Files / mechanism |
 |---|---|---|
-| **1. Orkiestracja** | Koordynator + przepływ `/swarm` | `command/swarm.md`, `AGENTS.md` |
-| **2. Agenci** | 16 wyspecjalizowanych ról | `agent/*.md` |
-| **3. Silnik (toole)** | Plugin swarma daje toole, których agenci używają | `plugin/swarm.ts` → CLI `swarm` |
-| **4. Bramka jakości** | Review + adwersarz + skaner błędów | reviewer/demon + UBS |
-| **5. Pamięć** | Uczenie się między sesjami | hivemind (Ollama), learning loop, CASS |
-| **6. CI/CD** | GitHub Actions: ansible-lint na PR, molecule na merge do main | `.github/workflows/swarm.yml` |
+| **1. Orchestration** | Coordinator + `/swarm` flow | `command/swarm.md`, `AGENTS.md` |
+| **2. Agents** | 16 specialized roles | `agent/*.md` |
+| **3. Engine (tools)** | Swarm plugin exposes tools that agents use | `plugin/swarm.ts` → CLI `swarm` |
+| **4. Quality gate** | Review + adversary + bug scanner | reviewer/demon + UBS |
+| **5. Memory** | Cross-session learning | hivemind (Ollama), learning loop, CASS |
+| **6. CI/CD** | GitHub Actions: ansible-lint on PR, molecule on merge to main | `.github/workflows/swarm.yml` |
 
-**Kluczowy insight:** wszystkie „super-funkcje" (epiki, rezerwacje plików, pamięć
-semantyczna, adversarial review, learning loop, worktrees) to **natywne toole
-pluginu swarm 0.63.2** — nie trzeba było ich pisać. Robota polegała na agentach,
-komendach i regułach (`AGENTS.md`), które te toole **wykorzystują**.
+**Key insight:** all the "super features" (epics, file reservations, semantic
+memory, adversarial review, learning loop, worktrees) are **native tools of the
+swarm plugin 0.63.2** — no need to write them. The work was in the agents,
+commands, and rules (`AGENTS.md`) that **use** these tools.
 
-**Rodziny tooli** (plugin udostępnia je agentom):
+**Tool families** (the plugin exposes them to agents):
 
-| Rodzina | Do czego | Przykłady |
+| Family | Purpose | Examples |
 |---|---|---|
-| `hive_*` | Tracker pracy backed gitem: epiki + subtaski | `hive_create_epic`, `hive_sync`, `hive_ready` |
-| `swarmmail_*` | Koordynacja: **rezerwacje plików** (brak konfliktów), poczta między agentami | `swarmmail_reserve`, `swarmmail_send`, `swarmmail_inbox` |
-| `hivemind_*` | **Pamięć semantyczna** (wektorowa, przez Ollamę) | `hivemind_store`, `hivemind_find` |
-| `swarm_*` | Dekompozycja, review, learning, worktrees | `swarm_decompose`, `swarm_adversarial_review`, `swarm_get_pattern_insights`, `swarm_worktree_create` |
-| `structured_*` | Parsowanie/walidacja planów (JSON/CellTree) | `swarm_validate_decomposition` |
-| `cass_*` | Cross-session search po historii AI | `cass_search` |
+| `hive_*` | Git-backed task tracker: epics + subtasks | `hive_create_epic`, `hive_sync`, `hive_ready` |
+| `swarmmail_*` | Coordination: **file reservations** (no conflicts), inter-agent mail | `swarmmail_reserve`, `swarmmail_send`, `swarmmail_inbox` |
+| `hivemind_*` | **Semantic memory** (vector-based, via Ollama) | `hivemind_store`, `hivemind_find` |
+| `swarm_*` | Decomposition, review, learning, worktrees | `swarm_decompose`, `swarm_adversarial_review`, `swarm_get_pattern_insights`, `swarm_worktree_create` |
+| `structured_*` | Parsing/validation of plans (JSON/CellTree) | `swarm_validate_decomposition` |
+| `cass_*` | Cross-session search across AI history | `cass_search` |
 
 ---
 
-## 👥 Agenci (25) — kto jest kim
+## 👥 Agents (25) — Who's Who
 
-Każdy agent to plik markdown w `agent/` z promptem + uprawnieniami + modelem.
-Trzy grupy wg warstwy: **kod** (`swarm-*`, `saas-*`, +4 pomocnicze — 16 agentów),
-**Psyche** (`psyche-*` — 4) i **BizDev** (`biz-*` — 5).
+Each agent is a markdown file in `agent/` with a prompt + permissions + model.
+Three groups by layer: **code** (`swarm-*`, `saas-*`, +4 auxiliary — 16 agents),
+**Psyche** (`psyche-*` — 4) and **BizDev** (`biz-*` — 5).
 
-### Warstwa pomysłów — Psyche (`/ideate`) i BizDev (`/validate`)
-| Agent | Model | Rola |
+### Idea Layer — Psyche (`/ideate`) and BizDev (`/validate`)
+| Agent | Model | Role |
 |---|---|---|
-| `psyche-profiler` | Kimi K2 Thinking | Wyciąga Twoje unfair advantages + founder-market-fit z profilu. Read-only. |
-| `psyche-scout` | DeepSeek Flash +web | Szuka realnych luk rynkowych pod Twój edge (z źródłami). Read-only. |
-| `psyche-synthesizer` | Kimi K2 Thinking | Generuje konkretne pomysły (advantage × luka). Read-only. |
-| `psyche-critic` | MiniMax M2.7 | **Fit-adwersarz** — zabija pomysły bez founder-fit. Read-only. |
+| `psyche-profiler` | Kimi K2 Thinking | Extracts your unfair advantages + founder-market-fit from the profile. Read-only. |
+| `psyche-scout` | DeepSeek Flash +web | Searches for real market gaps matching your edge (with sources). Read-only. |
+| `psyche-synthesizer` | Kimi K2 Thinking | Generates concrete ideas (advantage × gap). Read-only. |
+| `psyche-critic` | MiniMax M2.7 | **Fit-adversary** — kills ideas without founder-fit. Read-only. |
 | `biz-strategist` | Kimi K2 Thinking | Value prop, USP, MVP wedge, milestones. Read-only. |
-| `biz-cfo` | Kimi K2 Thinking | Unit economics: pricing, COGS (z kosztem AI/user), CAC/LTV. Blokuje, gdy COGS ≥ cena. |
-| `biz-researcher` | DeepSeek Flash +web | Realni konkurenci, ceny, popyt, kanały — z źródłami. Read-only. |
-| `biz-pm` | Kimi K2 Thinking | Problem-Solution Fit + spójność. Read-only. |
-| `biz-demon` | MiniMax M2.7 | **Bezwzględny inwestor/konkurent** — próbuje ZABIĆ biznes. Read-only. |
+| `biz-cfo` | Kimi K2 Thinking | Unit economics: pricing, COGS (including AI cost/user), CAC/LTV. Blocks when COGS ≥ price. |
+| `biz-researcher` | DeepSeek Flash +web | Real competitors, prices, demand, channels — with sources. Read-only. |
+| `biz-pm` | Kimi K2 Thinking | Problem-Solution Fit + coherence. Read-only. |
+| `biz-demon` | MiniMax M2.7 | **Ruthless investor/competitor** — tries to KILL the business. Read-only. |
 
-### Warstwa kodu
-Każdy agent to plik markdown w `agent/` z promptem + uprawnieniami + modelem.
-Dzielą się na **swarm-*** (generyczna orkiestracja) i **saas-*** (wyspecjalizowane
-pod SaaS), plus 4 pomocnicze.
+### Code Layer
+Each agent is a markdown file in `agent/` with a prompt + permissions + model.
+They divide into **swarm-*** (generic orchestration) and **saas-*** (specialized
+for SaaS), plus 4 auxiliary agents.
 
-### Orkiestracja / planowanie
-| Agent | Model | Rola |
+### Orchestration / Planning
+| Agent | Model | Role |
 |---|---|---|
-| `swarm-planner` | DeepSeek Pro `max` | Dekomponuje task na 2-7 subtasków, świadomy learning loopu (które strategie działały). Read-only. |
-| `saas-architect` | DeepSeek Pro `max` | Analizuje repo SaaS, produkuje plan z granicami plików i kryteriami sukcesu. Read-only. |
-| `archaeologist` | DeepSeek Pro `max` | Głęboka mapa architektury, przepływ danych, „blast radius" zmiany, historia decyzji (`git blame`/`log`). Read-only. |
+| `swarm-planner` | DeepSeek Pro `max` | Decomposes task into 2-7 subtasks, aware of learning loop (which strategies worked). Read-only. |
+| `saas-architect` | DeepSeek Pro `max` | Analyzes SaaS repo, produces plan with file boundaries and success criteria. Read-only. |
+| `archaeologist` | DeepSeek Pro `max` | Deep architecture map, data flow, change blast radius, decision history (`git blame`/`log`). Read-only. |
 
-### Workerzy krytyczni (bezpieczeństwo / kasa / dane)
-| Agent | Model | Rola |
+### Critical Workers (security / money / data)
+| Agent | Model | Role |
 |---|---|---|
-| `saas-auth` | DeepSeek Pro `max` | Auth, sesje, uprawnienia, OAuth, rate limiting. |
-| `saas-billing` | DeepSeek Pro `max` | Stripe, subskrypcje, faktury, webhooki płatności. |
-| `saas-db` | DeepSeek Pro `max` | Schema, migracje, indeksy, seedy, RLS (row-level security). |
+| `saas-auth` | DeepSeek Pro `max` | Auth, sessions, permissions, OAuth, rate limiting. |
+| `saas-billing` | DeepSeek Pro `max` | Stripe, subscriptions, invoices, payment webhooks. |
+| `saas-db` | DeepSeek Pro `max` | Schema, migrations, indexes, seeds, RLS (row-level security). |
 
-### Workerzy ogólni
-| Agent | Model | Rola |
+### General Workers
+| Agent | Model | Role |
 |---|---|---|
-| `saas-backend` | DeepSeek Flash `max` | API, serwisy, logika serwerowa, integracje, webhooki. |
-| `saas-frontend` | DeepSeek Flash `max` | UI, formularze, dashboardy, stan kliencki. |
-| `saas-test` | DeepSeek Flash `max` | **Tylko** testy (`*.test.*`, `*.spec.*`) — uprawnienia ograniczone do plików testowych. Flaga `--integration` włącza testy DB-backed API (wymaga lokalnej bazy). |
-| `swarm-worker` | DeepSeek Flash `max` | Generyczny wykonawca subtaska (cokolwiek poza powyższymi). |
-| `refactorer` | DeepSeek Flash `max` | Mechaniczna migracja wzorca po wielu plikach, zachowuje zachowanie. |
-| `swarm-researcher` | DeepSeek Flash `max` | Read-only research dokumentacji/API w jednorazowym kontekście; zapisuje do hivemind, zwraca skrót. |
+| `saas-backend` | DeepSeek Flash `max` | API, services, server logic, integrations, webhooks. |
+| `saas-frontend` | DeepSeek Flash `max` | UI, forms, dashboards, client state. |
+| `saas-test` | DeepSeek Flash `max` | **Only** tests (`*.test.*`, `*.spec.*`) — permissions limited to test files. Flag `--integration` enables DB-backed API tests (requires local database). |
+| `swarm-worker` | DeepSeek Flash `max` | Generic subtask executor (anything beyond the above). |
+| `refactorer` | DeepSeek Flash `max` | Mechanical pattern migration across many files, preserves behavior. |
+| `swarm-researcher` | DeepSeek Flash `max` | Read-only research of documentation/API in one-shot context; saves to hivemind, returns summary. |
 
-### Weryfikacja / wyjście
-| Agent | Model | Rola |
+### Verification / Exit
+| Agent | Model | Role |
 |---|---|---|
-| `saas-reviewer` | Kimi K2 Thinking | Read-only review: bugi, regresje, bezpieczeństwo, pokrycie testami. Odpala UBS. Inna rodzina niż workerzy. |
-| `demon` | GLM 5.2 | **Adwersarz** — aktywnie próbuje ZŁAMAĆ zmianę (edge case'y, race conditions, OWASP). Najmocniejszy + najbardziej zróżnicowany. Read-only. |
-| `saas-shipper` | DeepSeek Flash `max` | Finalna weryfikacja: typecheck + lint + testy + UBS. Raportuje „SHIP READY" lub błędy. |
-| `explore` | DeepSeek Flash `max` | Szybkie read-only wyszukiwanie plików/symboli (`rg`). Tani, brain niepotrzebny. |
+| `saas-reviewer` | Kimi K2 Thinking | Read-only review: bugs, regressions, security, test coverage. Runs UBS. Different family than workers. |
+| `demon` | GLM 5.2 | **Adversary** — actively tries to BREAK the change (edge cases, race conditions, OWASP). Strongest + most diverse. Read-only. |
+| `saas-shipper` | DeepSeek Flash `max` | Final verification: typecheck + lint + tests + UBS. Reports "SHIP READY" or errors. |
+| `explore` | DeepSeek Flash `max` | Fast read-only file/symbol search (`rg`). Cheap, no brain needed. |
 
-> **Read-only** = agent ma `edit: deny` — fizycznie nie może zmienić kodu. To
-> nie sugestia, to twardo egzekwowane uprawnienie.
+> **Read-only** = agent has `edit: deny` — physically cannot change code. This
+> is not a suggestion, it's a hard-enforced permission.
 
 ---
 
-## 🎚️ Dobór modeli — i dlaczego tak
+## 🎚️ Model Selection — and Why
 
-**Zasada: same tanie chińskie modele (zero US-frontier). DeepSeek robi robotę;
-bramka review używa INNYCH rodzin, żeby adwersarz łapał to, czego DeepSeek nie widzi
-we własnym kodzie.**
+**Principle: all cheap Chinese models (zero US-frontier). DeepSeek does the work;
+the review gate uses DIFFERENT families so the adversary catches what DeepSeek doesn't see
+in its own code.**
 
-| Tier | Model | Kto | Dlaczego |
+| Tier | Model | Who | Why |
 |---|---|---|---|
-| Koordynator | `deepseek/deepseek-v4-pro` (max) | sesja `/swarm` | Długowieczny workhorse. Pro na max thinkingu wystarcza do orkiestracji. |
-| Planiści | `deepseek/deepseek-v4-pro` (max) | `plan`, `swarm-planner`, `saas-architect` | Dekompozycja = najwyższa dźwignia; DeepSeek V4 Pro na max thinkingu daje radę. |
-| Workerzy krytyczni | `deepseek/deepseek-v4-pro` (max) | auth, billing, db | Bezpieczeństwo/kasa/dane — Pro daje większy margines niż Flash. |
-| Workerzy ogólni | `deepseek/deepseek-v4-flash` (max) | reszta saas-* + worker/refactorer/researcher/shipper | Wąskie taski → Flash na max thinkingu = świetny stosunek jakość/koszt. |
-| Reviewer | `openrouter/moonshotai/kimi-k2-thinking` | `saas-reviewer` | **Inna rodzina niż workerzy** → łapie charakterystyczne błędy DeepSeeka. |
-| Adwersarz | `openrouter/z-ai/glm-5.2` | `demon` | **Najmocniejszy + najbardziej zróżnicowany** — trzecia rodzina (po DeepSeek i Kimi) = max pokrycie ślepych plam. |
+| Coordinator | `deepseek/deepseek-v4-pro` (max) | `/swarm` session | Long-lived workhorse. Pro on max thinking is enough for orchestration. |
+| Planners | `deepseek/deepseek-v4-pro` (max) | `plan`, `swarm-planner`, `saas-architect` | Decomposition = highest leverage; DeepSeek V4 Pro on max thinking handles it. |
+| Critical workers | `deepseek/deepseek-v4-pro` (max) | auth, billing, db | Security/money/data — Pro gives more margin than Flash. |
+| General workers | `deepseek/deepseek-v4-flash` (max) | rest of saas-* + worker/refactorer/researcher/shipper | Narrow tasks → Flash on max thinking = great quality/cost ratio. |
+| Reviewer | `openrouter/moonshotai/kimi-k2-thinking` | `saas-reviewer` | **Different family than workers** → catches characteristic DeepSeek errors. |
+| Adversary | `openrouter/z-ai/glm-5.2` | `demon` | **Strongest + most diverse** — third family (after DeepSeek and Kimi) = max blind spot coverage. |
 
-**Dlaczego 3 rodziny w bramce?** Workerzy = DeepSeek, reviewer = Kimi, demon = GLM.
-Każda rodzina ma inne ślepe plamy, więc review łapie błędy, których DeepSeek nie
-zauważa w swoim własnym kodzie. To ważniejsze niż surowa moc jednego modelu.
+**Why 3 families in the gate?** Workers = DeepSeek, reviewer = Kimi, demon = GLM.
+Each family has different blind spots, so the review catches errors DeepSeek doesn't
+notice in its own code. This matters more than raw model power.
 
-**Max thinking** włączony globalnie dla obu DeepSeeków:
+**Max thinking** enabled globally for both DeepSeeks:
 ```jsonc
 "provider": { "deepseek": { "models": {
   "deepseek-v4-pro":   { "options": { "reasoningEffort": "max" } },
   "deepseek-v4-flash": { "options": { "reasoningEffort": "max" } }
 }}}
 ```
-(`reasoningEffort` → API `reasoning_effort`; rodzina `deepseek-thinking` wspiera `high`/`max`. Kimi i GLM myślą z natury — nie wymuszasz reasoningu.)
+(`reasoningEffort` → API `reasoning_effort`; `deepseek-thinking` family supports `high`/`max`. Kimi and GLM think natively — no need to force reasoning.)
 
-### Warstwy pomysłów (Psyche + BizDev) — trzy rodziny dla dywersyfikacji adwersarza
+### Idea Layers (Psyche + BizDev) — three families for adversary diversification
 
-Tu adwersarze chodzą częściej (iterujesz pomysły), więc mocne, ale tanie modele.
-**Inna rodzina dla adwersarza** = łapie inne ślepe plamy niż reszta.
+Here adversaries run more often (you iterate on ideas), so capable but cheap models.
+**Different family for the adversary** = catches different blind spots than the rest.
 
-| Rola | Model | Rodzina | $ / Mtok (out) |
+| Role | Model | Family | $ / Mtok (out) |
 |---|---|---|---|
-| Koordynatorzy `/ideate` `/validate` | `deepseek/deepseek-v4-pro` (max) | DeepSeek | 0.87 |
-| Researcherzy (+web) | `deepseek/deepseek-v4-flash` (max) | DeepSeek | 0.28 |
-| Analitycy: profiler, synthesizer, strategist, cfo, pm | `openrouter/moonshotai/kimi-k2-thinking` | Moonshot | 2.50 |
-| **Adwersarze**: `psyche-critic`, `biz-demon` | `openrouter/minimax/minimax-m2.7` | MiniMax | 1.20 |
+| Coordinators `/ideate` `/validate` | `deepseek/deepseek-v4-pro` (max) | DeepSeek | 0.87 |
+| Researchers (+web) | `deepseek/deepseek-v4-flash` (max) | DeepSeek | 0.28 |
+| Analysts: profiler, synthesizer, strategist, cfo, pm | `openrouter/moonshotai/kimi-k2-thinking` | Moonshot | 2.50 |
+| **Adversaries**: `psyche-critic`, `biz-demon` | `openrouter/minimax/minimax-m2.7` | MiniMax | 1.20 |
 
-**Ceny (out $/Mtok):** DeepSeek Flash 0.28 · DeepSeek Pro 0.87 · MiniMax M2.7 1.20 ·
-Kimi K2 Thinking 2.50 · GLM 5.2 ~4.50. Wszystkie to chińskie modele frontier za
-ułamek ceny US (dla odniesienia Opus 4.8 = 25). GLM 5.2 jest najdroższy z tej puli,
-ale ~5.5× tańszy od Opusa — dlatego siedzi tylko w JEDNYM slocie (kod-`demon`), gdzie
-najmocniejszy „złam to" naprawdę się liczy.
+**Prices (out $/Mtok):** DeepSeek Flash 0.28 · DeepSeek Pro 0.87 · MiniMax M2.7 1.20 ·
+Kimi K2 Thinking 2.50 · GLM 5.2 ~4.50. All are Chinese frontier models at a
+fraction of US prices (for reference, Opus 4.8 = 25). GLM 5.2 is the most expensive in this pool,
+but ~5.5× cheaper than Opus — that's why it sits in only ONE slot (code-`demon`), where
+the strongest "break it" really counts.
 
 ---
 
-## 🔄 Przepływ `/swarm` krok po kroku
+## 🔄 /swarm Flow Step by Step
 
-Gdy wpisujesz `/swarm "zadanie"`, koordynator przechodzi przez fazy:
+When you type `/swarm "task"`, the coordinator goes through phases:
 
-| Faza | Co się dzieje | Toole |
+| Phase | What happens | Tools |
 |---|---|---|
-| **0. Sokratejskie pytania** | Dopytuje o zakres/strategię, JEDNO pytanie naraz z opcjami. Pomijane przez `--fast`/`--auto`. | — |
-| **1. Init + pamięć** | Dołącza do swarma, sprawdza co już wiadomo (poprzednie decyzje, które strategie działały). **CASS pre-flight:** auto-przeszukuje historię AI — jeśli problem był już rozwiązany w sesji X, wyświetla ostrzeżenie „Previously solved in session X" i czeka na potwierdzenie. | `swarmmail_init`, `swarm_get_strategy_insights`, `hivemind_find`, `cass_search` |
-| **1.5. Research** | Tylko dla nieznanej technologii: spawnuje researchera w jednorazowym kontekście. | `Task(swarm-researcher)` |
-| **2. Dekompozycja** | Wybiera strategię, dzieli na 2-7 subtasków z **nienakładającymi się** plikami. | `swarm_select_strategy`, `swarm_plan_prompt`, `swarm_validate_decomposition` |
-| **3. Epic** | Tworzy epic + subtaski (śledzenie backed gitem). | `hive_create_epic` |
-| **4. NIE rezerwuje plików** | Koordynator NIE rezerwuje — workerzy robią to sami (inaczej deadlock). | — |
-| **5. Spawn workerów** | Równolegle (niezależne) lub sekwencyjnie (zależności). | `swarm_spawn_subtask` + `Task(<agent>)` |
-| **6. Bramka review** | Po KAŻDYM workerze: inbox → review → **demon** → werdykt. Max 3 próby, potem eskalacja. | `swarm_review`, `Task(demon)`, `swarm_review_feedback` |
-| **7. Ship** | Po przejściu wszystkich: shipper odpala typecheck+lint+testy+UBS. | `Task(saas-shipper)` |
-| **8. Sync + nauka** | Zapis do gita; outcome'y zasilają learning loop. | `hive_sync`, `swarm_complete` |
+| **0. Socratic questions** | Asks about scope/strategy, ONE question at a time with options. Skipped with `--fast`/`--auto`. | — |
+| **1. Init + memory** | Joins the swarm, checks what's already known (past decisions, which strategies worked). **CASS pre-flight:** auto-searches AI history — if the problem was already solved in session X, displays a warning "Previously solved in session X" and waits for confirmation. | `swarmmail_init`, `swarm_get_strategy_insights`, `hivemind_find`, `cass_search` |
+| **1.5. Research** | Only for unknown technology: spawns a researcher in one-shot context. | `Task(swarm-researcher)` |
+| **2. Decomposition** | Selects strategy, splits into 2-7 subtasks with **non-overlapping** files. | `swarm_select_strategy`, `swarm_plan_prompt`, `swarm_validate_decomposition` |
+| **3. Epic** | Creates epic + subtasks (tracking backed by git). | `hive_create_epic` |
+| **4. Does NOT reserve files** | Coordinator does NOT reserve — workers do it themselves (otherwise deadlock). | — |
+| **5. Spawn workers** | Parallel (independent) or sequential (dependencies). | `swarm_spawn_subtask` + `Task(<agent>)` |
+| **6. Review gate** | After EACH worker: inbox → review → **demon** → verdict. Max 3 attempts, then escalation. | `swarm_review`, `Task(demon)`, `swarm_review_feedback` |
+| **7. Ship** | After all pass: shipper runs typecheck+lint+tests+UBS. | `Task(saas-shipper)` |
+| **8. Sync + learning** | Saves to git; outcomes feed the learning loop. | `hive_sync`, `swarm_complete` |
 
-**Flagi:** `--fast` (bez pytań), `--auto` (zero interakcji), `--confirm-only`
-(pokaż plan, tak/nie), `--worktrees` (każdy worker w osobnym git worktree).
+**Flags:** `--fast` (no questions), `--auto` (zero interaction), `--confirm-only`
+(show plan, yes/no), `--worktrees` (each worker in its own git worktree).
 
-**Strategie dekompozycji:** `file-based` (refactor/migracja), `feature-based`
-(nowy feature), `risk-based` (bugfix/security), `research-based` (eksploracja).
-
----
-
-## ✅ Bramka jakości
-
-Trzy niezależne pasy, każdy łapie co innego:
-
-1. **`saas-reviewer`** (Kimi K2 Thinking — inna rodzina niż workerzy) — przegląd
-   poprawnościowy: bugi, regresje, brakujące error handling, pokrycie testami, wzorce.
-2. **`demon`** (GLM 5.2 — trzecia rodzina) — **adwersarz**: zakłada, że kod jest zły, dopóki nie
-   uda mu się go złamać. Edge case'y, concurrency, OWASP Top 10, złamane
-   założenia. Każda dziura musi mieć **konkretny trigger** (repro), nie „może być
-   niebezpieczne".
-3. **UBS** — mechaniczny skaner: brak `await`, null-deref, XSS, wstrzyknięcia,
-   hardcoded secrets, wycieki zasobów. **Każdy `critical` blokuje.**
-
-Reviewer i demon działają **równolegle** (nie sekwencyjnie) — skraca czas bramki z ~4 min do ~2 min. Oba pasy są niezależne, więc nie ma ryzyka wzajemnego wpływu.
-
-Bramka działa **po każdym workerze** (nie zbiorczo na końcu) — błąd łapany od razu,
-zanim się rozleje. Werdykt: `approved` / `needs_changes` (retry, max 3×) /
-`blocked` (eskalacja do Ciebie).
-
-Worker dodatkowo **sam skanuje** swoje pliki UBS-em przed zgłoszeniem ukończenia.
+**Decomposition strategies:** `file-based` (refactor/migration), `feature-based`
+(new feature), `risk-based` (bugfix/security), `research-based` (exploration).
 
 ---
 
-## 🧠 Pamięć i uczenie się
+## ✅ Quality Gate
 
-Trzy mechanizmy sprawiają, że system **mądrzeje z czasem**:
+Three independent layers, each catches something different:
 
-### 1. Hivemind — pamięć semantyczna (między sesjami)
-Wektorowa baza „dlaczego", nie „co": decyzje architektoniczne, root cause'y,
-gotcha. Agent przed robotą robi `hivemind_find(query=...)` — dziedziczy wiedzę z
-poprzednich sesji. Po robocie `hivemind_store(...)`. Działa lokalnie przez
-**Ollamę + nomic-embed-text** (embeddingi). Zero chmury.
+1. **`saas-reviewer`** (Kimi K2 Thinking — different family than workers) — correctness
+   review: bugs, regressions, missing error handling, test coverage, patterns.
+2. **`demon`** (GLM 5.2 — third family) — **adversary**: assumes the code is bad until
+   it manages to break it. Edge cases, concurrency, OWASP Top 10, broken
+   assumptions. Each hole must have a **concrete trigger** (repro), not "could be
+   dangerous".
+3. **UBS** — mechanical scanner: missing `await`, null-deref, XSS, injections,
+   hardcoded secrets, resource leaks. **Every `critical` blocks.**
 
-### 2. Learning loop — promocja/degradacja wzorców
-Każde wykonanie subtaska zapisuje outcome:
-- **szybko + sukces** → wzorzec **promowany**
-- **wolno + retry + błędy** → wzorzec **flagowany**
-- **>60% porażek** → auto-inwersja w **anti-pattern** („AVOID")
-- **90-dniowy half-life** → pewność maleje, jeśli nie potwierdzona ponownie
+Reviewer and demon run **in parallel** (not sequentially) — cuts gate time from ~4 min to ~2 min. Both layers are independent, so there's no risk of mutual influence.
 
-Sprawdzasz to: `swarm_get_pattern_insights`, `swarm_get_strategy_insights`,
-`swarm_get_file_insights`. Komenda `/retro` to podsumowuje po większej robocie.
+The gate runs **after each worker** (not collectively at the end) — errors caught immediately,
+before they spread. Verdict: `approved` / `needs_changes` (retry, max 3×) /
+`blocked` (escalation to you).
 
-### 3. CASS — cross-agent search (Twoja cała historia AI)
-Przeszukuje sesje **wszystkich** agentów (Claude Code, Codex, Cursor, OpenCode…).
-Zanim rozwiążesz problem od zera: `cass search "..." --robot` sprawdza, czy już
-go rozwiązałeś gdzieś indziej.
-
-### 4. Production Bug Webhook — automatyczne wciąganie błędów
-
-Serwer Bun (`scripts/prod-webhook.ts`) nasłuchuje na porcie `:4097` na raporty
-błędów z Sentry/LogRocket. Każdy zgłoszony błąd automatycznie trafia do hivemind
-jako learning (z kontekstem: stack trace, środowisko, wersja). Efekt: system
-**uczy się na produkcji** — następnym razem ten sam wzorzec błędu zostanie
-rozpoznany zanim go popełnisz.
-
-Uruchomienie: `bun run scripts/prod-webhook.ts` (lub jako usługa systemd/runit).
+The worker additionally **scans its own files** with UBS before reporting completion.
 
 ---
 
-## 🎛️ Komendy
+## 🧠 Memory and Learning
 
-Wpisujesz je w OpenCode (TUI/OpenChamber). Definicje w `command/*.md`.
+Three mechanisms make the system **smarter over time**:
 
-### Warstwa pomysłów (przed kodem)
-| Komenda | Co robi |
+### 1. Hivemind — Semantic Memory (Cross-Session)
+Vector database of "why", not "what": architectural decisions, root causes,
+gotchas. Before work, an agent runs `hivemind_find(query=...)` — inheriting knowledge from
+previous sessions. After work, `hivemind_store(...)`. Runs locally via
+**Ollama + nomic-embed-text** (embeddings). Zero cloud.
+
+### 2. Learning Loop — Pattern Promotion/Degradation
+Each subtask execution records an outcome:
+- **fast + success** → pattern **promoted**
+- **slow + retry + errors** → pattern **flagged**
+- **>60% failures** → auto-inversion to **anti-pattern** ("AVOID")
+- **90-day half-life** → confidence decays if not re-confirmed
+
+Check it: `swarm_get_pattern_insights`, `swarm_get_strategy_insights`,
+`swarm_get_file_insights`. The `/retro` command summarizes this after bigger work.
+
+### 3. CASS — Cross-Agent Search (Your Entire AI History)
+Searches sessions of **all** agents (Claude Code, Codex, Cursor, OpenCode…).
+Before solving a problem from scratch: `cass search "..." --robot` checks if you've
+already solved it somewhere else.
+
+### 4. Production Bug Webhook — Automatic Error Ingestion
+
+A Bun server (`scripts/prod-webhook.ts`) listens on port `:4097` for error
+reports from Sentry/LogRocket. Each reported error automatically goes into hivemind
+as a learning (with context: stack trace, environment, version). Result: the system
+**learns from production** — next time, the same error pattern will be
+recognized before you make it.
+
+Run: `bun run scripts/prod-webhook.ts` (or as a systemd/runit service).
+
+---
+
+## 🎛️ Commands
+
+Type these in OpenCode (TUI/OpenChamber). Definitions in `command/*.md`.
+
+### Idea Layer (Before Code)
+| Command | What it does |
 |---|---|
-| `/profile` | **Warstwa 0** — wciąga Twój **pełny profil** (`profile/jakub/`) i destyluje go w `profile/founder-fit.md` (unfair advantages, energy map, anti-fit, kanały). Odpalasz **raz**, odświeżasz gdy życie się zmieni. |
-| `/ideate "<domena lub cisza>"` | **Psyche** — czyta bundle + founder-fit, generuje pomysły pod **Twój** unfair advantage; fit-critic zabija te bez founder-fit. → `0-opportunity.md` w `~/Desktop/1-Projects/_ideas/<slug>/`. |
-| `/validate "<pomysł>"` | **BizDev** — research z sieci, unit economics (z kosztem AI/user), product-fit + bezwzględny demon-inwestor. → `GO/KILL/PIVOT`, na GO `2-plan.md`. Flaga `--brutal` = ostrzejszy demon. |
+| `/profile` | **Layer 0** — pulls your **full profile** (`profile/jakub/`) and distills it into `profile/founder-fit.md` (unfair advantages, energy map, anti-fit, channels). Run **once**, refresh when life changes. |
+| `/ideate "<domain or silence>"` | **Psyche** — reads the bundle + founder-fit, generates ideas for **your** unfair advantage; fit-critic kills those without founder-fit. → `0-opportunity.md` in `~/Desktop/1-Projects/_ideas/<slug>/`. |
+| `/validate "<idea>"` | **BizDev** — web research, unit economics (including AI cost/user), product-fit + ruthless demon-investor. → `GO/KILL/PIVOT`, on GO `2-plan.md`. Flag `--brutal` = harsher demon. |
 
-### Kodowanie
-| Komenda | Co robi |
+### Coding
+| Command | What it does |
 |---|---|
-| `/swarm "opis"` | Pełny przepływ (patrz wyżej). **Dla: feature, refactor 3+ plików, bug+testy.** |
+| `/swarm "description"` | Full flow (see above). **For: feature, 3+ file refactor, bug+tests.** |
 
-### Wspierające
-| Komenda | Kiedy |
+### Supporting
+| Command | When |
 |---|---|
-| `/swarm-status` | Postęp działającego swarma: epic, subtaski, blokady, co gotowe do spawnu. |
-| `/review` | Ad-hoc adversarial review brudnego diffa (reviewer + demon + UBS), bez zmian. |
-| `/iterate "..."` | Pętla popraw→oceń aż przejdzie demona i testy (max 3 rundy). |
-| `/parallel "a" "b"` | Znane, niezależne taski równolegle (gdy sam znasz podział). |
-| `/worktree-task "..."` | Ryzykowna/równoległa robota w izolowanym git worktree. |
-| `/retro` | Po swarmie: czego się nauczył system, anti-patterny, sync. |
-| `/costs` | Panel kosztów ostatniej sesji swarm: tokeny we/wy per model, koszt USD, porównanie z budżetem. Zawiera tabelkę z aktualnymi cenami modeli. |
-| `/commit` | Bramka (typecheck+lint+testy+UBS, brak sekretów) → czysty Conventional Commit. |
-| `/pr-create` | Push + PR ze strukturalnym opisem (przez `gh`; bez `gh` daje compare-URL). |
+| `/swarm-status` | Progress of a running swarm: epic, subtasks, blockers, what's ready to spawn. |
+| `/review` | Ad-hoc adversarial review of dirty diff (reviewer + demon + UBS), no changes. |
+| `/iterate "..."` | Improve→evaluate loop until it passes the demon and tests (max 3 rounds). |
+| `/parallel "a" "b"` | Known, independent tasks in parallel (when you already know the split). |
+| `/worktree-task "..."` | Risky/parallel work in an isolated git worktree. |
+| `/retro` | After a swarm: what the system learned, anti-patterns, sync. |
+| `/costs` | Cost panel for the last swarm session: tokens in/out per model, USD cost, comparison with budget. Includes a table with current model prices. |
+| `/commit` | Gate (typecheck+lint+tests+UBS, no secrets) → clean Conventional Commit. |
+| `/pr-create` | Push + PR with structured description (via `gh`; without `gh` gives compare-URL). |
 
 ---
 
-## 🛠️ Narzędzia (silnik)
+## 🛠️ Tools (Engine)
 
-| Narzędzie | Wersja | Rola | Krytyczne? |
+| Tool | Version | Role | Critical? |
 |---|---|---|---|
-| **swarm** | 0.63.2 | Silnik orkiestracji — wszystkie toole `hive_*`/`swarmmail_*`/`hivemind_*`/`swarm_*`. | ✅ rdzeń |
-| **OpenCode** | 1.17.7 | Host agentów (TUI). OpenChamber to GUI nad nim. | ✅ rdzeń |
-| **Ollama** | 0.30.9 | Lokalne embeddingi (`nomic-embed-text`) dla pamięci semantycznej. Usługa launchd w tle. | ✅ dla hivemind |
-| **UBS** | 5.3.2 | Skaner błędów AI. Bramka jakości. | ✅ jakość |
-| **CASS** | 0.6.16 | Cross-agent session search. | ⚪ opcjonalne (pomocne) |
-| **gh** | 2.94.0 | GitHub CLI — automatyczne PR-y. | ⚪ dla `/pr-create` |
-| **bash** | 5.3 | UBS wymaga bash ≥4 (macOS ma 3.2). | ✅ dla UBS |
-| **bun / node** | 1.3.14 / — | Runtime pluginu i toolingu. | ✅ rdzeń |
+| **swarm** | 0.63.2 | Orchestration engine — all `hive_*`/`swarmmail_*`/`hivemind_*`/`swarm_*` tools. | ✅ core |
+| **OpenCode** | 1.17.7 | Agent host (TUI). OpenChamber is the GUI over it. | ✅ core |
+| **Ollama** | 0.30.9 | Local embeddings (`nomic-embed-text`) for semantic memory. Launchd service in the background. | ✅ for hivemind |
+| **UBS** | 5.3.2 | AI bug scanner. Quality gate. | ✅ quality |
+| **CASS** | 0.6.16 | Cross-agent session search. | ⚪ optional (helpful) |
+| **gh** | 2.94.0 | GitHub CLI — automatic PRs. | ⚪ for `/pr-create` |
+| **bash** | 5.3 | UBS requires bash ≥4 (macOS has 3.2). | ✅ for UBS |
+| **bun / node** | 1.3.14 / — | Runtime for plugin and tooling. | ✅ core |
 
-UBS i CASS pochodzą z oficjalnych tapów Homebrew autora (Dicklesworthstone), MIT,
-weryfikacja SHA.
+UBS and CASS come from the author's official Homebrew taps (Dicklesworthstone), MIT,
+SHA-verified.
 
 ---
 
-## 🧩 Skille (wiedza na żądanie)
+## 🧩 Skills (Knowledge on Demand)
 
-Agent **sam ładuje** skill, gdy zadanie pasuje do jego opisu — nie zaśmiecają
-kontekstu na zapas (w przeciwieństwie do `AGENTS.md`, które jest zawsze obecne).
-Natywny mechanizm OpenCode: `~/.config/opencode/skills/<nazwa>/SKILL.md`.
+The agent **loads a skill itself** when the task matches its description — doesn't
+clutter context preemptively (unlike `AGENTS.md`, which is always present).
+Native OpenCode mechanism: `~/.config/opencode/skills/<name>/SKILL.md`.
 
-| Skill | Kiedy się odpala |
+| Skill | When it fires |
 |---|---|
-| `testing-patterns` | Testy do legacy/nieotestowanego kodu (charakteryzacja, łamanie zależności wg Feathersa, co testować w SaaS, unit vs integration vs e2e). |
-| `root-cause-debugging` | Coś się wywala / flaky — systematyczne: reprodukcja → izolacja → hipoteza → fix **przyczyny** nie objawu. |
-| `saas-security-review` | Zmiany w auth / billing / multitenancy — playbook OWASP w formacie atak→sprawdź→fix (IDOR, mass-assignment, forged webhooks, idempotencja…). |
-| `customize-opencode` | (wbudowany w OpenCode) Edycja samego configu OpenCode. |
+| `testing-patterns` | Tests for legacy/untested code (characterization, breaking dependencies per Feathers, what to test in SaaS, unit vs integration vs e2e). |
+| `root-cause-debugging` | Something crashes / is flaky — systematic: reproduction → isolation → hypothesis → fix the **cause**, not the symptom. |
+| `saas-security-review` | Changes in auth / billing / multitenancy — OWASP playbook in attack→check→fix format (IDOR, mass-assignment, forged webhooks, idempotency…). |
+| `customize-opencode` | (built into OpenCode) Editing the OpenCode config itself. |
 
 ---
 
-## 📚 Pliki wiedzy (`knowledge/`)
+## 📚 Knowledge Files (`knowledge/`)
 
-Ładowane przez referencję `@knowledge/<plik>.md` (gdy agent ich potrzebuje):
+Loaded by reference `@knowledge/<file>.md` (when the agent needs them):
 
-| Plik | Zawartość |
+| File | Contents |
 |---|---|
-| `saas-patterns.md` | Uniwersalne wzorce SaaS: multitenancy, idempotencja, webhooki, billing, auth/sesje, kolejki/joby, migracje, API, observability. |
-| `security-checklist.md` | Checklist OWASP: injection, authn/authz, sekrety, SSRF, rate limiting, concurrency, logowanie. |
+| `saas-patterns.md` | Universal SaaS patterns: multitenancy, idempotency, webhooks, billing, auth/sessions, queues/jobs, migrations, API, observability. |
+| `security-checklist.md` | OWASP checklist: injection, authn/authz, secrets, SSRF, rate limiting, concurrency, logging. |
 
-Różnica od skilli: knowledge = **referencja** dociągana świadomie; skille =
-**auto-wykrywane** po opisie. Oba ładowane na żądanie (nie na zapas).
+Difference from skills: knowledge = **reference** pulled in deliberately; skills =
+**auto-detected** by description. Both loaded on demand (not preemptively).
 
 ---
 
-## 📁 Struktura plików
+## 📁 File Structure
 
 ```
 ~/.config/opencode/
-├── opencode.jsonc        ← modele, provider (DeepSeek max + Kimi/MiniMax), MCP, uprawnienia
-├── AGENTS.md             ← reguły dla WSZYSTKICH agentów (zawsze w kontekście)
-├── agent/  (25)          ← warstwa kodu (16) + psyche-* (4) + biz-* (5)
+├── opencode.jsonc        ← models, providers (DeepSeek max + Kimi/MiniMax), MCP, permissions
+├── AGENTS.md             ← rules for ALL agents (always in context)
+├── agent/  (25)          ← code layer (16) + psyche-* (4) + biz-* (5)
 │   ├── swarm-planner.md       saas-architect.md     archaeologist.md
 │   ├── saas-auth.md           saas-billing.md       saas-db.md
 │   ├── saas-backend.md        saas-frontend.md      saas-test.md
@@ -496,161 +496,161 @@ Różnica od skilli: knowledge = **referencja** dociągana świadomie; skille =
 ├── command/  (12)        ← /profile /ideate /validate /swarm /review /commit /pr-create /retro ...
 ├── skills/  (3)          ← testing-patterns, root-cause-debugging, saas-security-review
 ├── knowledge/  (3)       ← saas-patterns.md, security-checklist.md, venture-pipeline.md
-└── plugin/swarm.ts       ← wrapper pluginu (absolutne ścieżki — GUI-safe)
+└── plugin/swarm.ts       ← plugin wrapper (absolute paths — GUI-safe)
 
-~/Desktop/                  ← Twój pulpit zorganizowany w PARA (0-Inbox, 1-Projects, 2-Areas, 3-Resources)
+~/Desktop/                  ← Your desktop organized in PARA (0-Inbox, 1-Projects, 2-Areas, 3-Resources)
 ├── 3-Resources/profile/
-│   ├── jakub/             ← WARSTWA 0 — Twój pełny bundle (źródło prawdy, czytany wprost)
-│   └── founder-fit.md     ← soczewka biznesowa (destyluje /profile)
+│   ├── jakub/             ← LAYER 0 — your full bundle (source of truth, read directly)
+│   └── founder-fit.md     ← business lens (distilled by /profile)
 └── 1-Projects/
-    ├── _ideas/<slug>/     ← inkubator: 0-opportunity → 1-validation → 2-plan.md
-    └── <slug>/            ← po GO pomysł AWANSUJE tu jako prawdziwy projekt (kod)
+    ├── _ideas/<slug>/     ← incubator: 0-opportunity → 1-validation → 2-plan.md
+    └── <slug>/            ← after GO, the idea PROMOTES here as a real project (code)
 
-~/.local/share/opencode/auth.json   ← klucze deepseek + openrouter (⛔ NIE RUSZAĆ)
-~/.config/opencode.backup-*         ← backup poprzedniego configu
+~/.local/share/opencode/auth.json   ← deepseek + openrouter keys (⛔ DO NOT TOUCH)
+~/.config/opencode.backup-*         ← backup of previous config
 ```
 
-**Dlaczego absolutne ścieżki w pluginie?** OpenChamber (GUI) startuje bez shellowego
-PATH. Plugin woła CLI po pełnej ścieżce (`~/.config/opencode/node_modules/.bin/swarm`,
-`~/.nix-profile/bin/opencode`) i prependuje `/home/me/.nix-profile/bin` do PATH przy spawn —
-żeby w GUI znaleźć `cass`/`ubs`/`ollama`/`bash5`.
+**Why absolute paths in the plugin?** OpenChamber (GUI) starts without a shell
+PATH. The plugin calls CLIs by full path (`~/.config/opencode/node_modules/.bin/swarm`,
+`~/.nix-profile/bin/opencode`) and prepends `/home/me/.nix-profile/bin` to PATH on spawn —
+so that `cass`/`ubs`/`ollama`/`bash5` are found in the GUI.
 
 ---
 
-## 🔑 Git / GitHub (skonfigurowane)
+## 🔑 Git / GitHub (Configured)
 
-| Element | Stan |
+| Element | Status |
 |---|---|
-| Protokół | **SSH** (klucz `~/.ssh/id_ed25519`, w ssh-agent + Keychain macOS) |
-| Klucz na GitHub | `mac-m2-2026-06` (typ: authentication) |
-| `gh` CLI | zalogowany jako **`mggpie`** (scope: repo, admin:public_key, …) |
-| Tożsamość commitów | `mggpie <57095596+mggpie@users.noreply.github.com>` (no-reply — bez prywatnego maila) |
+| Protocol | **SSH** (key `~/.ssh/id_ed25519`, in ssh-agent + Keychain macOS) |
+| Key on GitHub | `mac-m2-2026-06` (type: authentication) |
+| `gh` CLI | logged in as **`mggpie`** (scope: repo, admin:public_key, …) |
+| Commit identity | `mggpie <57095596+mggpie@users.noreply.github.com>` (no-reply — no private email) |
 | Default branch | `main` |
-| Fallback | `gh auth setup-git` ustawiony → HTTPS też działa, gdyby SSH padło |
-| Test | `ssh -T git@github.com` → *„Hi mggpie! You've successfully authenticated"* ✅ |
+| Fallback | `gh auth setup-git` set → HTTPS also works if SSH fails |
+| Test | `ssh -T git@github.com` → *"Hi mggpie! You've successfully authenticated"* ✅ |
 
-`git clone`/`push`/`pull` po SSH działają — w tym **repo prywatne**. `/pr-create`
-otwiera PR-y przez `gh`. Stary klucz `void` (z Linuksa) jest na koncie GitHub, ale
-fizycznie nie ma go na tym Macu — nieistotny.
+`git clone`/`push`/`pull` over SSH works — including **private repos**. `/pr-create`
+opens PRs via `gh`. Old key `void` (from Linux) is on the GitHub account, but
+physically not on this Mac — irrelevant.
 
 ---
 
-## 🍳 Przepisy — typowe sytuacje
+## 🍳 Recipes — Common Scenarios
 
-**Pełny pipeline (od zera, od pomysłu do kodu):**
+**Full pipeline (from scratch, idea to code):**
 ```fish
 cd ~/Desktop/1-Projects/_ideas
-/profile                               # RAZ: wciąga Twój pełny profil → 3-Resources/profile/founder-fit.md
-/ideate "narzędzia dla solo-devów AI"   # → _ideas/<slug>/0-opportunity.md, wybierasz 1 pomysł
-# przejrzyj brief, potem z 1-Projects/_ideas/<slug>/:
-/validate "<wybrany pomysł>"            # → GO/KILL/PIVOT; na GO awansuje do 1-Projects/<slug>/ + 2-plan.md
-# jeśli GO — w tym projekcie / repo kodu:
-/swarm "<z 2-plan.md>"                  # buduje wedge
+/profile                               # ONCE: pulls your full profile → 3-Resources/profile/founder-fit.md
+/ideate "tools for solo AI devs"        # → _ideas/<slug>/0-opportunity.md, pick 1 idea
+# review the brief, then from 1-Projects/_ideas/<slug>/:
+/validate "<chosen idea>"               # → GO/KILL/PIVOT; on GO promotes to 1-Projects/<slug>/ + 2-plan.md
+# if GO — in that project / code repo:
+/swarm "<from 2-plan.md>"               # builds the wedge
 /commit  →  /pr-create
 ```
-Większość pomysłów **umrze** na `/ideate` lub `/validate` — to cel. Tania śmierć
-w konsoli > 3 miesiące kodowania czegoś, za co nikt nie zapłaci.
+Most ideas **will die** at `/ideate` or `/validate` — that's the goal. Cheap death
+in console > 3 months of coding something nobody will pay for.
 
-**Tylko walidacja gotowego pomysłu:**
+**Validate an existing idea only:**
 ```
-/validate "SaaS do X dla Y" --brutal   # ostrzejszy demon + dodatkowa runda CFO
+/validate "SaaS for X for Y" --brutal   # harsher demon + additional CFO round
 ```
 
-**Nowy feature:**
+**New feature:**
 ```
-/swarm "dodaj eksport faktur do PDF z szablonem"
-→ odpowiedz na 1-2 pytania (albo dodaj --fast)
-→ patrz: architect planuje → workerzy piszą → demon szuka dziur → shipper
+/swarm "add PDF invoice export with template"
+→ answer 1-2 questions (or add --fast)
+→ watch: architect plans → workers write → demon hunts holes → shipper
 /commit  →  /pr-create
 ```
 
-**Bugfix (z testem regresji):**
+**Bugfix (with regression test):**
 ```
-/swarm "napraw: webhook Stripe podwójnie nalicza przy retry (+ test)"
+/swarm "fix: Stripe webhook double-charges on retry (+ test)"
 ```
-(strategia `risk-based` → najpierw failing test, potem fix przyczyny)
+(risk-based strategy → failing test first, then root cause fix)
 
-**Szybki przegląd przed commitem:**
+**Quick pre-commit review:**
 ```
-/review        ← reviewer + demon + UBS na brudnym diffie, bez zmian
-```
-
-**Refactor po wielu plikach:**
-```
-/swarm "zmigruj wszystkie wywołania starego API klienta na nowy --worktrees"
+/review        ← reviewer + demon + UBS on dirty diff, no changes
 ```
 
-**Po większej robocie — utrwal naukę:**
+**Multi-file refactor:**
 ```
-/retro         ← co zadziałało, jakie anti-patterny, sync
+/swarm "migrate all old API client calls to the new one --worktrees"
 ```
 
-**Sprawdź, czy już to rozwiązywałeś:**
+**After bigger work — persist learning:**
+```
+/retro         ← what worked, what anti-patterns, sync
+```
+
+**Check if you've already solved this:**
 ```fish
 cass search "stripe webhook idempotency" --robot --limit 5
 ```
 
 ---
 
-## 🔧 Diagnostyka
+## 🔧 Diagnostics
 
-| Problem | Sprawdź |
+| Problem | Check |
 |---|---|
-| Config się nie ładuje | `opencode debug config` (zparsowany JSON albo błąd) |
-| Agent nie widzi skilla | `opencode debug skill` (lista wykrytych) |
-| Modele agentów | `opencode debug config \| jq '.agent'` |
-| Zależności swarma | `swarm doctor` |
-| Dostępne modele | `opencode models \| grep deepseek` |
-| Ollama żyje? | `curl -s localhost:11434/api/version` |
-| SSH do GitHub | `ssh -T git@github.com` |
+| Config won't load | `opencode debug config` (parsed JSON or error) |
+| Agent doesn't see a skill | `opencode debug skill` (list of detected skills) |
+| Agent models | `opencode debug config | jq '.agent'` |
+| Swarm dependencies | `swarm doctor` |
+| Available models | `opencode models | grep deepseek` |
+| Ollama alive? | `curl -s localhost:11434/api/version` |
+| SSH to GitHub | `ssh -T git@github.com` |
 
-> **UBS w `swarm doctor` pokazuje „not found"** — to **fałszywy alarm**. `swarm
-> doctor` woła `ubs` przez `/usr/bin/env bash`, który w Twoim PATH trafia na
-> macOS bash 3.2 (UBS wymaga ≥4). Agenci wołają UBS poprawnie przez
-> `/bin/bash /home/me/.nix-profile/bin/ubs` i **działa** (zweryfikowane —
-> łapie błędy). Czysto kosmetyczne.
-
----
-
-## ⛔ Czego NIE robić
-
-- **Nie uruchamiaj `swarm setup`** — zregeneruje `plugin/swarm.ts` (skasuje fix
-  `liteModel` na DeepSeek + wstrzyknięcie PATH dla GUI) i nadpisze `AGENTS.md`.
-  Domyślnie ustawia opus/sonnet/**haiku** (haiku/anthropic nie masz w auth).
-  Wszystko już działa bez niego.
-- **Nie ruszaj `auth.json`** — tam są klucze API (deepseek + openrouter).
-- **Nie commituj z `--no-verify`** — omija bramkę jakości. `/commit` tego pilnuje.
-- **Pamiętaj o restarcie** — po zmianie w `~/.config/opencode/` zrestartuj
-  OpenCode/OpenChamber (config ładuje się raz przy starcie, nie ma hot-reloadu).
+> **UBS in `swarm doctor` shows "not found"** — this is a **false alarm**. `swarm
+> doctor` calls `ubs` via `/usr/bin/env bash`, which in your PATH hits
+> macOS bash 3.2 (UBS requires ≥4). Agents call UBS correctly via
+> `/bin/bash /home/me/.nix-profile/bin/ubs` and **it works** (verified —
+> catches bugs). Purely cosmetic.
 
 ---
 
-## 📖 Słownik pojęć
+## ⛔ What NOT to Do
 
-| Pojęcie | Znaczenie |
+- **Don't run `swarm setup`** — it regenerates `plugin/swarm.ts` (removes the
+  `liteModel` fix for DeepSeek + PATH injection for GUI) and overwrites `AGENTS.md`.
+  Defaults to opus/sonnet/**haiku** (haiku/anthropic not in your auth).
+  Everything already works without it.
+- **Don't touch `auth.json`** — that's where API keys live (deepseek + openrouter).
+- **Don't commit with `--no-verify`** — bypasses the quality gate. `/commit` enforces this.
+- **Remember to restart** — after changing something in `~/.config/opencode/`, restart
+  OpenCode/OpenChamber (config loads once at startup, no hot-reload).
+
+---
+
+## 📖 Glossary
+
+| Term | Meaning |
 |---|---|
-| **Koordynator** | Główny agent sesji `/swarm`. Mózg — orkiestruje, nie pisze kodu. |
-| **Worker** | Agent wykonujący jeden subtask w jednorazowym kontekście. |
-| **Subtask / bead** | Atomowy kawałek pracy z granicą plików, śledzony w hive. |
-| **Epic** | Zbiór subtasków = całe zadanie z `/swarm`, backed gitem. |
-| **Rezerwacja (swarmmail)** | Worker „blokuje" pliki, które edytuje → brak konfliktów z innymi workerami. |
-| **Demon** | Adwersarz (GLM 5.2) — próbuje złamać kod zanim wyjdzie. |
-| **Hivemind** | Pamięć semantyczna (wektorowa) między sesjami. |
-| **Learning loop** | System promocji/degradacji wzorców na podstawie outcome'ów. |
-| **Anti-pattern** | Strategia auto-oznaczona jako zła (>60% porażek) → „AVOID". |
-| **Worktree** | Izolowana kopia robocza gita (osobny branch) per worker. |
-| **UBS** | Ultimate Bug Scanner — mechaniczny skaner błędów AI. |
-| **CASS** | Cross-Agent Session Search — szukanie po całej Twojej historii AI. |
-| **max thinking** | `reasoningEffort: max` — DeepSeek myśli maksymalnie od startu. |
-| **read-only agent** | Agent z `edit: deny` — fizycznie nie może zmienić kodu. |
-| **unfair advantage** | Przewaga, której konkurent nie skopiuje (rzadka kombinacja skillów, przeżycie, asset, sposób myślenia). Rdzeń warstwy Psyche. |
-| **founder-market fit** | Czy ten konkretny założyciel udźwignie i wygra w tym rynku — i czy go to nie wypali. |
-| **founder churn** | Śmierć biznesu, bo założyciel wypali się/znudzi (nie z powodu rynku). `anti-fit.md` przed tym chroni. |
-| **COGS / unit economics** | Koszt obsługi 1 usera (w AI: tokeny/user!). Jeśli COGS ≥ cena → biznes krwawi. |
-| **wedge** | Najmniejsza rzecz, którą zbudujesz najpierw, a już jest warta zapłaty. |
-| **artefakt handoff** | `0-opportunity.md` → `1-validation.md` → `2-plan.md` — kontrakt między warstwami. |
+| **Coordinator** | Main agent of the `/swarm` session. Brain — orchestrates, doesn't write code. |
+| **Worker** | Agent executing one subtask in one-shot context. |
+| **Subtask / bead** | Atomic unit of work with file boundaries, tracked in hive. |
+| **Epic** | Collection of subtasks = the entire `/swarm` task, backed by git. |
+| **Reservation (swarmmail)** | Worker "locks" files it edits → no conflicts with other workers. |
+| **Demon** | Adversary (GLM 5.2) — tries to break the code before it ships. |
+| **Hivemind** | Semantic (vector) memory across sessions. |
+| **Learning loop** | Pattern promotion/degradation system based on outcomes. |
+| **Anti-pattern** | Strategy auto-marked as bad (>60% failure) → "AVOID". |
+| **Worktree** | Isolated git working copy (separate branch) per worker. |
+| **UBS** | Ultimate Bug Scanner — mechanical AI bug scanner. |
+| **CASS** | Cross-Agent Session Search — search across your entire AI history. |
+| **max thinking** | `reasoningEffort: max` — DeepSeek thinks maximally from the start. |
+| **read-only agent** | Agent with `edit: deny` — physically cannot change code. |
+| **unfair advantage** | Edge that competitors can't copy (rare skill combo, survival, asset, way of thinking). Core of the Psyche layer. |
+| **founder-market fit** | Whether this specific founder can handle and win in this market — and whether it won't burn them out. |
+| **founder churn** | Business death because the founder burned out/got bored (not because of the market). `anti-fit.md` protects against this. |
+| **COGS / unit economics** | Cost to serve 1 user (in AI: tokens/user!). If COGS ≥ price → business bleeds. |
+| **wedge** | The smallest thing you build first that's already worth paying for. |
+| **artifact handoff** | `0-opportunity.md` → `1-validation.md` → `2-plan.md` — contract between layers. |
 
 ---
 
-*Wygenerowano: 2026-06-20 • OpenCode 1.17.7 + swarm 0.63.2 + OpenChamber*
-*Pipeline: `/ideate` (Psyche) → `/validate` (BizDev) → `/swarm` (Code) — ten sam silnik, 3 warstwy*
+*Generated: 2026-06-20 • OpenCode 1.17.7 + swarm 0.63.2 + OpenChamber*
+*Pipeline: `/ideate` (Psyche) → `/validate` (BizDev) → `/swarm` (Code) — same engine, 3 layers*

@@ -195,6 +195,10 @@ RGB LEDs flash red during maintenance, rainbow when done. Errors saved to `~/0-I
 - Repos deleted from GitHub -> local clone removed
 - Repos moved between PARA dirs -> `vars/main.yml` updated, committed and pushed automatically
 
+## OpenCode Swarm
+
+OpenCode is the AI coding assistant (DeepSeek V4 via Nix). OpenChamber is the VSCode plugin that provides its GUI. Together they form a multi-agent swarm — DeepSeek V4 Pro handles planning and review, Flash handles execution. Everything is deployed by the `opencode-swarm` ansible tag: plugin, agents, commands, knowledge, configs. Command output flows through RTK (Rust Token Killer), a compression proxy that strips redundant output saving 60-90% tokens. See `roles/dotfiles/files/opencode/README.md` for the full guide.
+
 ## Secrets
 
 Vault is only required for: `ssh` (keys), `gh` (token), `bluetooth`/`fish` (Bose MAC address). All other tags work without vault.
