@@ -25,9 +25,9 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 **File management:** `lf` with sixel image previews, video thumbnails, PDF rendering, FZF integration, and drag-and-drop. PARA method at filesystem level (`~/0-Inbox`, `~/1-Projects`, `~/2-Areas`, `~/3-Resources`, `~/4-Archives`) - all GitHub repos auto-cloned to the right directory, new repos detected, deleted repos cleaned up, directory moves tracked. `poweroff` unmounts all USB drives before shutdown.
 
-**Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time. Solaar manages the Logitech MX Anywhere 3 - Smart Shift + Back + Forward fires `tv`, Smart Shift + scroll controls volume, Smart Shift alone emits middle click, Back/Forward alone switch Sway workspaces.
+**AI coding swarm:** [OpenCode Swarm](roles/dotfiles/files/opencode/README.md) — a full multi-agent swarm with 25 specialized agents, 3-family review gate, file reservation system, semantic memory with local embeddings, git-backed epic/subtask tracking, a learning loop, plugins and multi-agent orchestration.
 
-**OpenCode:** [OpenCode Swarm](roles/dotfiles/files/opencode/README.md) — a full multi-agent swarm with 25 specialized agents, 3-family review gate, file reservation system, semantic memory with local embeddings, git-backed epic/subtask tracking, a learning loop, plugins and multi-agent orchestration.
+**Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time. Solaar manages the Logitech MX Anywhere 3 - Smart Shift + Back + Forward fires `tv`, Smart Shift + scroll controls volume, Smart Shift alone emits middle click, Back/Forward alone switch Sway workspaces.
 
 ## How It's Built
 
