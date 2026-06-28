@@ -165,10 +165,9 @@ exec_always sh -c 'sleep 3; pactl set-card-profile alsa_card.pci-0000_00_1f.3 ou
 exec_always sh -c 'sleep 4; fish -c "lineout-keepalive sync"'
 exec_always sh -c 'pkill -x wl-clip-persist || true; sleep 0.1; wl-clip-persist --clipboard regular'
 exec swayidle -w \
-    timeout 300 'swaylock -f' \
     timeout 600 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
-    timeout 3600 '$HOME/.local/bin/poweroff' \
+    timeout 3600 'pgrep -x swaylock && $HOME/.local/bin/poweroff || true' \
     before-sleep 'swaylock -f'
 for_window [app_id=".*"] inhibit_idle fullscreen
 for_window [app_id="foot"] inhibit_idle none
