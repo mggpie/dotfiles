@@ -27,7 +27,7 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 **Extras:** maza host-level ad blocking (no Pi-hole, ads are cut off before they reach the browser). qBittorrent with 50+ search engine plugins auto-downloaded at deploy time. Solaar manages the Logitech MX Anywhere 3 - Smart Shift + Back + Forward fires `tv`, Smart Shift + scroll controls volume, Smart Shift alone emits middle click, Back/Forward alone switch Sway workspaces.
 
-**OpenCode:** [OpenCode Swarm](roles/dotfiles/files/opencode/README.md) — multi-agent AI coding with DeepSeek V4, RTK token compression, deployed via `opencode-swarm` tag.
+**OpenCode:** [OpenCode Swarm](roles/dotfiles/files/opencode/README.md) — a full multi-agent swarm with 25 specialized agents, 3-family review gate, file reservation system, semantic memory with local embeddings, git-backed epic/subtask tracking, a learning loop, plugins and multi-agent orchestration.
 
 ## How It's Built
 
