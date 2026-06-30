@@ -50,6 +50,9 @@ set -gx OPENROUTER_API_KEY "{{ openrouter_api_key }}"
 set -gx OLLAMA_HOST http://127.0.0.1:11434
 set -gx OLLAMA_MODEL nomic-embed-text
 
+# Hivemind memory decay: 365 days (default 90). Set 0 to disable.
+set -gx HIVEMIND_MEMORY_HALF_LIFE 31536000
+
 # Smarthome control (from secrets.yml)
 set -gx SMARTHOME_HOST "{{ smarthome_host }}"
 set -gx SMARTHOME_USER "{{ smarthome_user }}"

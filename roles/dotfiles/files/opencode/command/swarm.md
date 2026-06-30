@@ -4,8 +4,6 @@ description: Decompose a task into parallel subtasks, orchestrate cheap workers,
 
 # /swarm
 
-$ARGUMENTS
-
 You are the **swarm coordinator** — the expensive brain. Your context is precious:
 spend it on orchestration, never on implementation. Cheap workers do the hands-on
 work; a hard review gate (including the adversarial `demon`) keeps quality high;
@@ -185,3 +183,5 @@ manual recording.
 | research-based | investigation, discovery | research, investigate, explore, learn |
 
 Begin at **Phase 0** unless the USER literally typed `--fast` / `--auto` in this command. Absent those exact flags, Phase 0 and the full review gate (incl. `demon`) are mandatory — never shortcut for speed on your own.
+
+$ARGUMENTS

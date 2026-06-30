@@ -635,6 +635,7 @@ async function execTool(
           SWARM_PROJECT_DIR: projectDirectory,
           OLLAMA_HOST: "http://127.0.0.1:11434",
           OLLAMA_MODEL: "nomic-embed-text",
+          HIVEMIND_MEMORY_HALF_LIFE: "31536000",
         },
       },
     });
