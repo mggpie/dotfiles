@@ -605,120 +605,154 @@ async function execTool(
     throw new Error("swarm plugin not initialized: SDK client not available");
   }
 
-  // Build shell command with output to a temp file
-  // Single-quote escaping prevents shell injection (even for JSON args)
-  const tmpFile = join(tmpdir(), `swarm-${name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`);
-  const jsonStr = hasArgs ? JSON.stringify(args) : "";
-  const escapedJson = jsonStr.replace(/'/g, "'\\''");
-  const cmd = hasArgs
-    ? `${SWARM_BINARY} tool ${name} --json '${escapedJson}'`
-    : `${SWARM_BINARY} tool ${name}`;
-  const escapedTmp = tmpFile.replace(/'/g, "'\\''");
-  const shellCmd = `${cmd} > '${escapedTmp}' 2>&1`;
+  const maxRetries = 3;
+  const retryDelays = [1000, 3000, 7000]; // exponential-ish backoff
+  let lastError: Error | null = null;
 
-  let stdout: string;
-  let exitCode: number;
-
-  try {
-    // Create PTY via SDK client — OpenCode server spawns the process, NOT the plugin
-    const ptyResult = await sdkClient.pty.create({
-      body: {
-        command: "/bin/bash",
-        args: ["-c", shellCmd],
-        cwd: projectDirectory,
-        env: {
-          ...process.env as any,
-          PATH: `/home/me/.nix-profile/bin:/usr/bin:/usr/local/bin:${process.env.PATH || ""}`,
-          OPENCODE_SESSION_ID: ctx.sessionID,
-          OPENCODE_MESSAGE_ID: ctx.messageID,
-          OPENCODE_AGENT: ctx.agent,
-          SWARM_PROJECT_DIR: projectDirectory,
-          OLLAMA_HOST: "http://127.0.0.1:11434",
-          OLLAMA_MODEL: "nomic-embed-text",
-          HIVEMIND_MEMORY_HALF_LIFE: "31536000",
-        },
-      },
-    });
-
-    // Extract PTY info — response shape varies, handle both data and direct response
-    const ptyInfo: any = ptyResult?.data || ptyResult;
-    const ptyId: string | undefined = ptyInfo?.id || ptyInfo?.data?.id;
-    if (!ptyId) {
-      throw new Error(`Failed to create PTY: no ID returned (${JSON.stringify(ptyInfo).substring(0, 200)})`);
-    }
-
-    // Poll until PTY exits (or timeout)
-    const maxWait = 30000;
-    const pollInterval = 200;
-    let waited = 0;
-    let ptyStatus = "running";
-
-    while (ptyStatus === "running" && waited < maxWait) {
-      await new Promise(resolve => setTimeout(resolve, pollInterval));
-      waited += pollInterval;
-      try {
-        const info = await sdkClient.pty.get({ path: { id: ptyId } });
-        const infoData: any = info?.data || info;
-        ptyStatus = infoData?.status || "running";
-      } catch {
-        // If get fails, assume still running
-      }
-    }
-
-    // Clean up PTY
-    try { await sdkClient.pty.remove({ path: { id: ptyId } }); } catch {}
-
-    // Read output from temp file
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      stdout = readFileSync(tmpFile, "utf-8");
-    } catch {
-      stdout = "";
-    }
-  } catch (err: any) {
-    const errMsg = err?.message || String(err);
-    logError(`Tool ${name} spawn failed`, { args, error: errMsg, errorName: err?.name, errorCode: err?.code });
-    throw new Error(`swarm tool execution failed: ${errMsg}`);
-  } finally {
-    // Clean up temp file
-    try { rmSync(tmpFile, { force: true }); } catch {}
-  }
+      // Build shell command with output to a temp file
+      // Single-quote escaping prevents shell injection (even for JSON args)
+      const tmpFile = join(tmpdir(), `swarm-${name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`);
+      const jsonStr = hasArgs ? JSON.stringify(args) : "";
+      const escapedJson = jsonStr.replace(/'/g, "'\\''");
+      const cmd = hasArgs
+        ? `${SWARM_BINARY} tool ${name} --json '${escapedJson}'`
+        : `${SWARM_BINARY} tool ${name}`;
+      const escapedTmp = tmpFile.replace(/'/g, "'\\''");
+      const shellCmd = `${cmd} > '${escapedTmp}' 2>&1`;
 
-  // Parse JSON output from swarm CLI
-  if (!stdout.trim()) {
-    const errorMsg = "tool returned empty output";
-    logTool(name, args, undefined, errorMsg);
-    logError(`Tool ${name} failed`, { args, error: errorMsg });
-    throw new Error(errorMsg);
-  }
+      let stdout: string;
+      let exitCode: number;
 
-  try {
-    const result = JSON.parse(stdout);
-    if (result.success && result.data !== undefined) {
-      logTool(name, args, typeof result.data === "string" ? result.data : JSON.stringify(result.data));
-      if (name.startsWith("swarmmail_")) {
-        logSwarmMail(`tool_${name}`, { args, result: result.data });
+      try {
+        // Create PTY via SDK client — OpenCode server spawns the process, NOT the plugin
+        const ptyResult = await sdkClient.pty.create({
+          body: {
+            command: "/bin/bash",
+            args: ["-c", shellCmd],
+            cwd: projectDirectory,
+            env: {
+              ...process.env as any,
+              PATH: `/home/me/.nix-profile/bin:/usr/bin:/usr/local/bin:${process.env.PATH || ""}`,
+              OPENCODE_SESSION_ID: ctx.sessionID,
+              OPENCODE_MESSAGE_ID: ctx.messageID,
+              OPENCODE_AGENT: ctx.agent,
+              SWARM_PROJECT_DIR: projectDirectory,
+              OLLAMA_HOST: "http://127.0.0.1:11434",
+              OLLAMA_MODEL: "nomic-embed-text",
+              HIVEMIND_MEMORY_HALF_LIFE: "31536000",
+            },
+          },
+        });
+
+        // Extract PTY info — response shape varies, handle both data and direct response
+        const ptyInfo: any = ptyResult?.data || ptyResult;
+        const ptyId: string | undefined = ptyInfo?.id || ptyInfo?.data?.id;
+        if (!ptyId) {
+          throw new Error(`Failed to create PTY: no ID returned (${JSON.stringify(ptyInfo).substring(0, 200)})`);
+        }
+
+        // Poll until PTY exits (or timeout)
+        const maxWait = 30000;
+        const pollInterval = 200;
+        let waited = 0;
+        let ptyStatus = "running";
+
+        while (ptyStatus === "running" && waited < maxWait) {
+          await new Promise(resolve => setTimeout(resolve, pollInterval));
+          waited += pollInterval;
+          try {
+            const info = await sdkClient.pty.get({ path: { id: ptyId } });
+            const infoData: any = info?.data || info;
+            ptyStatus = infoData?.status || "running";
+          } catch {
+            // If get fails, assume still running
+          }
+        }
+
+        // Clean up PTY
+        try { await sdkClient.pty.remove({ path: { id: ptyId } }); } catch {}
+
+        // Read output from temp file
+        try {
+          stdout = readFileSync(tmpFile, "utf-8");
+        } catch {
+          stdout = "";
+        }
+      } catch (err: any) {
+        const errMsg = err?.message || String(err);
+        logError(`Tool ${name} spawn failed`, { args, error: errMsg, errorName: err?.name, errorCode: err?.code });
+        throw new Error(`swarm tool execution failed: ${errMsg}`);
+      } finally {
+        // Clean up temp file
+        try { rmSync(tmpFile, { force: true }); } catch {}
       }
-      return typeof result.data === "string"
-        ? result.data
-        : JSON.stringify(result.data, null, 2);
-    } else if (!result.success && result.error) {
-      const errorMsg = typeof result.error === "string"
-        ? result.error
-        : (result.error.message || "Tool execution failed");
-      logTool(name, args, undefined, errorMsg);
-      logError(`Tool ${name} failed`, { args, error: errorMsg });
-      throw new Error(errorMsg);
-    } else {
-      logTool(name, args, stdout);
-      return stdout;
+
+      // Parse JSON output from swarm CLI
+      if (!stdout.trim()) {
+        const errorMsg = "tool returned empty output";
+        logTool(name, args, undefined, errorMsg);
+        logError(`Tool ${name} failed`, { args, error: errorMsg });
+        throw new Error(errorMsg);
+      }
+
+      try {
+        const result = JSON.parse(stdout);
+        if (result.success && result.data !== undefined) {
+          logTool(name, args, typeof result.data === "string" ? result.data : JSON.stringify(result.data));
+          if (name.startsWith("swarmmail_")) {
+            logSwarmMail(`tool_${name}`, { args, result: result.data });
+          }
+          return typeof result.data === "string"
+            ? result.data
+            : JSON.stringify(result.data, null, 2);
+        } else if (!result.success && result.error) {
+          const errorMsg = typeof result.error === "string"
+            ? result.error
+            : (result.error.message || "Tool execution failed");
+          logTool(name, args, undefined, errorMsg);
+          logError(`Tool ${name} failed`, { args, error: errorMsg });
+          throw new Error(errorMsg);
+        } else {
+          logTool(name, args, stdout);
+          return stdout;
+        }
+      } catch (e: any) {
+        if (e.message && e.message !== "Unexpected end of JSON input" && !e.message.includes("JSON")) {
+          throw e;
+        }
+        logTool(name, args, stdout);
+        return stdout;
+      }
+    } catch (err: any) {
+      lastError = err;
+      const errMsg = err?.message || String(err);
+
+      // Only retry on transient errors: empty output, PTY failures, JSON parse
+      const isTransient = errMsg.includes("empty output")
+        || errMsg.includes("Failed to create PTY")
+        || errMsg.includes("Unexpected end of JSON input")
+        || errMsg.includes("ETIMEDOUT")
+        || errMsg.includes("ECONNRESET");
+
+      if (attempt < maxRetries && isTransient) {
+        const delay = retryDelays[attempt];
+        logCompaction("warn", "execTool retry", {
+          tool: name, attempt: attempt + 1, maxRetries, delay, error: errMsg
+        });
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+
+      // Non-transient or out of retries — log and rethrow
+      logError(`Tool ${name} failed after ${attempt + 1} attempts`, { args, error: errMsg });
+      throw err;
     }
-  } catch (e: any) {
-    if (e.message && e.message !== "Unexpected end of JSON input" && !e.message.includes("JSON")) {
-      throw e;
-    }
-    logTool(name, args, stdout);
-    return stdout;
   }
+
+  // Should never reach here, but just in case:
+  throw lastError || new Error("execTool failed");
 }
 
 // =============================================================================
