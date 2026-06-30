@@ -1,7 +1,7 @@
 # 🐝 OpenCode Swarm — complete guide
 
 Multi-agent system for **ideating, validating, and building** products/SaaS in
-**OpenCode 1.17.7 + OpenChamber** (GUI) on Void Linux workstation.
+**OpenCode 1.17.7 + OpenChamber** (GUI) on Void Linux and macOS workstations.
 
 > **One sentence:** expensive model **thinks and evaluates**, cheap models **execute**,
 > and a hard **quality gate + memory** ensure cheap models deliver good results.
@@ -438,14 +438,14 @@ Type these in OpenCode (TUI/OpenChamber). Definitions in `command/*.md`.
 |---|---|---|---|
 | **swarm** | 0.63.2 | Orchestration engine — all `hive_*`/`swarmmail_*`/`hivemind_*`/`swarm_*` tools. | ✅ core |
 | **OpenCode** | 1.17.7 | Agent host (TUI). OpenChamber is the GUI over it. | ✅ core |
-| **Ollama** | 0.30.9 | Local embeddings (`nomic-embed-text`) for semantic memory. Runit service (auto-starts on boot). | ✅ for hivemind |
+| **Ollama** | 0.30.9 | Local embeddings (`nomic-embed-text`) for semantic memory. Runit service (Void) or launchd (macOS) — auto-starts on boot. | ✅ for hivemind |
 | **UBS** | 5.3.2 | AI bug scanner. Quality gate. | ✅ quality |
 | **CASS** | 0.6.16 | Cross-agent session search. | ⚪ optional (helpful) |
 | **gh** | 2.94.0 | GitHub CLI — automatic PRs. | ⚪ for `/pr-create` |
 | **bash** | 5.3 | UBS requires bash ≥4 (macOS has 3.2). | ✅ for UBS |
 | **bun / node** | 1.3.14 / — | Runtime for plugin and tooling. | ✅ core |
 
-UBS and CASS are installed via Nix flake and prebuilt binary, MIT, SHA-verified.
+UBS and CASS are installed via Nix flake (Void) or Homebrew (macOS), MIT, SHA-verified.
 
 ---
 
@@ -497,7 +497,7 @@ Difference from skills: knowledge = **reference** pulled in deliberately; skills
 ├── knowledge/  (3)       ← saas-patterns.md, security-checklist.md, venture-pipeline.md
 └── plugin/swarm.ts       ← plugin wrapper (absolute paths — GUI-safe)
 
-~/Desktop/                  ← Your desktop organized in PARA (0-Inbox, 1-Projects, 2-Areas, 3-Resources)
+~/Desktop/                  ← Desktop organized in PARA (macOS: ~/Desktop/, Void: ~/)
 ├── 3-Resources/profile/
 │   ├── jakub/             ← LAYER 0 — your full bundle (source of truth, read directly)
 │   └── founder-fit.md     ← business lens (distilled by /profile)
@@ -505,7 +505,7 @@ Difference from skills: knowledge = **reference** pulled in deliberately; skills
     ├── _ideas/<slug>/     ← incubator: 0-opportunity → 1-validation → 2-plan.md
     └── <slug>/            ← after GO, the idea PROMOTES here as a real project (code)
 
-env.fish (Jinja2 template)   ← deepseek + openrouter keys injected from vault (never on disk as plaintext)
+env.fish (Jinja2 template, Void) or auth.json (macOS)   ← deepseek + openrouter keys (never as plaintext on Void)
 ~/.config/opencode.backup-*         ← backup of previous config
 ```
 
@@ -524,13 +524,14 @@ so that `cass`/`ubs`/`ollama`/`bash5` are found in the GUI.
 | Key on GitHub | SSH key (type: authentication, deployed from vault) |
 | `gh` CLI | logged in as **`mggpie`** (scope: repo, admin:public_key, …) |
 | Commit identity | `mggpie <57095596+mggpie@users.noreply.github.com>` (no-reply — no private email) |
-| Default branch | `main` |
+| Default branch | `main` (Void), `macos` (macOS) — same swarm config on both |
 | Fallback | `gh auth setup-git` set → HTTPS also works if SSH fails |
 | Test | `ssh -T git@github.com` → *"Hi mggpie! You've successfully authenticated"* ✅ |
 
 `git clone`/`push`/`pull` over SSH works — including **private repos**. `/pr-create`
-opens PRs via `gh`. Old key `void` is on the GitHub account, but
-physically not on this workstation — irrelevant.
+opens PRs via `gh`. SSH keys are deployed from ansible-vault on both platforms:
+`~/.ssh/id_ed25519` (Void) and `~/.ssh/id_ed25519_mac` (macOS).
+GitHub CLI is configured identically on both.
 
 ---
 
