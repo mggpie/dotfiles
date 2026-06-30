@@ -9,7 +9,7 @@ learns across sessions.
 
 - **Brain** (default agent, DeepSeek V4 Pro on max thinking): orchestrates,
   decomposes, reviews, decides. Long-lived, clean context. Does NOT implement.
-- **Hands** (DeepSeek V4 Flash on max thinking; Pro for auth/billing/db): focused,
+- **Hands** (DeepSeek V4 Flash; Pro for auth/billing/db): focused,
   disposable context. Reserve files, implement one subtask, test, record, exit.
 - **Planners** (`plan`, swarm-planner, saas-architect — DeepSeek V4 Pro): decompose
   and plan. Read-only, low token volume.
@@ -17,7 +17,7 @@ learns across sessions.
 - **Memory** (`hivemind_*`): durable cross-session learnings; the learning loop
   promotes patterns that work and inverts the ones that fail.
 
-DeepSeek V4 (Pro/Flash) does ALL the work at MAX reasoning effort.
+DeepSeek V4 Pro does ALL the work at MAX reasoning effort. Flash runs at default reasoning.
 
 ## When to swarm
 

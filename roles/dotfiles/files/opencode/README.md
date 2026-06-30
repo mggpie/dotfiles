@@ -248,20 +248,20 @@ for SaaS), plus 4 auxiliary agents.
 ### General Workers
 | Agent | Model | Role |
 |---|---|---|
-| `saas-backend` | DeepSeek Flash `max` | API, services, server logic, integrations, webhooks. |
-| `saas-frontend` | DeepSeek Flash `max` | UI, forms, dashboards, client state. |
-| `saas-test` | DeepSeek Flash `max` | **Only** tests (`*.test.*`, `*.spec.*`) — permissions limited to test files. Flag `--integration` enables DB-backed API tests (requires local database). |
-| `swarm-worker` | DeepSeek Flash `max` | Generic subtask executor (anything beyond the above). |
-| `refactorer` | DeepSeek Flash `max` | Mechanical pattern migration across many files, preserves behavior. |
-| `swarm-researcher` | DeepSeek Flash `max` | Read-only research of documentation/API in one-shot context; saves to hivemind, returns summary. |
+| `saas-backend` | DeepSeek Flash | API, services, server logic, integrations, webhooks. |
+| `saas-frontend` | DeepSeek Flash | UI, forms, dashboards, client state. |
+| `saas-test` | DeepSeek Flash | **Only** tests (`*.test.*`, `*.spec.*`) — permissions limited to test files. Flag `--integration` enables DB-backed API tests (requires local database). |
+| `swarm-worker` | DeepSeek Flash | Generic subtask executor (anything beyond the above). |
+| `refactorer` | DeepSeek Flash | Mechanical pattern migration across many files, preserves behavior. |
+| `swarm-researcher` | DeepSeek Flash | Read-only research of documentation/API in one-shot context; saves to hivemind, returns summary. |
 
 ### Verification / Exit
 | Agent | Model | Role |
 |---|---|---|
 | `saas-reviewer` | Kimi K2 Thinking | Read-only review: bugs, regressions, security, test coverage. Runs UBS. Different family than workers. |
 | `demon` | GLM 5.2 | **Adversary** — actively tries to BREAK the change (edge cases, race conditions, OWASP). Strongest + most diverse. Read-only. |
-| `saas-shipper` | DeepSeek Flash `max` | Final verification: typecheck + lint + tests + UBS. Reports "SHIP READY" or errors. |
-| `explore` | DeepSeek Flash `max` | Fast read-only file/symbol search (`rg`). Cheap, no brain needed. |
+| `saas-shipper` | DeepSeek Flash | Final verification: typecheck + lint + tests + UBS. Reports "SHIP READY" or errors. |
+| `explore` | DeepSeek Flash | Fast read-only file/symbol search (`rg`). Cheap, no brain needed. |
 
 > **Read-only** = agent has `edit: deny` — physically cannot change code. This
 > is not a suggestion, it's a hard-enforced permission.
@@ -279,7 +279,7 @@ in its own code.**
 | Coordinator | `deepseek/deepseek-v4-pro` (max) | `/swarm` session | Long-lived workhorse. Pro on max thinking is enough for orchestration. |
 | Planners | `deepseek/deepseek-v4-pro` (max) | `plan`, `swarm-planner`, `saas-architect` | Decomposition = highest leverage; DeepSeek V4 Pro on max thinking handles it. |
 | Critical workers | `deepseek/deepseek-v4-pro` (max) | auth, billing, db | Security/money/data — Pro gives more margin than Flash. |
-| General workers | `deepseek/deepseek-v4-flash` (max) | rest of saas-* + worker/refactorer/researcher/shipper | Narrow tasks → Flash on max thinking = great quality/cost ratio. |
+| General workers | `deepseek/deepseek-v4-flash` | rest of saas-* + worker/refactorer/researcher/shipper | Narrow tasks → Flash is a great quality/cost ratio. |
 | Reviewer | `openrouter/moonshotai/kimi-k2-thinking` | `saas-reviewer` | **Different family than workers** → catches characteristic DeepSeek errors. |
 | Adversary | `openrouter/z-ai/glm-5.2` | `demon` | **Strongest + most diverse** — third family (after DeepSeek and Kimi) = max blind spot coverage. |
 
@@ -287,11 +287,11 @@ in its own code.**
 Each family has different blind spots, so the review catches errors DeepSeek doesn't
 notice in its own code. This matters more than raw model power.
 
-**Max thinking** enabled globally for both DeepSeeks:
+**Max thinking** enabled for DeepSeek Pro (default for Flash):
 ```jsonc
 "provider": { "deepseek": { "models": {
   "deepseek-v4-pro":   { "options": { "reasoningEffort": "max" } },
-  "deepseek-v4-flash": { "options": { "reasoningEffort": "max" } }
+  "deepseek-v4-flash": { "options": {} }
 }}}
 ```
 (`reasoningEffort` → API `reasoning_effort`; `deepseek-thinking` family supports `high`/`max`. Kimi and GLM think natively — no need to force reasoning.)
@@ -304,7 +304,7 @@ Here adversaries run more often (you iterate on ideas), so capable but cheap mod
 | Role | Model | Family | $ / Mtok (out) |
 |---|---|---|---|
 | Coordinators `/ideate` `/validate` | `deepseek/deepseek-v4-pro` (max) | DeepSeek | 0.87 |
-| Researchers (+web) | `deepseek/deepseek-v4-flash` (max) | DeepSeek | 0.28 |
+| Researchers (+web) | `deepseek/deepseek-v4-flash` | DeepSeek | 0.28 |
 | Analysts: profiler, synthesizer, strategist, cfo, pm | `openrouter/moonshotai/kimi-k2-thinking` | Moonshot | 2.50 |
 | **Adversaries**: `psyche-critic`, `biz-demon` | `openrouter/minimax/minimax-m2.7` | MiniMax | 1.20 |
 

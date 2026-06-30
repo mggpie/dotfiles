@@ -13,7 +13,7 @@ the learning loop makes the next run smarter.
 
 ## Model routing (DeepSeek workhorses + diverse review gate)
 
-DeepSeek V4 (Pro/Flash) does the work at MAX reasoning effort. The review gate uses
+DeepSeek V4 Pro does the work at MAX reasoning effort. Flash runs at default reasoning. The review gate uses
 DIFFERENT Chinese model families on purpose, so the adversary catches what DeepSeek
 can't see in its own output. Zero US-frontier models.
 
@@ -22,10 +22,10 @@ can't see in its own output. Zero US-frontier models.
 | Coordinator          | deepseek/deepseek-v4-pro (max)         | you (this session) — long-lived workhorse |
 | Plan / decomposition | deepseek/deepseek-v4-pro (max)         | plan, swarm-planner, saas-architect |
 | Critical workers     | deepseek/deepseek-v4-pro (max)         | saas-auth, saas-billing, saas-db (security/money/data) |
-| General workers      | deepseek/deepseek-v4-flash (max)       | saas-backend, saas-frontend, saas-test, swarm-worker, refactorer, researcher, shipper |
+| General workers      | deepseek/deepseek-v4-flash             | saas-backend, saas-frontend, saas-test, swarm-worker, refactorer, researcher, shipper |
 | Correctness review   | openrouter/moonshotai/kimi-k2-thinking | saas-reviewer — different family from the workers |
 | Adversary            | openrouter/z-ai/glm-5.2                | demon — strongest + most diverse; breaks what review missed |
-| Deep map / search    | deepseek/deepseek-v4-pro / flash (max) | archaeologist (Pro), explore (Flash) |
+| Deep map / search    | deepseek/deepseek-v4-pro / flash       | archaeologist (Pro), explore (Flash) |
 | Escalation           | deepseek/deepseek-v4-pro (max)         | only when a worker fails review 3× |
 
 ## ⛔ Coordinator boundaries (NON-NEGOTIABLE)
