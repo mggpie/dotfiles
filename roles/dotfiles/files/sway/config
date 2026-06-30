@@ -175,6 +175,7 @@ for_window [app_id="org.wezfurlong.wezterm"] inhibit_idle none
 for_window [app_id="notepad"] floating enable, resize set width 35ppt height 80ppt, move position center, move scratchpad
 for_window [title="radio-stream"] move to workspace 10
 exec openrgb -d 0 --mode rainbow
+exec_always sh -c 'pgrep -x syncthing >/dev/null || nohup syncthing serve --no-browser --gui-address=127.0.0.1:8384 &'
 exec fish -c solaar-watch
 exec fish -c startup
 
