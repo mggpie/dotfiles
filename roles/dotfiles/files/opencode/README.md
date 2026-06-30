@@ -216,15 +216,15 @@ Three groups by layer: **code** (`swarm-*`, `saas-*`, +4 auxiliary — 16 agents
 ### Idea Layer — Psyche (`/ideate`) and BizDev (`/validate`)
 | Agent | Model | Role |
 |---|---|---|
-| `psyche-profiler` | Kimi K2 Thinking | Extracts your unfair advantages + founder-market-fit from the profile. Read-only. |
+| `psyche-profiler` | DeepSeek Pro `max` | Extracts your unfair advantages + founder-market-fit from the profile. Read-only. |
 | `psyche-scout` | DeepSeek Flash +web | Searches for real market gaps matching your edge (with sources). Read-only. |
-| `psyche-synthesizer` | Kimi K2 Thinking | Generates concrete ideas (advantage × gap). Read-only. |
-| `psyche-critic` | MiniMax M2.7 | **Fit-adversary** — kills ideas without founder-fit. Read-only. |
-| `biz-strategist` | Kimi K2 Thinking | Value prop, USP, MVP wedge, milestones. Read-only. |
-| `biz-cfo` | Kimi K2 Thinking | Unit economics: pricing, COGS (including AI cost/user), CAC/LTV. Blocks when COGS ≥ price. |
+| `psyche-synthesizer` | DeepSeek Pro `max` | Generates concrete ideas (advantage × gap). Read-only. |
+| `psyche-critic` | GLM 5.2 | **Fit-adversary** — kills ideas without founder-fit. Read-only. |
+| `biz-strategist` | DeepSeek Pro `max` | Value prop, USP, MVP wedge, milestones. Read-only. |
+| `biz-cfo` | DeepSeek Pro `max` | Unit economics: pricing, COGS (including AI cost/user), CAC/LTV. Blocks when COGS ≥ price. |
 | `biz-researcher` | DeepSeek Flash +web | Real competitors, prices, demand, channels — with sources. Read-only. |
-| `biz-pm` | Kimi K2 Thinking | Problem-Solution Fit + coherence. Read-only. |
-| `biz-demon` | MiniMax M2.7 | **Ruthless investor/competitor** — tries to KILL the business. Read-only. |
+| `biz-pm` | DeepSeek Pro `max` | Problem-Solution Fit + coherence. Read-only. |
+| `biz-demon` | GLM 5.2 | **Ruthless investor/competitor** — tries to KILL the business. Read-only. |
 
 ### Code Layer
 Each agent is a markdown file in `agent/` with a prompt + permissions + model.
@@ -305,8 +305,8 @@ Here adversaries run more often (you iterate on ideas), so capable but cheap mod
 |---|---|---|---|
 | Coordinators `/ideate` `/validate` | `deepseek/deepseek-v4-pro` (max) | DeepSeek | 0.87 |
 | Researchers (+web) | `deepseek/deepseek-v4-flash` | DeepSeek | 0.28 |
-| Analysts: profiler, synthesizer, strategist, cfo, pm | `openrouter/moonshotai/kimi-k2-thinking` | Moonshot | 2.50 |
-| **Adversaries**: `psyche-critic`, `biz-demon` | `openrouter/minimax/minimax-m2.7` | MiniMax | 1.20 |
+| Analysts: profiler, synthesizer, strategist, cfo, pm | `deepseek/deepseek-v4-pro` (max) | DeepSeek | 0.87 |
+| **Adversaries**: `psyche-critic`, `biz-demon` | `openrouter/z-ai/glm-5.2` | GLM | ~4.50 |
 
 **Prices (out $/Mtok):** DeepSeek Flash 0.28 · DeepSeek Pro 0.87 · MiniMax M2.7 1.20 ·
 Kimi K2 Thinking 2.50 · GLM 5.2 ~4.50. All are Chinese frontier models at a
@@ -438,15 +438,14 @@ Type these in OpenCode (TUI/OpenChamber). Definitions in `command/*.md`.
 |---|---|---|---|
 | **swarm** | 0.63.2 | Orchestration engine — all `hive_*`/`swarmmail_*`/`hivemind_*`/`swarm_*` tools. | ✅ core |
 | **OpenCode** | 1.17.7 | Agent host (TUI). OpenChamber is the GUI over it. | ✅ core |
-| **Ollama** | 0.30.9 | Local embeddings (`nomic-embed-text`) for semantic memory. Launchd service in the background. | ✅ for hivemind |
+| **Ollama** | 0.30.9 | Local embeddings (`nomic-embed-text`) for semantic memory. Runit service (auto-starts on boot). | ✅ for hivemind |
 | **UBS** | 5.3.2 | AI bug scanner. Quality gate. | ✅ quality |
 | **CASS** | 0.6.16 | Cross-agent session search. | ⚪ optional (helpful) |
 | **gh** | 2.94.0 | GitHub CLI — automatic PRs. | ⚪ for `/pr-create` |
 | **bash** | 5.3 | UBS requires bash ≥4 (macOS has 3.2). | ✅ for UBS |
 | **bun / node** | 1.3.14 / — | Runtime for plugin and tooling. | ✅ core |
 
-UBS and CASS come from the author's official Homebrew taps (Dicklesworthstone), MIT,
-SHA-verified.
+UBS and CASS are installed via Nix flake and prebuilt binary, MIT, SHA-verified.
 
 ---
 
@@ -506,7 +505,7 @@ Difference from skills: knowledge = **reference** pulled in deliberately; skills
     ├── _ideas/<slug>/     ← incubator: 0-opportunity → 1-validation → 2-plan.md
     └── <slug>/            ← after GO, the idea PROMOTES here as a real project (code)
 
-~/.local/share/opencode/auth.json   ← deepseek + openrouter keys (⛔ DO NOT TOUCH)
+env.fish (Jinja2 template)   ← deepseek + openrouter keys injected from vault (never on disk as plaintext)
 ~/.config/opencode.backup-*         ← backup of previous config
 ```
 
@@ -521,8 +520,8 @@ so that `cass`/`ubs`/`ollama`/`bash5` are found in the GUI.
 
 | Element | Status |
 |---|---|
-| Protocol | **SSH** (key `~/.ssh/id_ed25519`, in ssh-agent + Keychain macOS) |
-| Key on GitHub | `mac-m2-2026-06` (type: authentication) |
+| Protocol | **SSH** (key `~/.ssh/id_ed25519`, in ssh-agent) |
+| Key on GitHub | SSH key (type: authentication, deployed from vault) |
 | `gh` CLI | logged in as **`mggpie`** (scope: repo, admin:public_key, …) |
 | Commit identity | `mggpie <57095596+mggpie@users.noreply.github.com>` (no-reply — no private email) |
 | Default branch | `main` |
@@ -530,8 +529,8 @@ so that `cass`/`ubs`/`ollama`/`bash5` are found in the GUI.
 | Test | `ssh -T git@github.com` → *"Hi mggpie! You've successfully authenticated"* ✅ |
 
 `git clone`/`push`/`pull` over SSH works — including **private repos**. `/pr-create`
-opens PRs via `gh`. Old key `void` (from Linux) is on the GitHub account, but
-physically not on this Mac — irrelevant.
+opens PRs via `gh`. Old key `void` is on the GitHub account, but
+physically not on this workstation — irrelevant.
 
 ---
 
@@ -605,8 +604,7 @@ cass search "stripe webhook idempotency" --robot --limit 5
 | SSH to GitHub | `ssh -T git@github.com` |
 
 > **UBS in `swarm doctor` shows "not found"** — this is a **false alarm**. `swarm
-> doctor` calls `ubs` via `/usr/bin/env bash`, which in your PATH hits
-> macOS bash 3.2 (UBS requires ≥4). Agents call UBS correctly via
+> doctor` calls `ubs` via `/usr/bin/env bash`. Agents call UBS correctly via
 > `/bin/bash /home/me/.nix-profile/bin/ubs` and **it works** (verified —
 > catches bugs). Purely cosmetic.
 
