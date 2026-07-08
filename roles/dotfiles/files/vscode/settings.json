@@ -35,5 +35,10 @@
     "chat.tools.global.autoApprove": true,
     // Don't steal window focus or show a notification when Copilot is waiting for input.
     // Default "windowNotFocused" causes a popup if you switch away while the agent is running.
-    "chat.notifyWindowOnConfirmation": "off"
+    "chat.notifyWindowOnConfirmation": "off",
+
+    // OpenChamber (the OpenCode GUI) runs inside VSCode, which Sway launches
+    // without the nix-profile PATH, so it can't resolve `opencode` on its own.
+    // Point it straight at the CLI via the stable nix-profile symlink.
+    "openchamber.opencodeBinary": "/home/me/.nix-profile/bin/opencode"
 }

@@ -42,3 +42,14 @@
         src: vscode/code-flags.conf
         dest: "{{ user_home }}/.config/code-flags.conf"
         mode: "0644"
+
+    # OpenChamber is the OpenCode GUI frontend. Manage it here so the install is
+    # reproducible instead of a manual step that silently drifts from the repo.
+    - name: List installed VSCode extensions
+      ansible.builtin.command: "{{ user_home }}/.nix-profile/bin/code --list-extensions"
+      register: dotfiles_vscode_extensions
+      changed_when: false
+
+    - name: Install OpenChamber extension (OpenCode GUI frontend)
+      ansible.builtin.command: "{{ user_home }}/.nix-profile/bin/code --install-extension fedaykindev.openchamber"
+      when: "'fedaykindev.openchamber' not in dotfiles_vscode_extensions.stdout"
