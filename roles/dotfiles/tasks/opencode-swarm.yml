@@ -144,8 +144,8 @@
       become: true
 
     - name: Deploy ollama run script
-      ansible.builtin.copy:
-        src: runit/ollama/run
+      ansible.builtin.template:
+        src: "{{ role_path }}/files/runit/ollama/run"
         dest: /etc/sv/ollama/run
         mode: "0755"
       become: true

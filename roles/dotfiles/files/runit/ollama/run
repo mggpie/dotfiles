@@ -1,2 +1,7 @@
 #!/bin/sh
-exec ~/.nix-profile/bin/ollama serve 2>&1
+# runit supervises services as root, but ollama must run as the login user so it
+# uses that user's nix binary and ~/.ollama model store. chpst drops privileges;
+# HOME must be set explicitly (chpst does not set it) or ollama looks in root's
+# home and finds none of the pulled models (e.g. nomic-embed-text for hivemind).
+exec 2>&1
+exec chpst -u {{ username }} /usr/bin/env HOME={{ user_home }} {{ user_home }}/.nix-profile/bin/ollama serve
