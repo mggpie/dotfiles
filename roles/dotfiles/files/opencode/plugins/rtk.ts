@@ -1,6 +1,6 @@
 import type { Plugin } from "@opencode-ai/plugin"
-import { readFileSync, rmSync } from "node:fs"
-import { tmpdir } from "node:os"
+import { readFileSync, rmSync, existsSync } from "node:fs"
+import { homedir, tmpdir } from "node:os"
 
 // RTK OpenCode plugin — rewrites commands to use rtk for token savings.
 // Requires: rtk >= 0.23.0 in PATH.
@@ -14,6 +14,17 @@ import { tmpdir } from "node:os"
 // ALL process spawning from plugins. The OpenCode SERVER creates the PTY
 // process, not the plugin. Output goes to a temp file read via fs.
 
+// Race a promise against a timeout. The PTY host may be absent (e.g. headless
+// `opencode run`, which the swarm uses for workers), in which case
+// client.pty.create never resolves. Bounding it lets the plugin fail open
+// instead of hanging the caller (or opencode startup).
+function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>(resolve => setTimeout(() => resolve(fallback), ms)),
+  ])
+}
+
 async function ptyExec(
   client: any,
   command: string,
@@ -24,16 +35,21 @@ async function ptyExec(
     const escapedTmp = tmpFile.replace(/'/g, "'\\''")
     const shellCmd = `${command} > '${escapedTmp}' 2>&1`
 
-    const ptyResult = await client.pty.create({
-      body: {
-        command: "/bin/bash",
-        args: ["-c", shellCmd],
-        cwd,
-        env: {
-          PATH: `/home/me/.nix-profile/bin:/home/me/.local/bin:/usr/bin:/usr/local/bin:${process.env.PATH || ""}`,
+    const ptyResult = await withTimeout(
+      client.pty.create({
+        body: {
+          command: "/bin/bash",
+          args: ["-c", shellCmd],
+          cwd,
+          env: {
+            PATH: `/home/me/.nix-profile/bin:/home/me/.local/bin:/usr/bin:/usr/local/bin:${process.env.PATH || ""}`,
+          },
         },
-      },
-    })
+      }),
+      5000,
+      null,
+    )
+    if (!ptyResult) return ""
 
     const ptyInfo: any = ptyResult?.data || ptyResult
     const ptyId: string | undefined = ptyInfo?.id
@@ -71,15 +87,17 @@ export const RtkOpenCodePlugin: Plugin = async (input) => {
   const client = input.client
   const directory = input.directory
 
-  // Check if rtk binary is available via PTY
-  try {
-    const output = await ptyExec(client, "which rtk", directory)
-    if (!output.startsWith("/")) {
-      console.warn("[rtk] rtk binary not found in PATH — plugin disabled")
-      return {}
-    }
-  } catch {
-    console.warn("[rtk] rtk binary not found in PATH — plugin disabled")
+  // Locate the rtk binary WITHOUT spawning a process. Plugin init is awaited
+  // during opencode bootstrap; probing via the PTY API here hangs startup
+  // forever when no PTY host is attached (headless `opencode run`). A plain fs
+  // check is instant and also works inside OpenChamber's no-spawn sandbox.
+  const rtkBinary = [
+    `${homedir()}/.local/bin/rtk`,
+    "/usr/local/bin/rtk",
+    "/usr/bin/rtk",
+  ].find(p => existsSync(p))
+  if (!rtkBinary) {
+    console.warn("[rtk] rtk binary not found - plugin disabled")
     return {}
   }
 
@@ -95,7 +113,7 @@ export const RtkOpenCodePlugin: Plugin = async (input) => {
 
       try {
         const escapedCmd = command.replace(/'/g, "'\\''")
-        const result = await ptyExec(client, `rtk rewrite '${escapedCmd}'`, directory)
+        const result = await ptyExec(client, `'${rtkBinary}' rewrite '${escapedCmd}'`, directory)
         if (result && result !== command) {
           ;(args as Record<string, unknown>).command = result
         }
