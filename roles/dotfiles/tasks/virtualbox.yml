@@ -16,3 +16,21 @@
         name: "{{ username }}"
         groups: vboxusers
         append: true
+
+    - name: Load VirtualBox kernel modules
+      community.general.modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - vboxdrv
+        - vboxnetflt
+        - vboxnetadp
+
+    - name: Auto-load VirtualBox modules at boot
+      ansible.builtin.copy:
+        content: |
+          vboxdrv
+          vboxnetflt
+          vboxnetadp
+        dest: /etc/modules-load.d/virtualbox.conf
+        mode: "0644"
