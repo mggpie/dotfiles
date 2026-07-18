@@ -9,7 +9,7 @@
   block:
     - name: Check if Packet Tracer AppImage already installed
       ansible.builtin.stat:
-        path: "{{ user_home }}/.local/bin/packettracer"
+        path: "{{ user_home }}/.local/share/packettracer/packettracer.AppImage"
       register: dotfiles_packettracer_installed
 
     - name: Find Packet Tracer .deb in 0-Inbox
@@ -34,13 +34,19 @@
         path: "{{ user_home }}/.local/bin"
         state: directory
         mode: "0755"
+
+    - name: Create Packet Tracer data directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/share/packettracer"
+        state: directory
+        mode: "0755"
       when: not dotfiles_packettracer_installed.stat.exists
 
     - name: Extract Packet Tracer AppImage from .deb
       ansible.builtin.shell: |
         set -o pipefail
         ar p "{{ dotfiles_packettracer_deb.files[0].path }}" data.tar.xz \
-          | tar -xJO ./opt/pt/packettracer.AppImage > "{{ user_home }}/.local/bin/packettracer"
+          | tar -xJO ./opt/pt/packettracer.AppImage > "{{ user_home }}/.local/share/packettracer/packettracer.AppImage"
       args:
         executable: /bin/bash
       when: not dotfiles_packettracer_installed.stat.exists
@@ -48,9 +54,19 @@
 
     - name: Make Packet Tracer AppImage executable
       ansible.builtin.file:
-        path: "{{ user_home }}/.local/bin/packettracer"
+        path: "{{ user_home }}/.local/share/packettracer/packettracer.AppImage"
         mode: "0755"
       when: not dotfiles_packettracer_installed.stat.exists
+
+    - name: Create packettracer wrapper script for PATH
+      ansible.builtin.copy:
+        content: |
+          #!/bin/sh
+          # No native Wayland Qt plugin bundled in the AppImage - run via XWayland.
+          export QT_QPA_PLATFORM=xcb
+          exec "{{ user_home }}/.local/share/packettracer/packettracer.AppImage" "$@"
+        dest: "{{ user_home }}/.local/bin/packettracer"
+        mode: "0755"
 
     - name: Create .local/share/applications directory
       ansible.builtin.file:
