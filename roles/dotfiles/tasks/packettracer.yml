@@ -1,0 +1,72 @@
+---
+# Cisco Packet Tracer - requires a NetAcad login to download, so it can't be
+# fetched automatically. Drop the Ubuntu .deb from netacad.com into
+# ~/0-Inbox/ and this task extracts the bundled AppImage (the .deb itself
+# is just an AppImage wrapper - see its postinst script).
+
+- name: Packet Tracer
+  tags: [packettracer, notest]
+  block:
+    - name: Check if Packet Tracer AppImage already installed
+      ansible.builtin.stat:
+        path: "{{ user_home }}/.local/bin/packettracer"
+      register: dotfiles_packettracer_installed
+
+    - name: Find Packet Tracer .deb in 0-Inbox
+      ansible.builtin.find:
+        paths: "{{ user_home }}/0-Inbox"
+        patterns: "CiscoPacketTracer*.deb"
+      register: dotfiles_packettracer_deb
+      when: not dotfiles_packettracer_installed.stat.exists
+
+    - name: Fail if no Packet Tracer .deb found and not installed
+      ansible.builtin.fail:
+        msg: >
+          Packet Tracer is not installed and no CiscoPacketTracer*.deb was found
+          in {{ user_home }}/0-Inbox. Download it from netacad.com and place it
+          there.
+      when: >
+        not dotfiles_packettracer_installed.stat.exists and
+        dotfiles_packettracer_deb.matched == 0
+
+    - name: Create .local/bin directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/bin"
+        state: directory
+        mode: "0755"
+      when: not dotfiles_packettracer_installed.stat.exists
+
+    - name: Extract Packet Tracer AppImage from .deb
+      ansible.builtin.shell: |
+        set -o pipefail
+        ar p "{{ dotfiles_packettracer_deb.files[0].path }}" data.tar.xz \
+          | tar -xJO ./opt/pt/packettracer.AppImage > "{{ user_home }}/.local/bin/packettracer"
+      args:
+        executable: /bin/bash
+      when: not dotfiles_packettracer_installed.stat.exists
+      changed_when: true
+
+    - name: Make Packet Tracer AppImage executable
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/bin/packettracer"
+        mode: "0755"
+      when: not dotfiles_packettracer_installed.stat.exists
+
+    - name: Create .local/share/applications directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.local/share/applications"
+        state: directory
+        mode: "0755"
+
+    - name: Create Packet Tracer .desktop file
+      ansible.builtin.copy:
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=Cisco Packet Tracer
+          Exec={{ user_home }}/.local/bin/packettracer %U
+          Icon=packettracer
+          Terminal=false
+          Categories=Education;Network;
+        dest: "{{ user_home }}/.local/share/applications/packettracer.desktop"
+        mode: "0644"
