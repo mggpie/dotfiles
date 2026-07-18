@@ -31,6 +31,8 @@
   ansible.builtin.import_tasks: tlp.yml
 - name: Import virtualization tasks
   ansible.builtin.import_tasks: virtualization.yml
+- name: Import virtualbox tasks
+  ansible.builtin.import_tasks: virtualbox.yml
 - name: Import fonts tasks
   ansible.builtin.import_tasks: fonts.yml
 - name: Import maza tasks

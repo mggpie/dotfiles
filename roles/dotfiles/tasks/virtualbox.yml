@@ -1,0 +1,18 @@
+---
+- name: VirtualBox
+  tags: [virtualbox]
+  become: true
+  block:
+    - name: Install VirtualBox
+      community.general.xbps:
+        update_cache: false
+        name:
+          - virtualbox-ose
+          - virtualbox-ose-dkms
+        state: present
+
+    - name: Add user to vboxusers group
+      ansible.builtin.user:
+        name: "{{ username }}"
+        groups: vboxusers
+        append: true
