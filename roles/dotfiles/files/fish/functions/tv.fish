@@ -37,6 +37,8 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         pactl set-card-profile $audio_card $monitor_audio_profile
         pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
         pactl set-sink-volume @DEFAULT_SINK@ 35%
+        # WirePlumber persists route mute state - clear it or the sink stays silent
+        pactl set-sink-mute @DEFAULT_SINK@ 0
         sleep 0.1
 
         # Now disable TV
@@ -98,6 +100,8 @@ function tv --description "Toggle between TV and Monitor with audio switching"
         pactl set-card-profile $audio_card $tv_audio_profile
         pactl set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
         pactl set-sink-volume @DEFAULT_SINK@ 60%
+        # WirePlumber persists route mute state - clear it or the sink stays silent
+        pactl set-sink-mute @DEFAULT_SINK@ 0
 
         # Play silence to keep audio stream active - prevents amp buzzing
         lineout-keepalive start

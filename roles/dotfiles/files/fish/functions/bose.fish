@@ -34,6 +34,8 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
         # Switch audio back to HDMI before disconnect
         pactl set-card-profile $hdmi_card $fallback_profile 2>/dev/null
         pactl set-default-sink $fallback_sink 2>/dev/null
+        # WirePlumber persists route mute state - clear it or the sink stays silent
+        pactl set-sink-mute $fallback_sink 0 2>/dev/null
         sleep 0.2
         lineout-keepalive sync
 
@@ -214,6 +216,8 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     end
 
     pactl set-default-sink $bt_sink 2>/dev/null
+    # WirePlumber persists route mute state - clear it or the sink stays silent
+    pactl set-sink-mute $bt_sink 0 2>/dev/null
 
     echo "✅ Connected - audio on Bose QC45 (AAC)"
     notify-send -i audio-headphones "Bose QC45" "Connected"
