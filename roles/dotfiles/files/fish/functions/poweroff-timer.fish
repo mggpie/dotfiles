@@ -4,7 +4,7 @@ function poweroff-timer
             set pid (cat /tmp/timer.pid)
             kill $pid 2>/dev/null && begin
                 echo "Timer cancelled"
-                openrgb -d 0 --mode rainbow >/dev/null 2>&1
+                aura rainbow
             end || echo "No active timer"
             rm -f /tmp/timer.pid
         else
@@ -25,8 +25,8 @@ function poweroff-timer
     echo "To cancel: poweroff-timer cancel"
 
     # Turn off RGB aura immediately
-    openrgb -d 0 --mode off >/dev/null 2>&1
+    aura off
 
-    fish -c "sleep $seconds && smarthome 1 off 2>/dev/null; openrgb -d 0 --mode rainbow >/dev/null 2>&1 && sleep 2 && $HOME/.local/bin/poweroff" &
+    fish -c "sleep $seconds; smarthome 1 off 2>/dev/null; aura rainbow; sleep 2; $HOME/.local/bin/poweroff" &
     echo $last_pid > /tmp/timer.pid
 end

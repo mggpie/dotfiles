@@ -30,6 +30,20 @@ function upall
         return
     end
 
+    # Refuse concurrent runs. Two overlapping upall sessions (cron @reboot
+    # plus a manual run) fight over xbps/nix and the Aura controller.
+    set -l lock_dir /tmp/upall.lock
+    if not mkdir $lock_dir 2>/dev/null
+        set -l lock_pid (cat $lock_dir/pid 2>/dev/null)
+        if test -n "$lock_pid"; and ps -p $lock_pid >/dev/null 2>&1
+            echo "upall is already running (pid $lock_pid), aborting"
+            return 1
+        end
+        rm -rf $lock_dir
+        mkdir $lock_dir
+    end
+    echo $fish_pid > $lock_dir/pid
+
     set -l timestamp (date '+%Y-%m-%d %H:%M:%S')
     set -l has_errors 0
 
@@ -37,7 +51,7 @@ function upall
     mkdir -p (dirname $log_file)
 
     # LED: flashing red during maintenance
-    openrgb -d 0 --mode flashing --color FF0000 >/dev/null 2>&1
+    aura flashing
 
     echo "=== System Maintenance Started: $timestamp ===" | tee -a $log_file
 
@@ -169,6 +183,8 @@ function upall
     echo -e "\n=== System Maintenance Completed: "(date '+%Y-%m-%d %H:%M:%S')" ===" | tee -a $log_file
     echo -e "\nLog saved to: $log_file"
 
-    # LED: restore rainbow
-    openrgb -d 0 --mode rainbow >/dev/null 2>&1
+    # LED: restore rainbow and persist it across power cycles
+    aura rainbow
+    aura commit
+    rm -rf $lock_dir
 end

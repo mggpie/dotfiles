@@ -19,7 +19,7 @@ I picked Void Linux because it's one of the most architecturally interesting dis
 
 **Packages & system:** Dual package manager - xbps (~1200 packages), Nix as unprivileged overlay (~500) for apps not in Void repos. Tuned i915 kernel params, sysctl memory tuning (swappiness, vfs_cache_pressure), zram swap via zramen, TTY autologin, only TTY1-2 kept, unused services masked, CPU mitigations off (never do this on a production machine), `GRUB_TIMEOUT=0`. TLP installed but disabled - kernel defaults (schedutil governor) are more responsive than TLP powersave on desktop. Ansible Vault for SSH keys and tokens, `no_log: true` on secret tasks.
 
-**RGB as status indicator:** The PC's ASUS Aura LEDs aren't cosmetic - they're a state machine. Rainbow = system ready. Flashing red = maintenance running. Off = shutdown timer active. Rainbow flash = 2-second warning before poweroff.
+**RGB as status indicator:** The PC's ASUS Aura LEDs aren't cosmetic - they're a state machine. Rainbow = system ready. Flashing red = maintenance running. Off = shutdown timer active. Rainbow flash = 2-second warning before poweroff. The `aura` fish function drives the controller over raw HID; OpenRGB 1.0 is not used because its `SetGen1` command wedges this board's Aura firmware (`aura reset` does a USB port reset to recover).
 
 **Audio:** PipeWire + WirePlumber with per-device codec negotiation (Bluetooth A2DP/AAC for Bose QC45, HDMI stereo profiles for monitor and TV). YouTube radio via mpv (audio only) - prev/next and station name in Waybar, click to toggle, resumes the same station after stop. The `bose` function is a 146-line Bluetooth state machine that detects which display is active, picks the correct audio fallback, tries three connection strategies, waits for PipeWire to register the sink, and forces A2DP. The `tv` function hot-switches all workspaces and audio between monitor and TV.
 
@@ -94,7 +94,6 @@ ansible-playbook playbook.yml --list-tags       # Show all tags
 | `theme` | GTK/Qt theming (Tango Dark, Adwaita Dark) |
 | `bluetooth` | BlueZ with AutoEnable |
 | `wifi` | wpa_supplicant (manual start) |
-| `openrgb` | RGB LED control (ASUS Aura) |
 | `gaming` | Steam, Gamescope, GameMode, MangoHud |
 
 </details>
