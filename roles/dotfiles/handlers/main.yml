@@ -29,11 +29,3 @@
   until: sshd_restart.rc == 0
   retries: 5
   delay: 2
-
-# solaar overwrites config.yaml on exit, so we must kill it before deploy.
-# the watchdog (fish -c solaar-watch) keeps respawning it - we just kill solaar
-# and the watchdog will restart it 2s later with the new config
-- name: Restart solaar
-  ansible.builtin.command: pkill -f "solaar --window"
-  changed_when: true
-  failed_when: false

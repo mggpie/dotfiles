@@ -27,29 +27,85 @@
         state: present
       become: true
 
+    # Upstream 1.1.20 bug (fixed by pwr-Solaar/Solaar PR #3326, not yet in a
+    # release): the cookie-gated apply_settings_if_needed() treats the
+    # reconfiguration request sent when the mouse wakes from power-save as a
+    # duplicate and skips re-applying settings, so button diversions and smart
+    # shift silently revert to device defaults. Ship the two fixed modules
+    # until the fix lands in an xbps package. An xbps upgrade overwrites them;
+    # the assert below fails loudly so the patch gets refreshed.
+    - name: Check Solaar package version
+      ansible.builtin.command: xbps-query -p pkgver Solaar
+      register: solaar_pkgver
+      changed_when: false
+
+    - name: Assert solaar patch targets the installed release
+      ansible.builtin.assert:
+        that: solaar_pkgver.stdout | trim == "Solaar-1.1.20_1"
+        fail_msg: >-
+          Solaar changed to {{ solaar_pkgver.stdout | trim }} - refresh
+          files/solaar/patched/{device,notifications}.py from upstream PR #3326
+          and update this assert.
+
+    - name: Find solaar library directory
+      ansible.builtin.command: >-
+        python3 -c "import logitech_receiver, os; print(os.path.dirname(logitech_receiver.__file__))"
+      register: solaar_libdir
+      changed_when: false
+
+    - name: Deploy patched solaar modules (wake-from-power-save fix)
+      ansible.builtin.copy:
+        src: "solaar/patched/{{ item }}"
+        dest: "{{ solaar_libdir.stdout }}/{{ item }}"
+        mode: "0644"
+      loop: [device.py, notifications.py]
+      become: true
+
     - name: Create solaar config directory
       ansible.builtin.file:
         path: "{{ user_home }}/.config/solaar"
         state: directory
         mode: "0755"
 
-    - name: Stop solaar before config deploy
-      # Kill only the solaar process, not the fish watchdog (solaar-watch).
-      # The watchdog will restart solaar after deploy with the fresh config.
-      ansible.builtin.command: pkill -f "solaar --window"
+    # No solaar instance may run while config is replaced: on SIGTERM solaar
+    # saves its in-memory config on exit and would clobber the deployed file.
+    # The fish watchdog would respawn it mid-deploy, so stop the watchdog
+    # first and start it again once the new config is in place.
+    - name: Stop solaar watchdog
+      ansible.builtin.command: pkill -f "[f]ish -c solaar-watch"
       changed_when: false
       failed_when: false
+
+    - name: Stop solaar
+      ansible.builtin.command: pkill -f "[s]olaar -w hide"
+      changed_when: false
+      failed_when: false
+
+    - name: Wait for solaar to exit and save its state
+      ansible.builtin.command: pgrep -f "[s]olaar -w hide"
+      register: solaar_running
+      until: solaar_running.rc != 0
+      retries: 20
+      delay: 0.25
+      changed_when: false
+      failed_when: solaar_running.rc == 0
 
     - name: Deploy solaar config
       ansible.builtin.copy:
         src: solaar/config.yaml
         dest: "{{ user_home }}/.config/solaar/config.yaml"
         mode: "0644"
-      notify: Restart solaar
 
     - name: Deploy solaar rules
       ansible.builtin.copy:
         src: solaar/rules.yaml
         dest: "{{ user_home }}/.config/solaar/rules.yaml"
         mode: "0644"
-      notify: Restart solaar
+
+    # Restart even when the play was interrupted between stop and here;
+    # solaar-watch recovers SWAYSOCK itself when started from ansible.
+    - name: Start solaar watchdog
+      ansible.builtin.shell: >-
+        pgrep -f "[f]ish -c solaar-watch" >/dev/null ||
+        setsid -f fish -c 'solaar-watch >/dev/null 2>&1'
+      changed_when: false
