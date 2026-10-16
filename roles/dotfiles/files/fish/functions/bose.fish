@@ -42,7 +42,10 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
         bluetoothctl disconnect $mac 2>/dev/null
 
         echo "✅ Disconnected - audio on "(test "$tv_active" = "true" && echo "TV" || echo "Monitor")
-        notify-send -i audio-speakers "Bose QC45" "Disconnected"
+        # mako may have died mid-session - skip instead of spewing a DBus error
+        if pgrep -x mako >/dev/null
+            notify-send -i audio-speakers "Bose QC45" "Disconnected"
+        end
         return 0
     end
 
@@ -76,22 +79,42 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     end
 
     if test "$is_paired" = "true"
-        # Already paired - try direct connect from PC
-        set -l connect_output (bluetoothctl connect $mac 2>&1)
-        if test (count $connect_output) -gt 0
-            printf '%s\n' $connect_output
-        end
+        # Already paired - try direct connect from PC.
+        # The first attempt right after the QC45 powers on often fails with
+        # le-connection-abort-by-local, so retry before giving up.
+        for attempt in (seq 3)
+            set -l connect_output (bluetoothctl connect $mac 2>&1)
+            if test (count $connect_output) -gt 0
+                printf '%s\n' $connect_output
+            end
 
-        if string match -rq 'br-connection-key-missing' -- $connect_output
-            set connect_error "stale-bond"
-        end
-
-        for i in (seq 8)
-            if bluetoothctl info $mac 2>/dev/null | grep -q "Connected: yes"
-                set connected true
+            if string match -rq 'br-connection-key-missing' -- $connect_output
+                set connect_error "stale-bond"
                 break
             end
-            sleep 1
+
+            # A rejected attempt can still flip to connected a moment later.
+            # Successful attempts get a longer grace period than failures.
+            set -l polls 8
+            if string match -rq 'Failed to connect' -- $connect_output
+                set polls 2
+                if test $attempt -lt 3
+                    echo "⏳ Connect rejected - retrying in 1s..."
+                    sleep 1
+                end
+            end
+
+            for i in (seq $polls)
+                if bluetoothctl info $mac 2>/dev/null | grep -q "Connected: yes"
+                    set connected true
+                    break
+                end
+                sleep 1
+            end
+
+            if test "$connected" = "true"
+                break
+            end
         end
     end
 
@@ -220,6 +243,9 @@ function bose --description "Toggle Bose QC45 connection with audio switching"
     pactl set-sink-mute $bt_sink 0 2>/dev/null
 
     echo "✅ Connected - audio on Bose QC45 (AAC)"
-    notify-send -i audio-headphones "Bose QC45" "Connected"
+    # mako may have died mid-session - skip instead of spewing a DBus error
+    if pgrep -x mako >/dev/null
+        notify-send -i audio-headphones "Bose QC45" "Connected"
+    end
     return 0
 end
