@@ -5,7 +5,9 @@ function waybar-supervise --description "Keep the Waybar status bar alive"
     #
     # Sway spawns a fresh bar process on every reload but does not kill the old
     # one: drop previous supervisors and stray waybars so only one bar survives.
-    for pid in (pgrep -f waybar-supervise 2>/dev/null)
+    # Match the full wrapper command line - a bare "waybar-supervise" pattern
+    # would also kill unrelated processes that merely mention it.
+    for pid in (pgrep -f "^/usr/bin/fish $HOME/.local/bin/waybar-supervise" 2>/dev/null)
         test $pid = $fish_pid; and continue
         kill $pid 2>/dev/null
     end
