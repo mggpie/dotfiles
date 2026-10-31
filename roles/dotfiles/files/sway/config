@@ -154,7 +154,9 @@ bindsym Print exec screenshot
 floating_modifier $mod normal
 
 ### Bar
-bar swaybar_command waybar
+# waybar-supervise wraps waybar: sway does not respawn bar processes, so a
+# waybar crash (pulseaudio module vs PipeWire) would leave the bar gone
+bar swaybar_command waybar-supervise
 
 ### Autostart
 exec dbus-daemon --session --address=unix:path=$XDG_RUNTIME_DIR/bus
