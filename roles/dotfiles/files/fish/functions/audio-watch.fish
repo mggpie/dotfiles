@@ -1,7 +1,10 @@
 function audio-watch --description "Restart the PipeWire stack if it dies"
-    # PipeWire 1.6.9 segfaults in libspa-support.so shortly after session start
-    # (seen twice now) and nothing restarts it - audio then stays dead until a
-    # reload, and Firefox falls back to raw ALSA and blocks the card on top.
+    # PipeWire crashed at session start twice (segfault in libspa-support.so) and
+    # nothing restarts it - audio then stays dead until a reload, and apps end up
+    # on raw ALSA. Restart only the component that died: a full stack restart also
+    # kills pipewire-pulse, which drops the audio connections of running apps
+    # (Firefox does not recover from that). pipewire-pulse survives a pipewire
+    # restart and reconnects on its own.
     # exec_always starts this on every reload, so keep a single watcher.
     for pid in (pgrep -f '^fish -c audio-watch$' 2>/dev/null)
         test $pid = $fish_pid; and continue
@@ -12,19 +15,27 @@ function audio-watch --description "Restart the PipeWire stack if it dies"
     sleep 10
 
     while true
-        if not pgrep -x pipewire >/dev/null; or not pgrep -x wireplumber >/dev/null; or not pgrep -x pipewire-pulse >/dev/null
-            echo (date "+%F %T") "audio-watch: stack incomplete, restarting" >>/tmp/audio-watch.log
-            pkill -x wireplumber 2>/dev/null
-            pkill -x pipewire-pulse 2>/dev/null
-            pkill -x pipewire 2>/dev/null
-            sleep 1
+        set -l pipewire_was_down 0
+        if not pgrep -x pipewire >/dev/null
+            echo (date "+%F %T") "audio-watch: pipewire down, starting" >>/tmp/audio-watch.log
             pipewire >/dev/null 2>&1 &
-            sleep 0.5
-            pipewire-pulse >/dev/null 2>&1 &
-            sleep 0.5
-            wireplumber >/dev/null 2>&1 &
-            sleep 5
+            set pipewire_was_down 1
         end
+        if not pgrep -x wireplumber >/dev/null
+            echo (date "+%F %T") "audio-watch: wireplumber down, starting" >>/tmp/audio-watch.log
+            wireplumber >/dev/null 2>&1 &
+        end
+
+        # Only judge pulse once pipewire has had time to come up.
+        if test $pipewire_was_down = 0
+            if not pactl info >/dev/null 2>&1
+                echo (date "+%F %T") "audio-watch: pulse not serving, restarting" >>/tmp/audio-watch.log
+                pkill -x pipewire-pulse 2>/dev/null
+                sleep 1
+                pipewire-pulse >/dev/null 2>&1 &
+            end
+        end
+
         sleep 5
     end
 end
